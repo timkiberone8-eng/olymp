@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Волки и Лисы: Переправа — В стиле Cuphead (KIBERone)</title>
+  <script src="../assets/tailwind.js"></script>
+  <style>
+    /* 1930s Rubber Hose & Vintage Film Aesthetics */
+    @keyframes rubber-bounce {
+      0%, 100% { transform: translateY(0) scale(1, 1); }
+      30% { transform: translateY(-8px) scale(0.96, 1.05); }
+      70% { transform: translateY(2px) scale(1.04, 0.96); }
+    }
+    @keyframes boat-wobble {
+      0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+      50% { transform: translateY(-9px) rotate(1.8deg); }
+    }
+    @keyframes seamless-wave-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes comic-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .rubber-bounce {
+      animation: rubber-bounce 2.2s ease-in-out infinite;
+    }
+    .boat-wobble {
+      animation: boat-wobble 3s ease-in-out infinite;
+    }
+    .seamless-wave-track {
+      animation: seamless-wave-scroll 16s linear infinite;
+      will-change: transform;
+    }
+    @keyframes hop-in {
+      0% { transform: scale(0.65) translateY(-12px); opacity: 0; }
+      60% { transform: scale(1.06) translateY(2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .animate-hop-in {
+      animation: hop-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+
+    :root {
+      --sail-duration: 2.2s;
+    }
+
+    /* Clean, highly readable typography across all platforms */
+    .cuphead-font, .game-font {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Montserrat', 'Inter', Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.015em;
+    }
+    .cuphead-text-shadow {
+      text-shadow: 1.5px 1.5px 0 rgba(30, 23, 19, 0.35);
+    }
+    .cuphead-box-shadow {
+      box-shadow: 4px 4px 0 #1e1713;
+    }
+    .cuphead-box-shadow-lg {
+      box-shadow: 7px 7px 0 #1e1713;
+    }
+    .cuphead-btn {
+      border: 3.5px solid #1e1713;
+      box-shadow: 4px 4px 0 #1e1713;
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cuphead-btn:hover {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 5.5px 5.5px 0 #1e1713;
+    }
+    .cuphead-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #1e1713;
+    }
+
+    /* Vintage Paper Background & Vignette */
+    .vintage-paper {
+      background-color: #f7eed7;
+      background-image: 
+        radial-gradient(circle at 50% 40%, rgba(255,255,255,0.4) 0%, rgba(220,195,150,0.3) 70%, rgba(180,150,100,0.45) 100%),
+        repeating-linear-gradient(45deg, rgba(30,20,10,0.015) 0px, rgba(30,20,10,0.015) 2px, transparent 2px, transparent 6px);
+    }
+
+    .vignette-overlay {
+      box-shadow: inset 0 0 90px rgba(45, 25, 10, 0.45), inset 0 0 160px rgba(30, 15, 5, 0.3);
+    }
+
+    .boat-journey-smooth {
+      transition: left var(--sail-duration, 2.2s) cubic-bezier(0.45, 0.05, 0.25, 1);
+    }
+
+    ::-webkit-scrollbar { display: none; }
+    * { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body class="vintage-paper text-[#1e1713] w-screen h-screen overflow-hidden flex flex-col font-sans select-none antialiased relative vignette-overlay" data-olymp-back="center">
+
+  <!-- ==================== TOP CUPHEAD TITLE RIBBON ==================== -->
+  <header class="h-16 md:h-18 bg-[#fdf8ea] border-b-4 border-[#1e1713] px-3 md:px-6 flex items-center justify-between shrink-0 z-30 shadow-md relative">
+    
+    <!-- Left Logo & Clean Title -->
+    <div class="flex items-center gap-3">
+      <!-- 1930s Cartoon Star Badge -->
+      <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-[#f5c542] border-3 border-[#1e1713] cuphead-box-shadow flex items-center justify-center font-black text-[#1e1713] text-lg transform -rotate-6">
+        ★
+      </div>
+      <div>
+        <h1 class="cuphead-font text-lg md:text-2xl font-black text-[#1e1713] tracking-wide leading-none uppercase">
+          ВОЛКИ И ЛИСЫ НА БЕРЕГУ
+        </h1>
+      </div>
+    </div>
+
+    <!-- Center Vintage Scorecard -->
+    <div class="flex items-center">
+      <div class="bg-[#fdf8ea] border-3 border-[#1e1713] px-3 md:px-5 py-1.5 rounded-2xl cuphead-box-shadow flex items-center gap-2.5 transform rotate-1">
+        <span class="text-xs md:text-sm font-black uppercase text-[#78533e]">ХОДЫ:</span>
+        <span id="stepCounter" class="cuphead-font text-2xl md:text-3xl font-black text-[#df4b26]">0</span>
+        <span class="cuphead-font text-base md:text-xl font-black text-[#1e1713] inline">/ ПАР: 9</span>
+      </div>
+    </div>
+
+    <!-- Right Rubber Hose Action Buttons -->
+    <div class="flex items-center gap-2">
+      <button id="hintBtn" title="Подсказка (открыть / закрыть)" class="cuphead-btn bg-[#f5c542] hover:bg-[#fad468] text-[#1e1713] px-3 py-1.5 rounded-xl font-black text-xs md:text-sm uppercase flex items-center gap-1.5">
+        <span>💡</span> <span class="hidden sm:inline">ПОДСКАЗКА</span>
+      </button>
+
+      <button id="demoBtn" title="Авто-демонстрация" class="cuphead-btn bg-[#2a7e8e] hover:bg-[#3498ab] text-[#fdf8ea] px-3 py-1.5 rounded-xl font-black text-xs md:text-sm uppercase flex items-center gap-1.5">
+        <span>🎬</span> <span class="hidden sm:inline">ДЕМО</span>
+      </button>
+
+      <button id="resetBtn" title="Сброс в начало" class="cuphead-btn bg-[#df4b26] hover:bg-[#eb5a36] text-[#fdf8ea] px-3 py-1.5 rounded-xl font-black text-xs md:text-sm uppercase flex items-center gap-1.5">
+        <span>🔄</span> <span class="hidden sm:inline">ЗАНОВО</span>
+      </button>
+
+      <button id="rulesBtn" title="Правила" class="cuphead-btn bg-[#fdf8ea] text-[#1e1713] px-2.5 py-1.5 rounded-xl font-black text-xs md:text-sm uppercase">
+        <span>📜</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== TOGGLEABLE HINT CARD (ПО КЛИКУ) ==================== -->
+  <div id="hintModal" class="hidden absolute top-20 left-1/2 -translate-x-1/2 z-40 max-w-lg w-[92%] px-5 py-4 rounded-3xl border-4 border-[#1e1713] cuphead-box-shadow-lg bg-[#fdf8ea] text-[#1e1713] transition-all duration-200">
+    <div class="flex items-center justify-between border-b-3 border-[#1e1713] pb-2 mb-3">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">💡</span>
+        <h4 id="hintTitle" class="cuphead-font text-base md:text-lg font-black text-[#df4b26]">
+          ПОДСКАЗКА
+        </h4>
+      </div>
+      <button id="closeHintBtn" title="Закрыть подсказку" class="cuphead-btn bg-[#f5c542] hover:bg-[#fad468] text-[#1e1713] px-2.5 py-0.5 rounded-xl text-base font-black">
+        ✕
+      </button>
+    </div>
+    <p id="hintText" class="text-sm md:text-base font-bold text-[#1e1713] leading-relaxed mb-4">
+      <!-- Injected by JS -->
+    </p>
+    <div class="flex justify-end">
+      <button id="closeHintOkBtn" class="cuphead-btn bg-[#f5c542] hover:bg-[#fad468] text-[#1e1713] px-4 py-1.5 rounded-xl font-black text-xs uppercase">
+        ЗАКРЫТЬ ПОДСКАЗКУ ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== VINTAGE ERROR ALERT BANNER ==================== -->
+  <div id="alertBanner" class="hidden absolute top-20 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] px-4 py-3 rounded-2xl border-4 border-[#1e1713] cuphead-box-shadow-lg text-xs md:text-sm font-bold flex items-start justify-between gap-3 transition-all duration-200">
+    <div id="alertContent" class="flex items-start gap-3 flex-1"></div>
+    <button id="closeAlertBtn" class="cuphead-btn bg-[#fdf8ea] text-[#1e1713] px-2 py-0.5 rounded-lg font-black text-xs shrink-0">✕</button>
+  </div>
+
+  <!-- ==================== MAIN VIEWPORT (RIVER STAGE) ==================== -->
+  <main class="flex-1 relative overflow-hidden flex flex-row">
+
+    <!-- ==================== LEFT BANK (GREEN ISLE A) ==================== -->
+    <section class="w-[30%] min-w-[240px] max-w-[370px] bg-[#dbe8bb] border-r-4 border-[#1e1713] relative flex flex-col justify-between p-3 md:p-4 z-10">
+
+      <!-- Character Token List -->
+      <div id="leftBankList" class="relative z-10 flex-1 flex flex-col justify-center gap-2 py-2 overflow-y-auto">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Dock A Footer (Enlarged) -->
+      <div class="relative z-10 pt-2.5 pb-1 border-t-3 border-[#1e1713] flex items-center justify-between uppercase">
+        <div class="flex items-center gap-1.5 md:gap-2">
+          <span class="cuphead-font font-black text-[#1e1713] text-sm md:text-base lg:text-lg">⚓ ПРИЧАЛ А</span>
+          <span id="leftCountTag" class="cuphead-font text-xs md:text-sm font-black px-2 py-0.5 rounded-full bg-[#fdf8ea] border-2 border-[#1e1713] text-[#df4b26] cuphead-box-shadow">
+            6
+          </span>
+        </div>
+        <span id="dockAStatus" class="cuphead-font font-black text-[#df4b26] text-sm md:text-base lg:text-lg">ЛОДКА ТУТ</span>
+      </div>
+    </section>
+
+    <!-- ==================== INKWELL ISLE RIVER (CENTER) ==================== -->
+    <section id="riverZone" class="flex-1 bg-[#257b88] border-y-0 relative overflow-hidden flex flex-col justify-between">
+      
+      <!-- Vintage 1930s Stylized Foam Waves (Seamless 100% loop) -->
+      <div class="absolute inset-0 pointer-events-none opacity-45 overflow-hidden">
+        <div class="flex w-[200%] h-full seamless-wave-track">
+          <!-- Wave Tile 1 -->
+          <svg class="w-1/2 h-full shrink-0" preserveAspectRatio="none" viewBox="0 0 800 400">
+            <!-- Layer 1: Deep water -->
+            <path d="M0,60 Q50,20 100,60 T200,60 T300,60 T400,60 T500,60 T600,60 T700,60 T800,60 L800,400 L0,400 Z" fill="#1b606b" stroke="none"/>
+            <path d="M-2,60 Q50,20 100,60 T200,60 T300,60 T400,60 T500,60 T600,60 T700,60 T802,60" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+
+            <!-- Layer 2: Mid water -->
+            <path d="M0,170 Q50,130 100,170 T200,170 T300,170 T400,170 T500,170 T600,170 T700,170 T800,170 L800,400 L0,400 Z" fill="#154d56" stroke="none"/>
+            <path d="M-2,170 Q50,130 100,170 T200,170 T300,170 T400,170 T500,170 T600,170 T700,170 T802,170" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+
+            <!-- Layer 3: Foreground water -->
+            <path d="M0,290 Q50,250 100,290 T200,290 T300,290 T400,290 T500,290 T600,290 T700,290 T800,290 L800,400 L0,400 Z" fill="#0f3c44" stroke="none"/>
+            <path d="M-2,290 Q50,250 100,290 T200,290 T300,290 T400,290 T500,290 T600,290 T700,290 T802,290" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+          </svg>
+          <!-- Wave Tile 2 (Identical Clone for 100% seamless transition without vertical seam) -->
+          <svg class="w-1/2 h-full shrink-0" preserveAspectRatio="none" viewBox="0 0 800 400">
+            <!-- Layer 1: Deep water -->
+            <path d="M0,60 Q50,20 100,60 T200,60 T300,60 T400,60 T500,60 T600,60 T700,60 T800,60 L800,400 L0,400 Z" fill="#1b606b" stroke="none"/>
+            <path d="M-2,60 Q50,20 100,60 T200,60 T300,60 T400,60 T500,60 T600,60 T700,60 T802,60" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+
+            <!-- Layer 2: Mid water -->
+            <path d="M0,170 Q50,130 100,170 T200,170 T300,170 T400,170 T500,170 T600,170 T700,170 T800,170 L800,400 L0,400 Z" fill="#154d56" stroke="none"/>
+            <path d="M-2,170 Q50,130 100,170 T200,170 T300,170 T400,170 T500,170 T600,170 T700,170 T802,170" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+
+            <!-- Layer 3: Foreground water -->
+            <path d="M0,290 Q50,250 100,290 T200,290 T300,290 T400,290 T500,290 T600,290 T700,290 T800,290 L800,400 L0,400 Z" fill="#0f3c44" stroke="none"/>
+            <path d="M-2,290 Q50,250 100,290 T200,290 T300,290 T400,290 T500,290 T600,290 T700,290 T802,290" fill="none" stroke="#fdf8ea" stroke-width="4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Cartoon Lily Pad with Pie-Eyes -->
+      <div class="absolute top-5 left-10 pointer-events-none">
+        <svg width="45" height="30" viewBox="0 0 50 32">
+          <path d="M25 2 C38 2 48 10 45 22 C42 29 28 30 18 28 C6 25 2 15 8 7 C14 1 20 2 25 2 Z" fill="#4d9456" stroke="#1e1713" stroke-width="2.5"/>
+          <circle cx="28" cy="14" r="2.5" fill="#1e1713"/>
+          <polygon points="28,14 31,12 31,15" fill="#fdf8ea"/>
+        </svg>
+      </div>
+
+      <!-- ==================== DEMO & STEP-BY-STEP CONTROL DECK ==================== -->
+      <div id="demoDeck" class="hidden relative z-30 w-full pt-3 px-3 md:px-6 flex flex-col items-center">
+        <div class="bg-[#fdf8ea] border-3 border-[#1e1713] rounded-2xl p-2.5 md:p-3 cuphead-box-shadow max-w-2xl w-full flex flex-col gap-2">
+          
+          <!-- Top Row: Step Title & Speed Controls -->
+          <div class="flex items-center justify-between gap-2 border-b-2 border-[#1e1713]/15 pb-1.5">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <span class="text-xl shrink-0">🎬</span>
+              <span id="demoStepBadge" class="cuphead-font text-xs md:text-sm font-extrabold px-2.5 py-0.5 rounded-full bg-[#f5c542] border-2 border-[#1e1713] text-[#1e1713] shrink-0">
+                ШАГ 0 ИЗ 9
+              </span>
+              <span id="demoStepTitle" class="font-bold text-xs md:text-sm text-[#1e1713] truncate">
+                Начальная расстановка
+              </span>
+            </div>
+
+            <!-- Speed selector buttons -->
+            <div class="flex items-center gap-1 shrink-0">
+              <span class="text-xs font-bold text-[#78533e] mr-1 hidden sm:inline">Скорость:</span>
+              <button id="speed05Btn" class="px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-bold bg-[#f5c542] text-[#1e1713] shadow-sm transition-all" title="Медленно (0.5x) — комфортно для объяснения">
+                🐢 0.5x
+              </button>
+              <button id="speed1Btn" class="px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-bold bg-[#fdf8ea] text-[#1e1713] hover:bg-[#faeed0] shadow-sm transition-all" title="Обычно (1.0x)">
+                1.0x
+              </button>
+              <button id="speed15Btn" class="px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-bold bg-[#fdf8ea] text-[#1e1713] hover:bg-[#faeed0] shadow-sm transition-all" title="Быстро (1.5x)">
+                1.5x
+              </button>
+              <button id="exitDemoBtn" class="ml-1.5 px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-black bg-[#ffcdd2] text-[#c0392b] hover:bg-[#ef9a9a]" title="Закрыть демо и вернуться к игре">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Middle Row: Pedagogical Explanation for Kids -->
+          <div class="text-xs md:text-sm font-bold text-[#1e1713] leading-snug px-1">
+            <p id="demoStepDesc">Нажмите «Вперёд ⏭» для пошагового показа или «▶ Авто» для непрерывного просмотра.</p>
+          </div>
+
+          <!-- Bottom Row: Step-by-step navigation buttons -->
+          <div class="flex items-center justify-between gap-2 pt-1 border-t-2 border-[#1e1713]/10">
+            <!-- Navigation Buttons -->
+            <div class="flex items-center gap-1.5">
+              <button id="prevStepBtn" class="cuphead-btn bg-[#fdf8ea] hover:bg-[#fff9e6] text-[#1e1713] px-3 py-1 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1 disabled:opacity-40">
+                <span>⏮</span> <span>НАЗАД</span>
+              </button>
+              <button id="playPauseBtn" class="cuphead-btn bg-[#2a7e8e] hover:bg-[#3498ab] text-[#fdf8ea] px-3.5 py-1 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5">
+                <span id="playPauseIcon">▶</span> <span id="playPauseText">АВТО</span>
+              </button>
+              <button id="nextStepBtn" class="cuphead-btn bg-[#f5c542] hover:bg-[#fad468] text-[#1e1713] px-3 py-1 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1 disabled:opacity-40">
+                <span>ВПЕРЕД</span> <span>⏭</span>
+              </button>
+            </div>
+
+            <!-- Clickable Step Number Pills (0 to 9) -->
+            <div id="stepPillsRow" class="hidden sm:flex items-center gap-1">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==================== CUPHEAD CARTOON BOAT ==================== -->
+      <div id="boatAnchor" class="absolute top-1/2 -translate-y-1/2 left-[3%] boat-journey-smooth z-20 flex flex-col items-center">
+        
+        <!-- The Animated Cartoon Rowboat -->
+        <div class="relative w-80 md:w-96 h-36 md:h-42 boat-wobble flex items-center justify-center filter drop-shadow-xl">
+          
+          <!-- Detailed 1930s Wooden Skiff SVG -->
+          <svg class="absolute inset-0 w-full h-full" viewBox="0 0 340 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cartoon Water Splash -->
+            <ellipse cx="170" cy="138" rx="145" ry="14" fill="#154d56" stroke="#fdf8ea" stroke-width="3.5" />
+            
+            <!-- Boat Hull (Rich warm cartoon wood) -->
+            <path d="M20 70 C80 155 260 155 320 70 C290 120 180 138 20 70 Z" fill="#78350f" stroke="#1e1713" stroke-width="4.5" />
+            <!-- Upper plank -->
+            <path d="M25 65 C85 145 255 145 315 65 C285 110 180 128 25 65 Z" fill="#b45309" stroke="#1e1713" stroke-width="4" />
+            <!-- Wood grain swirl with cartoon knot eye -->
+            <path d="M70 100 Q170 130 270 95" stroke="#78350f" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="210" cy="112" r="3.5" fill="#78350f"/>
+
+            <!-- Front Prow with Cartoon Smiling Face -->
+            <path d="M312 65 C325 55 330 75 318 82" stroke="#1e1713" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <circle cx="304" cy="74" r="3.5" fill="#1e1713"/>
+            <polygon points="304,74 308,72 308,76" fill="#fdf8ea"/>
+
+            <!-- Inner bottom -->
+            <path d="M38 64 C90 115 250 115 302 64 C270 96 170 110 38 64 Z" fill="#451a03" stroke="#1e1713" stroke-width="3.5"/>
+
+            <!-- Benches / Seats (Left & Right) -->
+            <rect x="85" y="60" width="48" height="15" rx="3" fill="#d97706" stroke="#1e1713" stroke-width="3.5"/>
+            <rect x="205" y="60" width="48" height="15" rx="3" fill="#d97706" stroke="#1e1713" stroke-width="3.5"/>
+
+            <!-- Cartoon Oar with White Gloved Handle -->
+            <line x1="125" y1="105" x2="215" y2="28" stroke="#b45309" stroke-width="5" stroke-linecap="round"/>
+            <polygon points="112,115 130,100 120,95" fill="#d97706" stroke="#1e1713" stroke-width="3"/>
+            <!-- Brass oarlock -->
+            <circle cx="170" cy="62" r="5" fill="#f5c542" stroke="#1e1713" stroke-width="3"/>
+          </svg>
+
+          <!-- Inside the Boat: 2 Seat Targets -->
+          <div class="relative z-10 w-full px-6 md:px-8 flex justify-around items-end pb-3">
+            <div id="boatSeat1" class="w-28 md:w-34 h-28 md:h-34 flex flex-col items-center justify-end"></div>
+            <div id="boatSeat2" class="w-28 md:w-34 h-28 md:h-34 flex flex-col items-center justify-end"></div>
+          </div>
+        </div>
+
+        <!-- Sail Action Trigger under boat -->
+        <div id="manualControlsContainer" class="mt-3 flex flex-col items-center">
+          <button id="sailBtn" class="cuphead-btn bg-[#f5c542] hover:bg-[#fad468] text-[#1e1713] px-6 py-2.5 rounded-2xl cuphead-font font-black text-sm md:text-base uppercase tracking-wider flex items-center gap-2">
+            <span>🚣</span>
+            <span id="sailBtnLabel">ОТПЛЫТЬ НА БЕРЕГ Б ➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom River Instruction (High-Contrast Vintage Banner) -->
+      <div class="relative z-10 w-full pb-3.5 px-3 md:px-6 flex items-center justify-center">
+        <div class="bg-[#fdf8ea] border-3 border-[#1e1713] px-6 md:px-8 py-2 rounded-2xl cuphead-box-shadow flex items-center gap-2.5">
+          <span class="text-base md:text-lg">👆</span>
+          <span class="text-xs sm:text-sm md:text-base font-extrabold text-[#1e1713] tracking-normal">
+            Кликните на персонажа, чтобы посадить в лодку или высадить
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== RIGHT BANK (GREEN ISLE B) ==================== -->
+    <section class="w-[30%] min-w-[240px] max-w-[370px] bg-[#dbe8bb] border-l-4 border-[#1e1713] relative flex flex-col justify-between p-3 md:p-4 z-10">
+
+      <!-- Character Token List -->
+      <div id="rightBankList" class="relative z-10 flex-1 flex flex-col justify-center gap-2 py-2 overflow-y-auto">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Dock B Footer (Enlarged) -->
+      <div class="relative z-10 pt-2.5 pb-1 border-t-3 border-[#1e1713] flex items-center justify-between uppercase">
+        <div class="flex items-center gap-1.5 md:gap-2">
+          <span class="cuphead-font font-black text-[#1e1713] text-sm md:text-base lg:text-lg">⚓ ПРИЧАЛ Б</span>
+          <span id="rightCountTag" class="cuphead-font text-xs md:text-sm font-black px-2 py-0.5 rounded-full bg-[#fdf8ea] border-2 border-[#1e1713] text-[#df4b26] cuphead-box-shadow">
+            0
+          </span>
+        </div>
+        <span id="dockBStatus" class="cuphead-font font-black text-[#9c7159] text-sm md:text-base lg:text-lg">ПУСТО</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 1930s RULES MODAL ==================== -->
+  <div id="rulesModal" class="hidden fixed inset-0 bg-[#1e1713]/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#fdf8ea] border-4 border-[#1e1713] rounded-3xl p-6 max-w-lg w-full cuphead-box-shadow-lg relative">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b-3 border-[#1e1713]">
+        <h3 class="cuphead-font text-xl font-black text-[#1e1713] uppercase flex items-center gap-2">
+          <span>📜</span> ПРАВИЛА ПЕРЕПРАВЫ
+        </h3>
+        <button id="closeRulesBtn" class="text-[#1e1713] hover:text-[#df4b26] text-2xl font-black px-2">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs md:text-sm font-bold text-[#1e1713]">
+        <div class="bg-[#f7eed7] p-3 rounded-2xl border-2 border-[#1e1713]">
+          <b class="text-[#df4b26]">1. ЛОДКА:</b> вмещает строго не больше <b>2 зверей</b>. Пустая лодка не плывет.
+        </div>
+        <div class="bg-[#f7eed7] p-3 rounded-2xl border-2 border-[#1e1713]">
+          <b class="text-[#df4b26]">2. ГРЕБЦЫ:</b> грести умеют только <b>Мама-Лисица</b> и <b>Лисёнок-гребец</b>. Волки грести не умеют!
+        </div>
+        <div class="bg-[#f7eed7] p-3 rounded-2xl border-2 border-[#1e1713]">
+          <b class="text-[#df4b26]">3. БЕЗОПАСНОСТЬ:</b> чужая мама не может оставаться с малышами, если рядом нет их родной мамы.
+        </div>
+        <div class="bg-[#f7eed7] p-3 rounded-2xl border-2 border-[#1e1713]">
+          <b class="text-[#2a7e8e]">4. МАЛЫШИ ВМЕСТЕ:</b> волчата и лисята могут быть вместе одни, если чужой мамы рядом нет.
+        </div>
+      </div>
+
+      <div class="mt-5 text-center">
+        <button id="understoodBtn" class="w-full cuphead-btn bg-[#f5c542] text-[#1e1713] py-2.5 rounded-2xl cuphead-font font-black text-sm uppercase">
+          ЯСНО! ВПЕРЕД К ПОБЕДЕ!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CUPHEAD "A KNOCKOUT!" VICTORY MODAL ==================== -->
+  <div id="victoryModal" class="hidden fixed inset-0 bg-[#1e1713]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <canvas id="confettiCanvas" class="absolute inset-0 pointer-events-none w-full h-full"></canvas>
+
+    <div class="bg-[#fdf8ea] border-5 border-[#1e1713] rounded-3xl p-6 md:p-8 max-w-md w-full text-center cuphead-box-shadow-lg relative z-10 rubber-bounce">
+      
+      <!-- Vintage Knockout Badge -->
+      <div class="w-20 h-20 mx-auto rounded-full bg-[#f5c542] border-4 border-[#1e1713] cuphead-box-shadow flex items-center justify-center text-4xl mb-3 transform rotate-6">
+        🏆
+      </div>
+
+      <div class="inline-block bg-[#df4b26] text-[#fdf8ea] border-3 border-[#1e1713] px-4 py-1 rounded-full cuphead-font font-black text-xs md:text-sm uppercase tracking-widest mb-2 cuphead-box-shadow">
+        A KNOCKOUT!
+      </div>
+
+      <h2 class="cuphead-font text-3xl md:text-4xl font-black text-[#1e1713] uppercase tracking-wide leading-none mb-1">
+        ВСЕ ПЕРЕПРАВИЛИСЬ!
+      </h2>
+      <p class="text-xs md:text-sm font-bold text-[#78533e] mb-4 uppercase">
+        Идеальный алгоритм для KIBERone!
+      </p>
+
+      <div class="bg-[#f7eed7] border-3 border-[#1e1713] rounded-2xl p-4 mb-5 cuphead-box-shadow">
+        <div id="starRow" class="text-3xl mb-1">⭐ ⭐ ⭐</div>
+        <div class="cuphead-font text-sm md:text-base font-black text-[#1e1713] uppercase">
+          ШАГОВ СДЕЛАНО: <span id="finalStepCount" class="text-[#df4b26] text-xl">9</span>
+        </div>
+        <div id="finalGrade" class="cuphead-font text-lg font-black text-[#2a7e8e] mt-1">
+          GRADE: S • МАТЕМАТИЧЕСКИЙ РЕКОРД!
+        </div>
+      </div>
+
+      <div class="flex gap-2.5">
+        <button id="victoryPlayAgainBtn" class="flex-1 cuphead-btn bg-[#f5c542] text-[#1e1713] py-3 rounded-2xl cuphead-font font-black text-sm uppercase">
+          СЫГРАТЬ ЕЩЁ РАЗ 🔄
+        </button>
+        <button id="victoryCloseBtn" class="cuphead-btn bg-[#fdf8ea] text-[#1e1713] px-4 py-3 rounded-2xl cuphead-font font-black text-sm uppercase">
+          ОСМОТР
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AUTHENTIC 1930s CUPHEAD SPRITES REGISTRY ==================== -->
+  <script>
+    /**
+     * AUTHENTIC 1930s RUBBER HOSE / CUPHEAD SPRITES
+     * Features: Heavy 3-4px dark ink outlines, classic pie-cut eyes (Pac-man eyes),
+     * rubber hose limbs, white cartoon 4-finger gloves with 3 black stitch darts.
+     */
+    const CUPHEAD_SPRITES = {
+      // 1. MAMA FOX (Flapper 1930s Lady Fox)
+      f_mom: `
+        <svg viewBox="0 0 100 120" class="w-full h-full drop-shadow">
+          <!-- Bushy curled tail -->
+          <path d="M20 75 C5 60 4 92 16 106 C28 118 48 114 42 94 C38 80 26 88 20 75 Z" fill="#df4b26" stroke="#1e1713" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M12 90 C8 96 10 104 16 106 C24 108 24 100 20 95 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          
+          <!-- Rubber hose body -->
+          <path d="M36 55 C26 75 28 104 50 108 C72 104 74 75 64 55 Z" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <!-- Cream chest bib -->
+          <path d="M42 62 C38 78 40 92 50 96 C60 92 62 78 58 62 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          
+          <!-- Left & Right Pointy Ears -->
+          <polygon points="32,30 22,6 42,20" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="31,25 25,12 38,20" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+          <polygon points="68,30 78,6 58,20" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="69,25 75,12 62,20" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Head -->
+          <ellipse cx="50" cy="38" rx="22" ry="18" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <!-- Cheeks fluff -->
+          <path d="M30 42 Q20 48 32 54 Q44 56 46 50 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          <path d="M70 42 Q80 48 68 54 Q56 56 54 50 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          
+          <!-- Muzzle & Black Button Nose -->
+          <polygon points="46,45 54,45 50,54" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+          <circle cx="50" cy="51" r="3.5" fill="#1e1713"/>
+
+          <!-- Authentic 1930s Pie-Cut Eyes with Eyelashes -->
+          <!-- Left Eye -->
+          <circle cx="41" cy="36" r="5" fill="#1e1713"/>
+          <polygon points="41,36 46,33 46,38" fill="#fdf8ea"/>
+          <line x1="37" y1="31" x2="35" y2="28" stroke="#1e1713" stroke-width="2" stroke-linecap="round"/>
+          <line x1="41" y1="30" x2="41" y2="26" stroke="#1e1713" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Right Eye -->
+          <circle cx="59" cy="36" r="5" fill="#1e1713"/>
+          <polygon points="59,36 64,33 64,38" fill="#fdf8ea"/>
+          <line x1="59" y1="30" x2="59" y2="26" stroke="#1e1713" stroke-width="2" stroke-linecap="round"/>
+          <line x1="63" y1="31" x2="65" y2="28" stroke="#1e1713" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Vintage flower in hair -->
+          <circle cx="28" cy="22" r="4.5" fill="#f5c542" stroke="#1e1713" stroke-width="2"/>
+          <circle cx="28" cy="22" r="2" fill="#df4b26"/>
+
+          <!-- White Cartoon Glove holding Oar -->
+          <line x1="72" y1="20" x2="82" y2="108" stroke="#b45309" stroke-width="4.5" stroke-linecap="round"/>
+          <ellipse cx="85" cy="112" rx="6" ry="10" fill="#d97706" stroke="#1e1713" stroke-width="2.5" transform="rotate(10 85 112)"/>
+          <!-- Glove -->
+          <circle cx="74" cy="65" r="7" fill="#fdf8ea" stroke="#1e1713" stroke-width="3"/>
+          <line x1="72" y1="62" x2="72" y2="67" stroke="#1e1713" stroke-width="1.8"/>
+          <line x1="75" y1="62" x2="75" y2="67" stroke="#1e1713" stroke-width="1.8"/>
+        </svg>
+      `,
+
+      // 2. ROWER FOX CUB (Newsboy Scamp with Cap & Oar)
+      f_rower: `
+        <svg viewBox="0 0 90 105" class="w-full h-full drop-shadow">
+          <!-- Curled Tail -->
+          <path d="M18 70 C8 58 6 80 16 90 C26 98 38 94 34 78 Z" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+          <path d="M12 76 C9 81 12 88 16 90 C20 91 20 86 16 82 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Body with red cartoon shorts -->
+          <ellipse cx="45" cy="68" rx="18" ry="22" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <path d="M30 75 C30 92 60 92 60 75 Z" fill="#c0392b" stroke="#1e1713" stroke-width="3"/>
+          <circle cx="40" cy="80" r="2" fill="#fdf8ea"/>
+          <circle cx="50" cy="80" r="2" fill="#fdf8ea"/>
+
+          <!-- Pointy Ears -->
+          <polygon points="26,26 20,8 36,18" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+          <polygon points="64,26 70,8 54,18" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Head -->
+          <ellipse cx="45" cy="32" rx="19" ry="16" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          
+          <!-- 1930s Newsboy Flat Cap (кепка-газетчика) -->
+          <path d="M22 28 Q45 10 68 24 Q50 18 22 28 Z" fill="#2a7e8e" stroke="#1e1713" stroke-width="3"/>
+          <path d="M30 26 Q45 18 64 24" fill="#3498ab"/>
+          <circle cx="45" cy="18" r="3" fill="#f5c542" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- White Cheeks & Nose -->
+          <path d="M28 36 Q18 42 28 46 Q38 48 40 42 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+          <path d="M62 36 Q72 42 62 46 Q52 48 50 42 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+          <circle cx="45" cy="42" r="3" fill="#1e1713"/>
+
+          <!-- Wide Grin with cartoon tongue -->
+          <path d="M36 46 Q45 56 54 46 Z" fill="#1e1713"/>
+          <path d="M41 49 Q45 55 49 49 Z" fill="#e74c3c"/>
+
+          <!-- Big Mischievous Pie Eyes -->
+          <circle cx="36" cy="31" r="5" fill="#1e1713"/>
+          <polygon points="36,31 41,28 41,33" fill="#fdf8ea"/>
+          <circle cx="54" cy="31" r="5" fill="#1e1713"/>
+          <polygon points="54,31 59,28 59,33" fill="#fdf8ea"/>
+
+          <!-- White Glove gripping Oar -->
+          <line x1="64" y1="18" x2="74" y2="86" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="76" cy="92" rx="5" ry="9" fill="#d97706" stroke="#1e1713" stroke-width="2.5" transform="rotate(10 76 92)"/>
+          <circle cx="66" cy="52" r="6.5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          <line x1="64" y1="50" x2="68" y2="50" stroke="#1e1713" stroke-width="1.5"/>
+        </svg>
+      `,
+
+      // 3. BABY FOX CUB (Chubby Round Kit)
+      f_kid2: `
+        <svg viewBox="0 0 85 95" class="w-full h-full drop-shadow">
+          <!-- Big fluffy tail -->
+          <path d="M16 62 C6 52 6 74 14 82 C22 88 34 84 30 70 Z" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+          <path d="M10 68 C8 72 10 78 14 82 Z" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Round baby body -->
+          <circle cx="42" cy="62" r="18" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <ellipse cx="42" cy="64" rx="10" ry="12" fill="#fdf8ea" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Round ears -->
+          <polygon points="26,24 20,8 35,18" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+          <polygon points="58,24 64,8 49,18" fill="#df4b26" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Head -->
+          <ellipse cx="42" cy="30" rx="18" ry="15" fill="#df4b26" stroke="#1e1713" stroke-width="3.5"/>
+          <circle cx="42" cy="38" r="2.8" fill="#1e1713"/>
+
+          <!-- Giant saucer pie eyes -->
+          <circle cx="34" cy="27" r="5.5" fill="#1e1713"/>
+          <polygon points="34,27 39,24 39,29" fill="#fdf8ea"/>
+          <circle cx="50" cy="27" r="5.5" fill="#1e1713"/>
+          <polygon points="50,27 55,24 55,29" fill="#fdf8ea"/>
+
+          <!-- Rosy cartoon cheeks -->
+          <circle cx="26" cy="33" r="3.5" fill="#f5c542" opacity="0.8"/>
+          <circle cx="58" cy="33" r="3.5" fill="#f5c542" opacity="0.8"/>
+
+          <!-- Tiny white mitten paws held up -->
+          <circle cx="32" cy="54" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          <circle cx="52" cy="54" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+        </svg>
+      `,
+
+      // 4. MAMA WOLF (1930s She-Wolf Matriarch)
+      w_mom: `
+        <svg viewBox="0 0 100 120" class="w-full h-full drop-shadow">
+          <!-- Sleek tail -->
+          <path d="M24 76 C10 62 12 94 22 104 C30 112 44 106 40 88 Z" fill="#4b5563" stroke="#1e1713" stroke-width="3.5"/>
+
+          <!-- Sleek Charcoal Body -->
+          <path d="M35 55 C25 75 27 104 50 108 C73 104 75 75 65 55 Z" fill="#4b5563" stroke="#1e1713" stroke-width="3.5"/>
+          <!-- Silver fur bib with jagged zig-zag edge -->
+          <path d="M42 60 L38 78 L45 84 L42 94 L50 98 L58 94 L55 84 L62 78 L58 60 Z" fill="#cbd5e1" stroke="#1e1713" stroke-width="2.5"/>
+
+          <!-- Sharp Wolf Ears with dark rims -->
+          <polygon points="30,30 20,4 42,16" fill="#4b5563" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="30,25 24,10 38,16" fill="#1e1713"/>
+          <polygon points="70,30 80,4 58,16" fill="#4b5563" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="70,25 76,10 62,16" fill="#1e1713"/>
+
+          <!-- Head -->
+          <ellipse cx="50" cy="36" rx="23" ry="19" fill="#4b5563" stroke="#1e1713" stroke-width="3.5"/>
+          <!-- Pointy Wolf Snout -->
+          <polygon points="42,40 58,40 50,56" fill="#cbd5e1" stroke="#1e1713" stroke-width="2.5"/>
+          <ellipse cx="50" cy="53" rx="4" ry="3" fill="#1e1713"/>
+
+          <!-- Arched eyebrows over Sharp Pie Eyes -->
+          <path d="M33 26 Q40 22 47 27" stroke="#1e1713" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="40" cy="33" r="5" fill="#1e1713"/>
+          <polygon points="40,33 45,30 45,35" fill="#fdf8ea"/>
+
+          <path d="M67 26 Q60 22 53 27" stroke="#1e1713" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="60" cy="33" r="5" fill="#1e1713"/>
+          <polygon points="60,33 65,30 65,35" fill="#fdf8ea"/>
+
+          <!-- Confident Smirk -->
+          <path d="M44 48 Q50 52 56 47" stroke="#1e1713" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+          <!-- White Cartoon Gloves on hips -->
+          <circle cx="28" cy="74" r="6.5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.8"/>
+          <line x1="26" y1="72" x2="30" y2="72" stroke="#1e1713" stroke-width="1.6"/>
+          <circle cx="72" cy="74" r="6.5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.8"/>
+          <line x1="70" y1="72" x2="74" y2="72" stroke="#1e1713" stroke-width="1.6"/>
+        </svg>
+      `,
+
+      // 5. WOLF PUP 1 (Bouncy Howler)
+      w_kid1: `
+        <svg viewBox="0 0 85 95" class="w-full h-full drop-shadow">
+          <!-- Stubby tail -->
+          <path d="M20 64 C12 56 12 76 20 82 C26 86 36 82 32 70 Z" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Round body -->
+          <circle cx="42" cy="62" r="17" fill="#64748b" stroke="#1e1713" stroke-width="3.5"/>
+          <ellipse cx="42" cy="64" rx="9" ry="11" fill="#cbd5e1" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Perky ears (one floppy for cartoon humor) -->
+          <polygon points="26,24 18,10 34,16" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+          <polygon points="58,24 64,8 48,16" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Head -->
+          <ellipse cx="42" cy="30" rx="17" ry="14" fill="#64748b" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="36,34 48,34 42,44" fill="#cbd5e1" stroke="#1e1713" stroke-width="2"/>
+          <circle cx="42" cy="41" r="2.8" fill="#1e1713"/>
+
+          <!-- Goofy open smile with tongue -->
+          <path d="M38 43 Q42 50 46 43" stroke="#1e1713" stroke-width="2" fill="#c0392b"/>
+
+          <!-- Big Pie Eyes -->
+          <circle cx="34" cy="27" r="5" fill="#1e1713"/>
+          <polygon points="34,27 39,24 39,29" fill="#fdf8ea"/>
+          <circle cx="50" cy="27" r="5" fill="#1e1713"/>
+          <polygon points="50,27 55,24 55,29" fill="#fdf8ea"/>
+
+          <!-- Clapping White Cartoon Paws -->
+          <circle cx="35" cy="56" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          <circle cx="49" cy="56" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+        </svg>
+      `,
+
+      // 6. WOLF PUP 2 (Curious Buster with Striped Bandana)
+      w_kid2: `
+        <svg viewBox="0 0 85 95" class="w-full h-full drop-shadow">
+          <!-- Stubby tail -->
+          <path d="M20 64 C10 54 12 76 20 84 C26 90 36 84 32 70 Z" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Round body -->
+          <circle cx="42" cy="62" r="17" fill="#64748b" stroke="#1e1713" stroke-width="3.5"/>
+          <ellipse cx="42" cy="64" rx="9" ry="11" fill="#cbd5e1" stroke="#1e1713" stroke-width="2"/>
+
+          <!-- Retro Red Bandana around neck -->
+          <path d="M30 46 Q42 52 54 46 L42 58 Z" fill="#df4b26" stroke="#1e1713" stroke-width="2.5"/>
+          <circle cx="42" cy="49" r="1.5" fill="#fdf8ea"/>
+
+          <!-- Pointy ears -->
+          <polygon points="26,24 20,8 36,16" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+          <polygon points="58,24 64,8 48,16" fill="#64748b" stroke="#1e1713" stroke-width="3"/>
+
+          <!-- Head slightly tilted -->
+          <ellipse cx="42" cy="30" rx="17" ry="14" fill="#64748b" stroke="#1e1713" stroke-width="3.5"/>
+          <polygon points="36,34 48,34 42,44" fill="#cbd5e1" stroke="#1e1713" stroke-width="2"/>
+          <circle cx="42" cy="41" r="2.8" fill="#1e1713"/>
+
+          <!-- Inquisitive Pie Eyes -->
+          <circle cx="34" cy="27" r="5" fill="#1e1713"/>
+          <polygon points="34,27 38,23 39,28" fill="#fdf8ea"/>
+          <circle cx="50" cy="27" r="5" fill="#1e1713"/>
+          <polygon points="50,27 54,23 55,28" fill="#fdf8ea"/>
+
+          <!-- White Cartoon Paws -->
+          <circle cx="30" cy="55" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+          <circle cx="54" cy="55" r="5" fill="#fdf8ea" stroke="#1e1713" stroke-width="2.5"/>
+        </svg>
+      `
+    };
+  </script>
+
+  <!-- ==================== GAME CONTROLLER ==================== -->
+  <script>
+    const CHARACTERS = [
+      { id: 'f_mom', name: 'Мама-Лисица', family: 'fox', isMom: true, canRow: true, badge: 'МАМА • ГРЕБЕЦ', sprite: CUPHEAD_SPRITES.f_mom },
+      { id: 'f_rower', name: 'Лисёнок-гребец', family: 'fox', isMom: false, canRow: true, badge: 'СКАМП • ГРЕБЕЦ', sprite: CUPHEAD_SPRITES.f_rower },
+      { id: 'f_kid2', name: 'Лисёнок-малыш', family: 'fox', isMom: false, canRow: false, badge: 'МАЛЫШ ЛИС', sprite: CUPHEAD_SPRITES.f_kid2 },
+      { id: 'w_mom', name: 'Мама-Волчица', family: 'wolf', isMom: true, canRow: false, badge: 'МАМА ВОЛЧИЦА', sprite: CUPHEAD_SPRITES.w_mom },
+      { id: 'w_kid1', name: 'Волчонок 1', family: 'wolf', isMom: false, canRow: false, badge: 'ВОЛЧОНОК БОДРЫЙ', sprite: CUPHEAD_SPRITES.w_kid1 },
+      { id: 'w_kid2', name: 'Волчонок 2', family: 'wolf', isMom: false, canRow: false, badge: 'ВОЛЧОНОК ЛЮБОПЫТНЫЙ', sprite: CUPHEAD_SPRITES.w_kid2 }
+    ];
+
+    const OPTIMAL_STEPS = [
+      { direction: 'right', boat: ['f_rower', 'f_kid2'], title: 'РАУНД 1: ЛИСЯТА ВПЕРЕД!', desc: 'Лисёнок-гребец и малыш плывут на правый берег. Лисьи малыши переправляются первыми!' },
+      { direction: 'left', boat: ['f_rower'], title: 'РАУНД 2: ЛОДКА НАЗАД!', desc: 'Лисёнок-гребец возвращается за своей мамой.' },
+      { direction: 'right', boat: ['f_mom', 'f_rower'], title: 'РАУНД 3: ВСЯ СЕМЬЯ ЛИС!', desc: 'Мама-Лисица и Лисёнок плывут на правый берег. Теперь все лисы на месте!' },
+      { direction: 'left', boat: ['f_mom'], title: 'РАУНД 4: МАМА-ЛИСА ЗА ВОЛЧИЦЕЙ', desc: 'Мама-Лисица возвращается. Лисята на правом берегу одни — волков там нет!' },
+      { direction: 'right', boat: ['f_mom', 'w_mom'], title: 'РАУНД 5: ПЕРЕПРАВА ОБЕИХ МАМ!', desc: 'Ключевой момент! Обе мамы плывут вместе. Волчата одни, лисята встречают маму!' },
+      { direction: 'left', boat: ['f_rower'], title: 'РАУНД 6: ЛИСЁНОК ЗА ВОЛЧАТАМИ', desc: 'Лисёнок-гребец плывет за малышами волков. Обе мамы на правом берегу.' },
+      { direction: 'right', boat: ['f_rower', 'w_kid1'], title: 'РАУНД 7: ПЕРВЫЙ ВОЛЧОНОК!', desc: 'Лисёнок перевозит Волчонка 1 прямо в лапы его мамы.' },
+      { direction: 'left', boat: ['f_rower'], title: 'РАУНД 8: ПОСЛЕДНИЙ ВОЯЖ', desc: 'Лисёнок-гребец плывет за последним волчонком.' },
+      { direction: 'right', boat: ['f_rower', 'w_kid2'], title: 'РАУНД 9: ПОЛНЫЙ НОКАУТ!', desc: 'Лисёнок доставляет Волчонка 2. Все 6 зверей переправились целыми и невредимыми!' }
+    ];
+
+    const state = {
+      positions: { f_mom: 'left', f_rower: 'left', f_kid2: 'left', w_mom: 'left', w_kid1: 'left', w_kid2: 'left' },
+      boatBank: 'left',
+      boatOccupants: [],
+      steps: 0,
+      isSailing: false,
+      isDemoRunning: false,
+      isDemoMode: false,
+      demoStep: 0,
+      demoSpeed: 0.5
+    };
+
+    const leftBankList = document.getElementById('leftBankList');
+    const rightBankList = document.getElementById('rightBankList');
+    const boatSeat1 = document.getElementById('boatSeat1');
+    const boatSeat2 = document.getElementById('boatSeat2');
+    const boatAnchor = document.getElementById('boatAnchor');
+    const sailBtn = document.getElementById('sailBtn');
+    const sailBtnLabel = document.getElementById('sailBtnLabel');
+    const boatStatusInfo = document.getElementById('boatStatusInfo');
+    const manualControlsContainer = document.getElementById('manualControlsContainer');
+    const demoDeck = document.getElementById('demoDeck');
+    const demoStepBadge = document.getElementById('demoStepBadge');
+    const demoStepTitle = document.getElementById('demoStepTitle');
+    const demoStepDesc = document.getElementById('demoStepDesc');
+    const speed05Btn = document.getElementById('speed05Btn');
+    const speed1Btn = document.getElementById('speed1Btn');
+    const speed15Btn = document.getElementById('speed15Btn');
+    const exitDemoBtn = document.getElementById('exitDemoBtn');
+    const prevStepBtn = document.getElementById('prevStepBtn');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseIcon = document.getElementById('playPauseIcon');
+    const playPauseText = document.getElementById('playPauseText');
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    const stepPillsRow = document.getElementById('stepPillsRow');
+    const stepCounter = document.getElementById('stepCounter');
+    const leftCountTag = document.getElementById('leftCountTag');
+    const rightCountTag = document.getElementById('rightCountTag');
+    const dockAStatus = document.getElementById('dockAStatus');
+    const dockBStatus = document.getElementById('dockBStatus');
+    const alertBanner = document.getElementById('alertBanner');
+    const alertContent = document.getElementById('alertContent');
+    const closeAlertBtn = document.getElementById('closeAlertBtn');
+    const hintModal = document.getElementById('hintModal');
+    const hintTitle = document.getElementById('hintTitle');
+    const hintText = document.getElementById('hintText');
+    const closeHintBtn = document.getElementById('closeHintBtn');
+    const closeHintOkBtn = document.getElementById('closeHintOkBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const hintBtn = document.getElementById('hintBtn');
+    const demoBtn = document.getElementById('demoBtn');
+    const rulesBtn = document.getElementById('rulesBtn');
+    const rulesModal = document.getElementById('rulesModal');
+    const closeRulesBtn = document.getElementById('closeRulesBtn');
+    const understoodBtn = document.getElementById('understoodBtn');
+    const victoryModal = document.getElementById('victoryModal');
+    const finalStepCount = document.getElementById('finalStepCount');
+    const finalGrade = document.getElementById('finalGrade');
+    const starRow = document.getElementById('starRow');
+    const victoryPlayAgainBtn = document.getElementById('victoryPlayAgainBtn');
+    const victoryCloseBtn = document.getElementById('victoryCloseBtn');
+    const confettiCanvas = document.getElementById('confettiCanvas');
+
+    function evaluateGroupSafety(group, locationName) {
+      const hasFoxMom = group.some(c => c.id === 'f_mom');
+      const hasWolfMom = group.some(c => c.id === 'w_mom');
+      const wolfKids = group.filter(c => c.family === 'wolf' && !c.isMom);
+      const foxKids = group.filter(c => c.family === 'fox' && !c.isMom);
+
+      if (hasFoxMom && !hasWolfMom && wolfKids.length > 0) {
+        return {
+          safe: false,
+          violators: wolfKids.map(k => k.id),
+          reason: `ОПАСНОСТЬ (${locationName}): Мама-Лисица осталась с ${wolfKids.map(k=>k.name).join(' и ')} без Волчицы!`
+        };
+      }
+
+      if (hasWolfMom && !hasFoxMom && foxKids.length > 0) {
+        return {
+          safe: false,
+          violators: foxKids.map(k => k.id),
+          reason: `ОПАСНОСТЬ (${locationName}): Мама-Волчица осталась с ${foxKids.map(k=>k.name).join(' и ')} без Лисицы!`
+        };
+      }
+
+      return { safe: true, violators: [] };
+    }
+
+    function getCharactersOnBank(bank) {
+      return CHARACTERS.filter(c => state.positions[c.id] === bank);
+    }
+
+    // Build Cuphead Style Character Playing Card
+    function buildCharacterCard(char, clickable, clickAction, isDanger = false, isInBoat = false) {
+      if (isInBoat) {
+        const boatCard = document.createElement('div');
+        boatCard.dataset.charId = char.id;
+        boatCard.className = `character-boat-seat relative flex flex-col items-center justify-end cursor-pointer group transition-all duration-150 hover:scale-110 active:scale-95 animate-hop-in`;
+        boatCard.title = `Кликните, чтобы высадить на берег: ${char.name}`;
+        boatCard.innerHTML = `
+          <div class="w-20 md:w-24 h-22 md:h-28 shrink-0 flex items-center justify-center filter drop-shadow-md">
+            ${char.sprite}
+          </div>
+        `;
+        if (clickable) {
+          boatCard.addEventListener('click', () => clickAction(char));
+        }
+        return boatCard;
+      }
+
+      const card = document.createElement('div');
+      card.dataset.charId = char.id;
+      card.className = `character-bank-card relative flex items-center gap-2.5 p-2 md:p-2.5 rounded-2xl border-3 border-[#1e1713] cuphead-box-shadow transition-all duration-150 group ${
+        clickable ? 'cursor-pointer hover:-translate-y-1 hover:rotate-1 active:translate-y-0.5' : 'opacity-90'
+      } ${
+        isDanger ? 'bg-[#ffcdd2] border-[#c0392b] animate-pulse' :
+        char.family === 'fox' ? 'bg-[#fbe9e7] hover:bg-[#ffccbc]' :
+        'bg-[#eceff1] hover:bg-[#cfd8dc]'
+      }`;
+
+      card.innerHTML = `
+        <div class="w-14 h-16 md:w-16 md:h-20 lg:w-20 lg:h-24 shrink-0 flex items-center justify-center transform group-hover:scale-105 transition-transform filter drop-shadow">
+          ${char.sprite}
+        </div>
+        <div class="overflow-hidden flex-1 leading-tight py-1">
+          <div class="cuphead-font text-base md:text-lg lg:text-xl font-extrabold text-[#1e1713] truncate flex items-center gap-2">
+            <span>${char.name}</span>
+            ${char.canRow ? '<span class="text-sm md:text-base" title="Умеет грести">🚣</span>' : ''}
+          </div>
+        </div>
+      `;
+
+      if (clickable) {
+        card.addEventListener('click', () => clickAction(char));
+      }
+
+      return card;
+    }
+
+    function render(animateCards = true) {
+      // 1. Capture previous positions of bank cards for smooth FLIP transition
+      const oldRects = new Map();
+      if (animateCards) {
+        document.querySelectorAll('.character-bank-card').forEach(el => {
+          const id = el.dataset.charId;
+          if (id) {
+            oldRects.set(id, el.getBoundingClientRect());
+          }
+        });
+      }
+
+      const leftAnimals = getCharactersOnBank('left');
+      const rightAnimals = getCharactersOnBank('right');
+      const boatAnimals = state.boatOccupants.map(id => CHARACTERS.find(c => c.id === id));
+
+      const leftSafety = evaluateGroupSafety(leftAnimals, 'на левом берегу');
+      const rightSafety = evaluateGroupSafety(rightAnimals, 'на правом берегу');
+
+      // Left Bank
+      leftBankList.innerHTML = '';
+      leftAnimals.forEach(char => {
+        const canClick = !state.isSailing && state.boatBank === 'left' && state.boatOccupants.length < 2;
+        const isDanger = leftSafety.violators.includes(char.id);
+        const card = buildCharacterCard(char, canClick, (c) => boardBoat(c.id), isDanger);
+        leftBankList.appendChild(card);
+      });
+      leftCountTag.textContent = leftAnimals.length;
+
+      // Right Bank
+      rightBankList.innerHTML = '';
+      rightAnimals.forEach(char => {
+        const canClick = !state.isSailing && state.boatBank === 'right' && state.boatOccupants.length < 2;
+        const isDanger = rightSafety.violators.includes(char.id);
+        const card = buildCharacterCard(char, canClick, (c) => boardBoat(c.id), isDanger);
+        rightBankList.appendChild(card);
+      });
+      rightCountTag.textContent = rightAnimals.length;
+
+      // Boat Seats (Clean, no text labels)
+      boatSeat1.innerHTML = '';
+      boatSeat2.innerHTML = '';
+
+      if (state.boatOccupants[0]) {
+        const char = CHARACTERS.find(c => c.id === state.boatOccupants[0]);
+        const card = buildCharacterCard(char, !state.isSailing, () => unboardBoat(char.id), false, true);
+        boatSeat1.appendChild(card);
+      } else {
+        boatSeat1.innerHTML = `<div class="border-3 border-dashed border-[#78350f]/35 rounded-2xl w-24 md:w-28 h-20 md:h-24 bg-[#78350f]/5"></div>`;
+      }
+
+      if (state.boatOccupants[1]) {
+        const char = CHARACTERS.find(c => c.id === state.boatOccupants[1]);
+        const card = buildCharacterCard(char, !state.isSailing, () => unboardBoat(char.id), false, true);
+        boatSeat2.appendChild(card);
+      } else {
+        boatSeat2.innerHTML = `<div class="border-3 border-dashed border-[#78350f]/35 rounded-2xl w-24 md:w-28 h-20 md:h-24 bg-[#78350f]/5"></div>`;
+      }
+
+      // Boat Horizontal Position
+      if (state.boatBank === 'left') {
+        boatAnchor.style.left = '3%';
+        dockAStatus.textContent = 'ЛОДКА ТУТ';
+        dockAStatus.className = 'cuphead-font font-black text-[#df4b26] text-sm md:text-base lg:text-lg';
+        dockBStatus.textContent = 'ПУСТО';
+        dockBStatus.className = 'cuphead-font font-black text-[#9c7159] text-sm md:text-base lg:text-lg';
+        sailBtnLabel.textContent = 'ОТПЛЫТЬ НА БЕРЕГ Б ➔';
+      } else {
+        boatAnchor.style.left = 'calc(97% - 350px)';
+        dockAStatus.textContent = 'ПУСТО';
+        dockAStatus.className = 'cuphead-font font-black text-[#9c7159] text-sm md:text-base lg:text-lg';
+        dockBStatus.textContent = 'ЛОДКА ТУТ';
+        dockBStatus.className = 'cuphead-font font-black text-[#df4b26] text-sm md:text-base lg:text-lg';
+        sailBtnLabel.textContent = '⬅ ОТПЛЫТЬ НА БЕРЕГ А';
+      }
+
+      // Boat Status (cleaned from boat view)
+      if (boatStatusInfo) {
+        boatStatusInfo.style.display = 'none';
+      }
+
+      stepCounter.textContent = state.steps;
+
+      // 2. Play FLIP animation on the newly mounted bank cards
+      if (animateCards && oldRects.size > 0) {
+        document.querySelectorAll('.character-bank-card').forEach(el => {
+          const id = el.dataset.charId;
+          const oldRect = oldRects.get(id);
+
+          if (oldRect) {
+            const newRect = el.getBoundingClientRect();
+            const dy = oldRect.top - newRect.top;
+            const dx = oldRect.left - newRect.left;
+
+            if (Math.abs(dx) < 70 && Math.abs(dy) > 1) {
+              // Smooth vertical reordering within the same bank list
+              el.style.transform = `translateY(${dy}px)`;
+              el.style.transition = 'none';
+
+              requestAnimationFrame(() => {
+                el.offsetHeight; // force reflow
+                el.style.transition = 'transform 0.42s cubic-bezier(0.2, 0.85, 0.3, 1)';
+                el.style.transform = '';
+                setTimeout(() => { el.style.transition = ''; }, 440);
+              });
+            } else if (Math.abs(dx) >= 70) {
+              // Arrived from across or boat -> smooth slide-in
+              const fromLeft = dx > 0;
+              el.style.opacity = '0';
+              el.style.transform = `translateX(${fromLeft ? '-30px' : '30px'}) scale(0.92)`;
+              el.style.transition = 'none';
+
+              requestAnimationFrame(() => {
+                el.offsetHeight;
+                el.style.transition = 'opacity 0.35s ease, transform 0.42s cubic-bezier(0.2, 0.85, 0.3, 1)';
+                el.style.opacity = '1';
+                el.style.transform = '';
+                setTimeout(() => { el.style.transition = ''; }, 440);
+              });
+            }
+          } else {
+            // Newly appeared on bank
+            el.style.opacity = '0';
+            el.style.transform = 'scale(0.92) translateY(12px)';
+            el.style.transition = 'none';
+
+            requestAnimationFrame(() => {
+              el.offsetHeight;
+              el.style.transition = 'opacity 0.35s ease, transform 0.42s cubic-bezier(0.2, 0.85, 0.3, 1)';
+              el.style.opacity = '1';
+              el.style.transform = '';
+              setTimeout(() => { el.style.transition = ''; }, 440);
+            });
+          }
+        });
+      }
+
+      // Check Victory
+      if (rightAnimals.length === 6 && state.boatBank === 'right' && state.boatOccupants.length === 0) {
+        showVictory();
+      }
+    }
+
+    function boardBoat(charId) {
+      if (state.isSailing) return;
+      if (state.boatOccupants.length >= 2) {
+        showBanner('В ЛОДКЕ ТОЛЬКО 2 МЕСТА!', 'warning');
+        return;
+      }
+      hideBanner();
+      state.positions[charId] = 'boat';
+      state.boatOccupants.push(charId);
+      render();
+    }
+
+    function unboardBoat(charId) {
+      if (state.isSailing) return;
+      hideBanner();
+      state.positions[charId] = state.boatBank;
+      state.boatOccupants = state.boatOccupants.filter(id => id !== charId);
+      render();
+    }
+
+    function sail() {
+      if (state.isSailing) return;
+
+      if (state.boatOccupants.length === 0) {
+        showBanner('ЛОДКА НЕ ПОПЛЫВЕТ САМА! ПОСАДИТЕ ЗВЕРЕЙ.', 'warning');
+        return;
+      }
+
+      const boatAnimals = state.boatOccupants.map(id => CHARACTERS.find(c => c.id === id));
+      const hasRower = boatAnimals.some(c => c.canRow);
+      if (!hasRower) {
+        showBanner('В ЛОДКЕ НЕТ ГРЕБЦА! ГРЕСТИ УМЕЮТ ТОЛЬКО ЛИСЫ (МАМА ИЛИ ЛИСЁНОК-ГРЕБЕЦ).', 'danger');
+        return;
+      }
+
+      const boatSafety = evaluateGroupSafety(boatAnimals, 'в лодке');
+      if (!boatSafety.safe) {
+        showBanner(boatSafety.reason, 'danger');
+        return;
+      }
+
+      const leavingBankAnimals = getCharactersOnBank(state.boatBank);
+      const leavingSafety = evaluateGroupSafety(leavingBankAnimals, state.boatBank === 'left' ? 'на левом берегу' : 'на правом берегу');
+      if (!leavingSafety.safe) {
+        showBanner(leavingSafety.reason, 'danger');
+        return;
+      }
+
+      hideBanner();
+      state.isSailing = true;
+      sailBtn.disabled = true;
+      sailBtn.classList.add('opacity-50');
+
+      const targetBank = state.boatBank === 'left' ? 'right' : 'left';
+      state.boatBank = targetBank;
+
+      render();
+
+      setTimeout(() => {
+        state.steps++;
+        state.isSailing = false;
+        sailBtn.disabled = false;
+        sailBtn.classList.remove('opacity-50');
+
+        const arrivalShoreAnimals = [...getCharactersOnBank(targetBank), ...boatAnimals];
+        const arrivalSafety = evaluateGroupSafety(arrivalShoreAnimals, targetBank === 'left' ? 'на левом берегу' : 'на правом берегу');
+        if (!arrivalSafety.safe) {
+          showBanner(arrivalSafety.reason, 'danger');
+        }
+
+        render();
+      }, 1100);
+    }
+
+    function showBanner(text, type = 'warning') {
+      alertBanner.classList.remove('hidden');
+      if (type === 'danger') {
+        alertBanner.className = 'absolute top-20 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] px-4 py-3 rounded-2xl border-4 border-[#1e1713] cuphead-box-shadow-lg bg-[#c0392b] text-[#fdf8ea] text-xs md:text-sm font-black flex items-start justify-between gap-3';
+        alertContent.innerHTML = `<span class="text-2xl">⚠️</span><div><b class="cuphead-font text-base text-[#f5c542] uppercase">WHOOPS! ОШИБКА:</b> <p class="mt-0.5 uppercase">${text}</p></div>`;
+      } else {
+        alertBanner.className = 'absolute top-20 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] px-4 py-3 rounded-2xl border-4 border-[#1e1713] cuphead-box-shadow-lg bg-[#f5c542] text-[#1e1713] text-xs md:text-sm font-black flex items-start justify-between gap-3';
+        alertContent.innerHTML = `<span class="text-2xl">💡</span><div><b class="cuphead-font text-base text-[#1e1713] uppercase">ВНИМАНИЕ:</b> <p class="mt-0.5 uppercase">${text}</p></div>`;
+      }
+    }
+
+    function hideBanner() {
+      alertBanner.classList.add('hidden');
+    }
+
+    function toggleHint() {
+      const isHidden = hintModal.classList.contains('hidden');
+      if (isHidden) {
+        const stepIdx = state.steps;
+        if (stepIdx < DEMO_SNAPSHOTS.length) {
+          const s = DEMO_SNAPSHOTS[stepIdx];
+          hintTitle.textContent = s.title;
+          hintText.textContent = s.desc;
+        } else {
+          hintTitle.textContent = 'ФИНАЛЬНЫЙ ЭТАП';
+          hintText.textContent = 'Используйте лисёнка-гребца как челнок для перевозки оставшихся волчат!';
+        }
+        hintModal.classList.remove('hidden');
+      } else {
+        hintModal.classList.add('hidden');
+      }
+    }
+
+    /* ==================== STEP-BY-STEP DEMO ENGINE ==================== */
+    const DEMO_SNAPSHOTS = [
+      {
+        step: 0,
+        left: ['f_mom', 'f_rower', 'f_kid2', 'w_mom', 'w_kid1', 'w_kid2'],
+        right: [],
+        boatBank: 'left',
+        boatMove: [],
+        from: 'left',
+        to: 'left',
+        title: 'СТАРТ: ВСЕ НА БЕРЕГУ А',
+        desc: 'Все 6 зверей стоят на левом берегу. Лодка готова к первому рейсу.'
+      },
+      {
+        step: 1,
+        from: 'left',
+        to: 'right',
+        boatMove: ['f_rower', 'f_kid2'],
+        left: ['f_mom', 'w_mom', 'w_kid1', 'w_kid2'],
+        right: ['f_rower', 'f_kid2'],
+        boatBank: 'right',
+        title: 'ШАГ 1: ЛИСЯТА ВПЕРЁД!',
+        desc: 'Лисёнок-гребец и малыш переплывают на берег Б. Лисьи малыши переправляются первыми!'
+      },
+      {
+        step: 2,
+        from: 'right',
+        to: 'left',
+        boatMove: ['f_rower'],
+        left: ['f_mom', 'f_rower', 'w_mom', 'w_kid1', 'w_kid2'],
+        right: ['f_kid2'],
+        boatBank: 'left',
+        title: 'ШАГ 2: ЛОДКА НАЗАД',
+        desc: 'Лисёнок-гребец возвращается на левый берег за своей мамой.'
+      },
+      {
+        step: 3,
+        from: 'left',
+        to: 'right',
+        boatMove: ['f_mom', 'f_rower'],
+        left: ['w_mom', 'w_kid1', 'w_kid2'],
+        right: ['f_mom', 'f_rower', 'f_kid2'],
+        boatBank: 'right',
+        title: 'ШАГ 3: ВСЯ СЕМЬЯ ЛИС!',
+        desc: 'Мама-Лисица и Лисёнок плывут на берег Б. Вся лисья семья уже на месте!'
+      },
+      {
+        step: 4,
+        from: 'right',
+        to: 'left',
+        boatMove: ['f_mom'],
+        left: ['f_mom', 'w_mom', 'w_kid1', 'w_kid2'],
+        right: ['f_rower', 'f_kid2'],
+        boatBank: 'left',
+        title: 'ШАГ 4: МАМА-ЛИСА ЗА ВОЛЧИЦЕЙ',
+        desc: 'Мама-Лисица возвращается. Лисята на правом берегу одни — волков там нет, опасности нет!'
+      },
+      {
+        step: 5,
+        from: 'left',
+        to: 'right',
+        boatMove: ['f_mom', 'w_mom'],
+        left: ['w_kid1', 'w_kid2'],
+        right: ['f_mom', 'w_mom', 'f_rower', 'f_kid2'],
+        boatBank: 'right',
+        title: 'ШАГ 5: ПЕРЕПРАВА ОБЕИХ МАМ!',
+        desc: 'Кульминация! Обе мамы плывут вместе. Волчата одни на берегу А, а лисята встречают маму на берегу Б!'
+      },
+      {
+        step: 6,
+        from: 'right',
+        to: 'left',
+        boatMove: ['f_rower'],
+        left: ['w_kid1', 'w_kid2', 'f_rower'],
+        right: ['f_mom', 'w_mom', 'f_kid2'],
+        boatBank: 'left',
+        title: 'ШАГ 6: ЛИСЁНОК ЗА ВОЛЧАТАМИ',
+        desc: 'Лисёнок-гребец плывет на берег А за волчатами. Обе мамы остаются на берегу Б.'
+      },
+      {
+        step: 7,
+        from: 'left',
+        to: 'right',
+        boatMove: ['f_rower', 'w_kid1'],
+        left: ['w_kid2'],
+        right: ['f_mom', 'w_mom', 'f_rower', 'f_kid2', 'w_kid1'],
+        boatBank: 'right',
+        title: 'ШАГ 7: ПЕРВЫЙ ВОЛЧОНОК!',
+        desc: 'Лисёнок перевозит Волчонка 1 прямо в лапы его мамы-волчицы.'
+      },
+      {
+        step: 8,
+        from: 'right',
+        to: 'left',
+        boatMove: ['f_rower'],
+        left: ['w_kid2', 'f_rower'],
+        right: ['f_mom', 'w_mom', 'f_kid2', 'w_kid1'],
+        boatBank: 'left',
+        title: 'ШАГ 8: ПОСЛЕДНИЙ ВОЯЖ',
+        desc: 'Лисёнок-гребец плывет за последним оставшимся волчонком.'
+      },
+      {
+        step: 9,
+        from: 'left',
+        to: 'right',
+        boatMove: ['f_rower', 'w_kid2'],
+        left: [],
+        right: ['f_mom', 'f_rower', 'f_kid2', 'w_mom', 'w_kid1', 'w_kid2'],
+        boatBank: 'right',
+        title: 'ШАГ 9: ФИНИШ! ВСЕ СПАСЕНЫ!',
+        desc: 'Лисёнок доставляет Волчонка 2. Все 6 зверей переправились целыми и невредимыми!'
+      }
+    ];
+
+    function setDemoSpeed(speed) {
+      state.demoSpeed = speed;
+      const sailDurationSec = (1.1 / speed).toFixed(2);
+      document.documentElement.style.setProperty('--sail-duration', `${sailDurationSec}s`);
+
+      [
+        { btn: speed05Btn, val: 0.5 },
+        { btn: speed1Btn, val: 1.0 },
+        { btn: speed15Btn, val: 1.5 }
+      ].forEach(({ btn, val }) => {
+        if (!btn) return;
+        if (state.demoSpeed === val) {
+          btn.className = 'px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-black bg-[#f5c542] text-[#1e1713] shadow cuphead-box-shadow';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded-lg border-2 border-[#1e1713] text-xs font-bold bg-[#fdf8ea] text-[#1e1713] hover:bg-[#faeed0]';
+        }
+      });
+    }
+
+    function applySnapshot(stepIndex) {
+      if (stepIndex < 0) stepIndex = 0;
+      if (stepIndex > 9) stepIndex = 9;
+      const snap = DEMO_SNAPSHOTS[stepIndex];
+      state.positions = {};
+      CHARACTERS.forEach(c => {
+        if (snap.left.includes(c.id)) state.positions[c.id] = 'left';
+        else if (snap.right.includes(c.id)) state.positions[c.id] = 'right';
+      });
+      state.boatBank = snap.boatBank;
+      state.boatOccupants = [];
+      state.steps = stepIndex;
+      state.demoStep = stepIndex;
+      state.isSailing = false;
+      render();
+      updateDemoUI();
+    }
+
+    async function animateStepForward() {
+      if (state.isSailing || state.demoStep >= 9) return;
+      const nextStep = state.demoStep + 1;
+      const snap = DEMO_SNAPSHOTS[nextStep];
+
+      state.isSailing = true;
+      updateDemoUI();
+
+      // 1. Boarding passengers
+      state.boatOccupants = [...snap.boatMove];
+      snap.boatMove.forEach(id => {
+        state.positions[id] = 'boat';
+      });
+      render();
+
+      const boardDelay = Math.round(750 / state.demoSpeed);
+      await new Promise(r => setTimeout(r, boardDelay));
+
+      // 2. Sail across smoothly
+      state.boatBank = snap.to;
+      render();
+
+      const sailDurationMs = Math.round((1.1 / state.demoSpeed) * 1000) + 200;
+      await new Promise(r => setTimeout(r, sailDurationMs));
+
+      // 3. Disembark passengers
+      snap.boatMove.forEach(id => {
+        state.positions[id] = snap.to;
+      });
+      state.boatOccupants = [];
+      state.steps = nextStep;
+      state.demoStep = nextStep;
+      state.isSailing = false;
+
+      render();
+      updateDemoUI();
+
+      if (nextStep === 9) {
+        setTimeout(showVictory, 450);
+      }
+    }
+
+    function stepBackward() {
+      if (state.isSailing || state.demoStep <= 0) return;
+      pauseAutoPlay();
+      applySnapshot(state.demoStep - 1);
+    }
+
+    async function startAutoPlay() {
+      if (state.demoStep >= 9) {
+        applySnapshot(0);
+        await new Promise(r => setTimeout(r, 400));
+      }
+      state.isDemoRunning = true;
+      updateDemoUI();
+
+      while (state.isDemoRunning && state.demoStep < 9) {
+        await animateStepForward();
+        if (!state.isDemoRunning) break;
+        await new Promise(r => setTimeout(r, Math.round(900 / state.demoSpeed)));
+      }
+
+      state.isDemoRunning = false;
+      updateDemoUI();
+    }
+
+    function pauseAutoPlay() {
+      state.isDemoRunning = false;
+      updateDemoUI();
+    }
+
+    function toggleAutoPlay() {
+      if (state.isDemoRunning) {
+        pauseAutoPlay();
+      } else {
+        startAutoPlay();
+      }
+    }
+
+    function renderStepPills() {
+      if (!stepPillsRow) return;
+      stepPillsRow.innerHTML = '';
+      for (let i = 0; i <= 9; i++) {
+        const pill = document.createElement('button');
+        pill.className = `w-6 h-6 rounded-lg text-xs font-black border-2 border-[#1e1713] transition-all flex items-center justify-center ${
+          i === state.demoStep ? 'bg-[#f5c542] text-[#1e1713] scale-110 shadow' : 'bg-[#fdf8ea] text-[#78533e] hover:bg-[#faeed0]'
+        }`;
+        pill.textContent = i;
+        pill.title = `Перейти к шагу ${i}`;
+        pill.addEventListener('click', () => {
+          if (!state.isSailing) {
+            pauseAutoPlay();
+            applySnapshot(i);
+          }
+        });
+        stepPillsRow.appendChild(pill);
+      }
+    }
+
+    function updateDemoUI() {
+      const snap = DEMO_SNAPSHOTS[state.demoStep] || DEMO_SNAPSHOTS[0];
+      if (demoStepBadge) demoStepBadge.textContent = `ШАГ ${state.demoStep} ИЗ 9`;
+      if (demoStepTitle) demoStepTitle.textContent = snap.title;
+      if (demoStepDesc) demoStepDesc.textContent = snap.desc;
+
+      if (prevStepBtn) prevStepBtn.disabled = state.demoStep <= 0 || state.isSailing;
+      if (nextStepBtn) nextStepBtn.disabled = state.demoStep >= 9 || state.isSailing;
+      if (playPauseBtn) playPauseBtn.disabled = state.isSailing;
+
+      if (playPauseIcon && playPauseText) {
+        if (state.isDemoRunning) {
+          playPauseIcon.textContent = '⏸';
+          playPauseText.textContent = 'ПАУЗА';
+          playPauseBtn.className = 'cuphead-btn bg-[#df4b26] hover:bg-[#eb5a36] text-[#fdf8ea] px-3.5 py-1 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5';
+        } else {
+          playPauseIcon.textContent = '▶';
+          playPauseText.textContent = 'АВТО';
+          playPauseBtn.className = 'cuphead-btn bg-[#2a7e8e] hover:bg-[#3498ab] text-[#fdf8ea] px-3.5 py-1 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5';
+        }
+      }
+
+      renderStepPills();
+    }
+
+    function enterDemoMode() {
+      state.isDemoMode = true;
+      demoDeck.classList.remove('hidden');
+      manualControlsContainer.classList.add('hidden');
+      demoBtn.classList.add('ring-3', 'ring-[#1e1713]', 'bg-[#fad468]');
+      demoBtn.innerHTML = '<span>🎬</span> <span class="hidden sm:inline">ДЕМО-РЕЖИМ</span>';
+      setDemoSpeed(0.5); // Default to slow, teacher-friendly pace
+      applySnapshot(0);
+    }
+
+    function exitDemoMode() {
+      pauseAutoPlay();
+      state.isDemoMode = false;
+      demoDeck.classList.add('hidden');
+      manualControlsContainer.classList.remove('hidden');
+      demoBtn.classList.remove('ring-3', 'ring-[#1e1713]', 'bg-[#fad468]');
+      demoBtn.innerHTML = '<span>🎬</span> <span class="hidden sm:inline">ДЕМО</span>';
+      resetGame();
+    }
+
+    function toggleDemoMode() {
+      if (state.isDemoMode) {
+        exitDemoMode();
+      } else {
+        enterDemoMode();
+      }
+    }
+
+    function showVictory() {
+      finalStepCount.textContent = state.steps;
+      if (state.steps === 9) {
+        starRow.textContent = '⭐ ⭐ ⭐';
+        finalGrade.textContent = 'GRADE: S • АБСОЛЮТНЫЙ ПАР!';
+      } else if (state.steps <= 13) {
+        starRow.textContent = '⭐ ⭐';
+        finalGrade.textContent = 'GRADE: A • ОТЛИЧНАЯ ПЕРЕПРАВА!';
+      } else {
+        starRow.textContent = '⭐';
+        finalGrade.textContent = 'GRADE: B • ЗАДАЧА РЕШЕНА!';
+      }
+
+      victoryModal.classList.remove('hidden');
+      if (window.Olymp && !state.isDemoMode) Olymp.stars(state.steps === 9 ? 3 : state.steps <= 13 ? 2 : 1);
+      runConfetti();
+    }
+
+    let confettiTimer = null;
+    function runConfetti() {
+      const ctx = confettiCanvas.getContext('2d');
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#f5c542', '#df4b26', '#2a7e8e', '#c0392b', '#1e1713'];
+
+      for (let i = 0; i < 95; i++) {
+        particles.push({
+          x: Math.random() * confettiCanvas.width,
+          y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+          size: Math.random() * 9 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: Math.random() * 4 - 2,
+          vy: Math.random() * 3 + 2.5,
+          rot: Math.random() * 360,
+          rotSpeed: Math.random() * 8 - 4
+        });
+      }
+
+      if (confettiTimer) clearInterval(confettiTimer);
+
+      confettiTimer = setInterval(() => {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.rotSpeed;
+
+          if (p.y > confettiCanvas.height) {
+            p.y = -10;
+            p.x = Math.random() * confettiCanvas.width;
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+      }, 25);
+    }
+
+    function resetGame() {
+      pauseAutoPlay();
+      if (confettiTimer) clearInterval(confettiTimer);
+      state.positions = {
+        f_mom: 'left',
+        f_rower: 'left',
+        f_kid2: 'left',
+        w_mom: 'left',
+        w_kid1: 'left',
+        w_kid2: 'left'
+      };
+      state.boatBank = 'left';
+      state.boatOccupants = [];
+      state.steps = 0;
+      state.demoStep = 0;
+      state.isSailing = false;
+      hideBanner();
+      hintModal.classList.add('hidden');
+      victoryModal.classList.add('hidden');
+      render();
+      if (state.isDemoMode) {
+        updateDemoUI();
+      }
+    }
+
+    sailBtn.addEventListener('click', sail);
+    resetBtn.addEventListener('click', () => {
+      if (state.isDemoMode) exitDemoMode();
+      else resetGame();
+    });
+    hintBtn.addEventListener('click', toggleHint);
+    closeHintBtn.addEventListener('click', () => hintModal.classList.add('hidden'));
+    closeHintOkBtn.addEventListener('click', () => hintModal.classList.add('hidden'));
+    closeAlertBtn.addEventListener('click', hideBanner);
+    demoBtn.addEventListener('click', toggleDemoMode);
+    exitDemoBtn.addEventListener('click', exitDemoMode);
+    prevStepBtn.addEventListener('click', stepBackward);
+    nextStepBtn.addEventListener('click', animateStepForward);
+    playPauseBtn.addEventListener('click', toggleAutoPlay);
+    speed05Btn.addEventListener('click', () => setDemoSpeed(0.5));
+    speed1Btn.addEventListener('click', () => setDemoSpeed(1.0));
+    speed15Btn.addEventListener('click', () => setDemoSpeed(1.5));
+    rulesBtn.addEventListener('click', () => rulesModal.classList.remove('hidden'));
+    closeRulesBtn.addEventListener('click', () => rulesModal.classList.add('hidden'));
+    understoodBtn.addEventListener('click', () => rulesModal.classList.add('hidden'));
+    victoryPlayAgainBtn.addEventListener('click', resetGame);
+    victoryCloseBtn.addEventListener('click', () => victoryModal.classList.add('hidden'));
+
+    window.addEventListener('resize', () => {
+      if (confettiCanvas) {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Коврик со звёздочкой</title>
+  <script src="../assets/tailwind.js"></script>
+  <style>
+    /* Тетрадь в клетку на фоне */
+    body {
+      background-color: #f5f2e9;
+      background-image: 
+        linear-gradient(#e3decb 1px, transparent 1px),
+        linear-gradient(90deg, #e3decb 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+      color: #2b2b2b;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    /* Рукописные контуры */
+    .hand-drawn-card {
+      border: 3px solid #2d3134;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+
+    .hand-drawn-btn {
+      border: 2.5px solid #2d3134;
+      border-radius: 255px 20px 220px 18px / 20px 225px 18px 250px;
+      box-shadow: 2px 3px 0px #2d3134;
+      transition: all 0.1s ease;
+    }
+
+    .hand-drawn-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 1px 0px #2d3134;
+    }
+
+    /* Клетки сетки */
+    .hand-drawn-cell {
+      border: 2px solid #3a3f44;
+      border-radius: 12px 5px 14px 6px / 6px 14px 5px 12px;
+      transition: background-color 0.1s ease, transform 0.05s ease;
+    }
+
+    .hand-drawn-cell:active {
+      transform: scale(0.96);
+    }
+
+    /* Штриховка карандашами */
+    .pencil-empty {
+      background-color: #ffffff;
+    }
+
+    .pencil-blue {
+      background: #e3effd;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(70, 130, 220, 0.4),
+        rgba(70, 130, 220, 0.4) 4px,
+        rgba(100, 160, 245, 0.6) 4px,
+        rgba(100, 160, 245, 0.6) 8px
+      );
+    }
+
+    .pencil-green {
+      background: #e6f7ec;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(46, 160, 90, 0.4),
+        rgba(46, 160, 90, 0.4) 4px,
+        rgba(75, 190, 120, 0.6) 4px,
+        rgba(75, 190, 120, 0.6) 8px
+      );
+    }
+
+    .pencil-orange {
+      background: #fef4e2;
+      background-image: repeating-linear-gradient(
+        35deg,
+        rgba(235, 150, 40, 0.4),
+        rgba(235, 150, 40, 0.4) 4px,
+        rgba(250, 180, 70, 0.6) 4px,
+        rgba(250, 180, 70, 0.6) 8px
+      );
+    }
+
+    .pencil-purple {
+      background: #f6e8fa;
+      background-image: repeating-linear-gradient(
+        -35deg,
+        rgba(165, 80, 200, 0.4),
+        rgba(165, 80, 200, 0.4) 4px,
+        rgba(195, 110, 230, 0.6) 4px,
+        rgba(195, 110, 230, 0.6) 8px
+      );
+    }
+
+    /* Скотч сверху листа */
+    .washi-tape {
+      width: 120px;
+      height: 26px;
+      background: rgba(240, 225, 160, 0.7);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      transform: rotate(-1.5deg);
+      border-left: 2px dashed rgba(200, 180, 110, 0.5);
+      border-right: 2px dashed rgba(200, 180, 110, 0.5);
+    }
+
+    /* Адаптивный квадрат игрового поля: подстраивается и под высоту (vh), и под ширину (vw) */
+    .puzzle-grid-box {
+      width: min(84vw, 45vh, 420px);
+      height: min(84vw, 45vh, 420px);
+      aspect-ratio: 1 / 1;
+    }
+  </style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body class="min-h-screen w-screen flex flex-col items-center justify-center p-2 sm:p-4 box-border">
+
+  <!-- Бумажный лист задания (одна аккуратная центрированная карточка) -->
+  <main class="relative w-full max-w-lg bg-[#fefdf8] hand-drawn-card p-4 sm:p-6 shadow-2xl flex flex-col items-center justify-between box-border my-auto">
+    
+    <!-- Полоска скотча сверху -->
+    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 washi-tape pointer-events-none"></div>
+
+    <!-- Заголовок -->
+    <div class="w-full text-center border-b-2 border-dashed border-slate-300 pb-2 mb-2 sm:mb-3">
+      <h1 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-wide">
+        ✏️ Коврик со звёздочкой
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-700 mt-1 leading-snug font-medium">
+        Раздели коврик на <b>4 одинаковые части</b>. В каждой части должна быть <b>ровно 1 звёздочка</b>!
+      </p>
+    </div>
+
+    <!-- Палитра карандашей -->
+    <div class="flex items-center gap-2 sm:gap-2.5 bg-[#f6f2e7] px-3 py-1.5 sm:py-2 rounded-2xl border-2 border-slate-300 shadow-sm mb-2 sm:mb-3">
+      <span class="text-xs font-bold text-slate-600 mr-0.5">Карандаш:</span>
+      <button onclick="selectColor(1)" id="btn-c1" class="w-9 h-9 sm:w-10 sm:h-10 hand-drawn-btn pencil-blue flex items-center justify-center text-slate-900 font-black text-sm ring-4 ring-slate-800" title="Синий карандаш">1</button>
+      <button onclick="selectColor(2)" id="btn-c2" class="w-9 h-9 sm:w-10 sm:h-10 hand-drawn-btn pencil-green flex items-center justify-center text-slate-900 font-black text-sm opacity-80" title="Зелёный карандаш">2</button>
+      <button onclick="selectColor(3)" id="btn-c3" class="w-9 h-9 sm:w-10 sm:h-10 hand-drawn-btn pencil-orange flex items-center justify-center text-slate-900 font-black text-sm opacity-80" title="Жёлтый карандаш">3</button>
+      <button onclick="selectColor(4)" id="btn-c4" class="w-9 h-9 sm:w-10 sm:h-10 hand-drawn-btn pencil-purple flex items-center justify-center text-slate-900 font-black text-sm opacity-80" title="Фиолетовый карандаш">4</button>
+      <button onclick="selectColor(0)" id="btn-c0" class="w-9 h-9 sm:w-10 sm:h-10 hand-drawn-btn bg-[#f5ebe1] flex items-center justify-center text-slate-700 font-bold text-sm opacity-80 ml-1" title="Ластик">🧹</button>
+    </div>
+
+    <!-- Игровое поле 4x4 (идеально вписывается в экран по высоте и ширине) -->
+    <div class="puzzle-grid-box flex items-center justify-center mb-2 sm:mb-3">
+      <div id="grid" class="w-full h-full grid grid-cols-4 grid-rows-4 gap-1.5 sm:gap-2.5 p-2 sm:p-3 bg-[#fdfbf3] rounded-2xl border-3 border-slate-700 shadow-inner touch-none">
+        <!-- 16 клеток создаются скриптом -->
+      </div>
+    </div>
+
+    <!-- Подсказка / Результат проверки -->
+    <div id="feedback" class="w-full text-center text-xs sm:text-sm p-2 sm:p-2.5 rounded-xl font-bold transition-all border-2 border-slate-300 bg-white text-slate-600 shadow-sm mb-2 sm:mb-3">
+      Раскрась клетки коврика и нажми «Проверить»!
+    </div>
+
+    <!-- Кнопки управления -->
+    <div class="w-full flex gap-2.5 sm:gap-3">
+      <button onclick="resetGrid()" class="flex-1 py-2 sm:py-2.5 px-3 hand-drawn-btn bg-[#f5efe4] text-slate-700 text-xs sm:text-sm font-bold">
+        Очистить
+      </button>
+      <button onclick="validateSolution()" class="flex-1 py-2 sm:py-2.5 px-3 hand-drawn-btn bg-[#2d3134] text-white text-xs sm:text-sm font-bold hover:bg-slate-700 shadow-md">
+        Проверить 🔍
+      </button>
+    </div>
+
+  </main>
+
+  <script>
+    const stars = new Set(["2,1", "2,3", "3,1", "3,3"]);
+    let currentColor = 1;
+    let gridState = Array(4).fill(null).map(() => Array(4).fill(0));
+    let isDrawing = false;
+
+    const pencilClasses = {
+      0: 'pencil-empty',
+      1: 'pencil-blue',
+      2: 'pencil-green',
+      3: 'pencil-orange',
+      4: 'pencil-purple'
+    };
+
+    const colorNames = {
+      0: 'Белая',
+      1: 'Синяя (№1)',
+      2: 'Зелёная (№2)',
+      3: 'Жёлтая (№3)',
+      4: 'Фиолетовая (№4)'
+    };
+
+    function selectColor(c) {
+      currentColor = c;
+      [0, 1, 2, 3, 4].forEach(i => {
+        const btn = document.getElementById(`btn-c${i}`);
+        if (i === c) {
+          btn.classList.add('ring-4', 'ring-slate-800');
+          btn.classList.remove('opacity-80');
+        } else {
+          btn.classList.remove('ring-4', 'ring-slate-800');
+          btn.classList.add('opacity-80');
+        }
+      });
+    }
+
+    function renderGrid() {
+      const gridEl = document.getElementById('grid');
+      gridEl.innerHTML = '';
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const val = gridState[r][c];
+          const hasStar = stars.has(`${r},${c}`);
+          const cell = document.createElement('div');
+          cell.className = `hand-drawn-cell flex items-center justify-center relative cursor-pointer select-none w-full h-full ${pencilClasses[val]}`;
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+
+          if (hasStar) {
+            cell.innerHTML = `
+              <svg class="w-3/5 h-3/5 pointer-events-none" viewBox="0 0 24 24" style="filter: drop-shadow(1px 2px 0px rgba(0,0,0,0.25));">
+                <polygon points="12,2 15,8.8 22.3,9.5 16.8,14.4 18.5,21.6 12,17.8 5.5,21.6 7.2,14.4 1.7,9.5 9,8.8" 
+                         fill="#fbd043" stroke="#4a3e20" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            `;
+          }
+
+          cell.addEventListener('pointerdown', (e) => {
+            isDrawing = true;
+            paintCell(r, c);
+            cell.setPointerCapture(e.pointerId);
+          });
+
+          cell.addEventListener('pointermove', (e) => {
+            if (!isDrawing) return;
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            if (target) {
+              const targetCell = target.closest('.hand-drawn-cell');
+              if (targetCell && targetCell.dataset.r !== undefined) {
+                const tr = parseInt(targetCell.dataset.r);
+                const tc = parseInt(targetCell.dataset.c);
+                if (gridState[tr][tc] !== currentColor) {
+                  paintCell(tr, tc);
+                }
+              }
+            }
+          });
+
+          cell.addEventListener('pointerup', (e) => {
+            isDrawing = false;
+            try { cell.releasePointerCapture(e.pointerId); } catch(err){}
+          });
+
+          cell.addEventListener('pointercancel', () => { isDrawing = false; });
+
+          gridEl.appendChild(cell);
+        }
+      }
+    }
+
+    window.addEventListener('pointerup', () => { isDrawing = false; });
+
+    function paintCell(r, c) {
+      gridState[r][c] = currentColor;
+      const cell = document.querySelector(`.hand-drawn-cell[data-r="${r}"][data-c="${c}"]`);
+      if (cell) {
+        cell.className = `hand-drawn-cell flex items-center justify-center relative cursor-pointer select-none w-full h-full ${pencilClasses[currentColor]}`;
+      }
+    }
+
+    function resetGrid() {
+      gridState = Array(4).fill(null).map(() => Array(4).fill(0));
+      renderGrid();
+      const fb = document.getElementById('feedback');
+      fb.className = "w-full text-center text-xs sm:text-sm p-2 sm:p-2.5 rounded-xl font-bold transition-all border-2 border-slate-300 bg-white text-slate-600 shadow-sm mb-2 sm:mb-3";
+      fb.innerHTML = "Раскрась клетки коврика и нажми «Проверить»!";
+    }
+
+    function isConnected(cells) {
+      if (cells.length === 0) return false;
+      const set = new Set(cells.map(p => `${p.r},${p.c}`));
+      const visited = new Set();
+      const queue = [cells[0]];
+      visited.add(`${cells[0].r},${cells[0].c}`);
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+        for (const [dr, dc] of dirs) {
+          const nr = curr.r + dr;
+          const nc = curr.c + dc;
+          const key = `${nr},${nc}`;
+          if (set.has(key) && !visited.has(key)) {
+            visited.add(key);
+            queue.push({ r: nr, c: nc });
+          }
+        }
+      }
+      return visited.size === cells.length;
+    }
+
+    function getCanonicalShape(cells) {
+      const orientations = [];
+      for (const flip of [false, true]) {
+        for (let rot = 0; rot < 4; rot++) {
+          let pts = cells.map(p => {
+            let r = p.r, c = flip ? -p.c : p.c;
+            for (let i = 0; i < rot; i++) {
+              const temp = r;
+              r = c;
+              c = -temp;
+            }
+            return { r, c };
+          });
+          const minR = Math.min(...pts.map(p => p.r));
+          const minC = Math.min(...pts.map(p => p.c));
+          const normalized = pts.map(p => ({ r: p.r - minR, c: p.c - minC }))
+                                .sort((a, b) => a.r === b.r ? a.c - b.c : a.r - b.r);
+          orientations.push(normalized.map(p => `${p.r}:${p.c}`).join(';'));
+        }
+      }
+      orientations.sort();
+      return orientations[0];
+    }
+
+    function setFeedback(msg, type) {
+      const fb = document.getElementById('feedback');
+      fb.className = "w-full text-center text-xs sm:text-sm p-2 sm:p-2.5 rounded-xl font-bold transition-all border-2 shadow-md mb-2 sm:mb-3 ";
+      if (type === 'success') {
+        fb.className += "bg-[#eaf8ee] text-[#1b6b33] border-[#2e9c4c]";
+        fb.innerHTML = `🌟 ${msg}`;
+      } else if (type === 'warning') {
+        fb.className += "bg-[#fef8eb] text-[#8a5b0b] border-[#e29d1d]";
+        fb.innerHTML = `✏️ ${msg}`;
+      } else {
+        fb.className += "bg-[#fdeeed] text-[#9c2522] border-[#d8403d]";
+        fb.innerHTML = `❌ ${msg}`;
+      }
+    }
+
+    function validateSolution() {
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (gridState[r][c] === 0) {
+            setFeedback("Остались незакрашенные клетки! Закрась весь коврик.", "warning");
+            return;
+          }
+        }
+      }
+
+      const pieces = { 1: [], 2: [], 3: [], 4: [] };
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          pieces[gridState[r][c]].push({ r, c });
+        }
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        if (pieces[i].length !== 4) {
+          setFeedback(`Фигура ${colorNames[i]} состоит из ${pieces[i].length} клеток, а нужно ровно 4!`, "error");
+          return;
+        }
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        if (!isConnected(pieces[i])) {
+          setFeedback(`Фигура ${colorNames[i]} разорвана! Она должна быть цельной.`, "error");
+          return;
+        }
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        const starCount = pieces[i].filter(p => stars.has(`${p.r},${p.c}`)).length;
+        if (starCount === 0) {
+          setFeedback(`В фигуре ${colorNames[i]} нет звёздочки!`, "error");
+          return;
+        }
+        if (starCount > 1) {
+          setFeedback(`В фигуре ${colorNames[i]} сразу ${starCount} звёздочки, а должна быть ровно одна!`, "error");
+          return;
+        }
+      }
+
+      const shapes = [1, 2, 3, 4].map(i => getCanonicalShape(pieces[i]));
+      const firstShape = shapes[0];
+      const allEqual = shapes.every(s => s === firstShape);
+
+      if (!allEqual) {
+        setFeedback("Фигуры разной формы! По условию все 4 части должны быть абсолютно одинаковыми.", "error");
+        return;
+      }
+
+      setFeedback("Блестяще! Коврик разрезан правильно: 4 одинаковых уголка «Г» и в каждом ровно по одной звёздочке!", "success");
+      window.Olymp && Olymp.stars(3);
+    }
+
+    renderGrid();
+    selectColor(1);
+  </script>
+</body>
+</html>

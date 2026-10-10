@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>№ 1. Монетки</title>
+  <script src="../assets/tailwind.js"></script>
+  <style>
+    .coin-transition {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body class="bg-zinc-100 text-zinc-900 antialiased p-3 sm:p-6 md:p-8 min-h-screen flex flex-col items-center justify-center select-none font-sans">
+  <div class="w-full max-w-5xl bg-white text-zinc-900 border border-zinc-200 rounded-3xl p-5 sm:p-8 shadow-xl">
+    
+    <!-- Верхняя панель: Название и счетчики -->
+    <div class="flex items-center justify-between border-b border-zinc-100 pb-4 sm:pb-5 mb-4 sm:mb-5">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-zinc-500 font-medium">Олимпиадная логика</div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 mt-0.5">№ 1. Монетки</h1>
+      </div>
+
+      <div class="flex items-center gap-4 sm:gap-5">
+        <div class="text-right">
+          <div class="text-xs text-zinc-500 font-medium">Ходы</div>
+          <div id="moves-counter" class="text-2xl sm:text-3xl font-mono font-bold text-sky-600 leading-none mt-1">0 / 4</div>
+        </div>
+        <div class="h-8 w-[1px] bg-zinc-200"></div>
+        <div class="text-right">
+          <div class="text-xs text-zinc-500 font-medium">Стопки</div>
+          <div id="pairs-counter" class="text-2xl sm:text-3xl font-mono font-bold text-zinc-800 leading-none mt-1">0 / 4</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Краткое правило -->
+    <div class="text-sm sm:text-base text-zinc-600 bg-zinc-50 border border-zinc-200/80 rounded-2xl px-4 sm:px-5 py-3 mb-4 sm:mb-5 flex items-center gap-3">
+      <span class="text-sky-600 font-mono text-lg font-semibold">ℹ</span>
+      <span class="leading-relaxed">
+        Прыжок <strong class="text-zinc-900 font-semibold">ровно через 2 монеты</strong> на третью. Стопка из 2 монет = 2 монеты, пустая ячейка = 0.
+      </span>
+    </div>
+
+    <!-- Игровое поле -->
+    <div class="bg-zinc-50 rounded-2xl p-3 sm:p-5 border border-zinc-200/90 mb-4 sm:mb-5">
+      <div id="slots-container" class="grid grid-cols-8 gap-2 sm:gap-4 items-end h-[142px] sm:h-[160px]">
+        <!-- Слоты генерируются скриптом -->
+      </div>
+    </div>
+
+    <!-- Фиксированный блок подсказки и расчета пути: высота строго зафиксирована (h-[64px] sm:h-[70px]) -->
+    <div id="info-box" class="h-[64px] sm:h-[70px] rounded-2xl border border-zinc-200 bg-zinc-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors">
+      <div id="status-message" class="text-sm sm:text-base font-semibold text-zinc-800 truncate w-full">
+        Нажмите на любую монету, чтобы начать ход
+      </div>
+      <div id="distance-detail" class="text-xs sm:text-sm font-mono text-zinc-500 truncate w-full mt-0.5">
+        Цель: получить 4 стопки по 2 монеты за 4 хода
+      </div>
+    </div>
+
+    <!-- Нижняя панель действий -->
+    <div class="flex items-center justify-between pt-1">
+      <div class="flex items-center gap-3">
+        <button id="undo-btn" onclick="undoMove()" disabled class="px-5 py-2.5 text-sm sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 disabled:opacity-40 disabled:pointer-events-none transition shadow-2xs">
+          ← Отменить ход
+        </button>
+        <button id="reset-btn" onclick="resetBoard()" class="px-5 py-2.5 text-sm sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition shadow-2xs">
+          Сброс
+        </button>
+      </div>
+
+      <div id="result-badge" class="hidden text-sm sm:text-base font-medium px-4 py-1.5 rounded-full border"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let state = [1, 1, 1, 1, 1, 1, 1, 1];
+    let selectedIdx = null;
+    let history = [];
+
+    const slotsContainer = document.getElementById('slots-container');
+    const infoBox = document.getElementById('info-box');
+    const statusMsg = document.getElementById('status-message');
+    const distDetail = document.getElementById('distance-detail');
+    const movesCounter = document.getElementById('moves-counter');
+    const pairsCounter = document.getElementById('pairs-counter');
+    const undoBtn = document.getElementById('undo-btn');
+    const resultBadge = document.getElementById('result-badge');
+
+    function inspectPath(from, to) {
+      if (from === to) return { count: 0, formula: 'тот же слот', slots: [] };
+      const step = to > from ? 1 : -1;
+      let count = 0;
+      let parts = [];
+      let slots = [];
+      for (let i = from + step; i !== to; i += step) {
+        count += state[i];
+        slots.push(i);
+        parts.push(`№${i + 1}(${state[i]})`);
+      }
+      const formula = parts.length > 0 ? parts.join(' + ') + ` = ${count}` : 'между ними пусто (0)';
+      return { count, formula, slots };
+    }
+
+    function isValidMove(from, to) {
+      if (from === to) return { valid: false, reason: "Нельзя положить на то же место" };
+      if (state[from] !== 1) return { valid: false, reason: "Брать можно только отдельную монету" };
+      if (state[to] !== 1) {
+        if (state[to] === 0) return { valid: false, reason: "Нужно положить на монету, а не на пустое место" };
+        if (state[to] >= 2) return { valid: false, reason: "В стопке уже 2 монеты — стопка заполнена" };
+      }
+      const path = inspectPath(from, to);
+      if (path.count !== 2) {
+        return { 
+          valid: false, 
+          reason: `Между монетами ${path.count} ${path.count === 1 ? 'монета' : (path.count >= 2 && path.count <= 4 ? 'монеты' : 'монет')} (нужно ровно 2)`,
+          formula: path.formula
+        };
+      }
+      return { valid: true, formula: path.formula };
+    }
+
+    function render() {
+      slotsContainer.innerHTML = '';
+      
+      const pairsCount = state.filter(s => s === 2).length;
+      const movesCount = history.length;
+
+      movesCounter.innerText = `${movesCount} / 4`;
+      pairsCounter.innerText = `${pairsCount} / 4`;
+      undoBtn.disabled = history.length === 0;
+
+      if (pairsCount === 4) {
+        resultBadge.className = "text-sm sm:text-base font-medium px-4 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700";
+        resultBadge.innerText = `Решено за ${movesCount} хода!`;
+        resultBadge.classList.remove('hidden');
+        setInfoBox("Отличная комбинация! Все 4 стопки собраны.", "Задача решена полностью!", "success");
+        window.Olymp && Olymp.stars(3);
+      } else if (movesCount >= 4) {
+        resultBadge.className = "text-sm sm:text-base font-medium px-4 py-1 rounded-full border border-amber-300 bg-amber-50 text-amber-700";
+        resultBadge.innerText = "Ходы исчерпаны";
+        resultBadge.classList.remove('hidden');
+        setInfoBox("Лимит в 4 хода исчерпан.", "Отмените ход или нажмите «Сброс».", "warning");
+      } else {
+        resultBadge.classList.add('hidden');
+      }
+
+      state.forEach((coins, idx) => {
+        const slotEl = document.createElement('div');
+        slotEl.className = 'flex flex-col items-center justify-end h-full group cursor-pointer';
+        slotEl.onclick = () => handleSlotClick(idx);
+
+        const isSelected = selectedIdx === idx;
+        let isTargetValid = false;
+        if (selectedIdx !== null && selectedIdx !== idx) {
+          isTargetValid = isValidMove(selectedIdx, idx).valid;
+        }
+
+        slotEl.onmouseenter = () => {
+          if (selectedIdx !== null && selectedIdx !== idx) {
+            const path = inspectPath(selectedIdx, idx);
+            distDetail.innerText = `Расчет пути: ${path.formula}`;
+          }
+        };
+
+        const coinArea = document.createElement('div');
+        coinArea.className = `w-full h-[106px] sm:h-[120px] rounded-2xl flex flex-col justify-end items-center p-1.5 sm:p-2 relative coin-transition border ${
+          isSelected 
+            ? 'border-sky-500 bg-sky-50/80 ring-2 ring-sky-300 shadow-md' 
+            : isTargetValid 
+              ? 'border-emerald-500 bg-emerald-50/90 ring-1 ring-emerald-300 hover:scale-105 shadow-md' 
+              : 'border-zinc-200 bg-white hover:border-zinc-300'
+        }`;
+
+        if (coins === 0) {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'w-9 h-9 sm:w-12 sm:h-12 rounded-full border border-dashed border-zinc-300 mb-3 sm:mb-4 opacity-60';
+          coinArea.appendChild(placeholder);
+        } else if (coins === 1) {
+          const coin = document.createElement('div');
+          coin.className = `w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-zinc-50 via-zinc-200 to-zinc-300 border border-zinc-400/70 ring-1 ring-black/5 shadow-xs mb-2 sm:mb-3 coin-transition ${
+            isSelected ? 'scale-110 -translate-y-2 ring-2 ring-sky-400 shadow-lg border-sky-400' : ''
+          }`;
+          coinArea.appendChild(coin);
+        } else if (coins === 2) {
+          const stack = document.createElement('div');
+          stack.className = 'relative w-11 sm:w-14 h-16 sm:h-20 mb-2 sm:mb-3';
+
+          const coinBottom = document.createElement('div');
+          coinBottom.className = 'absolute bottom-0 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-zinc-200 to-zinc-400 border border-zinc-500/60 ring-1 ring-black/5 shadow-2xs';
+
+          const coinTop = document.createElement('div');
+          coinTop.className = 'absolute bottom-3.5 sm:bottom-4 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 border border-amber-500/70 ring-1 ring-amber-900/10 shadow-xs';
+
+          stack.appendChild(coinBottom);
+          stack.appendChild(coinTop);
+          coinArea.appendChild(stack);
+        }
+
+        const label = document.createElement('div');
+        label.className = `mt-1.5 sm:mt-2 text-sm sm:text-base font-mono font-bold leading-none ${
+          isSelected ? 'text-sky-600' : isTargetValid ? 'text-emerald-600' : 'text-zinc-500'
+        }`;
+        label.innerText = idx + 1;
+
+        slotEl.appendChild(coinArea);
+        slotEl.appendChild(label);
+        slotsContainer.appendChild(slotEl);
+      });
+    }
+
+    function setInfoBox(title, subtitle, type = 'neutral') {
+      statusMsg.innerText = title;
+      distDetail.innerText = subtitle;
+      if (type === 'error') {
+        infoBox.className = "h-[64px] sm:h-[70px] rounded-2xl border border-rose-200 bg-rose-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors";
+        statusMsg.className = "text-sm sm:text-base font-semibold text-rose-700 truncate w-full";
+        distDetail.className = "text-xs sm:text-sm font-mono text-rose-600/80 truncate w-full mt-0.5";
+      } else if (type === 'success') {
+        infoBox.className = "h-[64px] sm:h-[70px] rounded-2xl border border-emerald-200 bg-emerald-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors";
+        statusMsg.className = "text-sm sm:text-base font-semibold text-emerald-700 truncate w-full";
+        distDetail.className = "text-xs sm:text-sm font-mono text-emerald-600/80 truncate w-full mt-0.5";
+      } else if (type === 'active') {
+        infoBox.className = "h-[64px] sm:h-[70px] rounded-2xl border border-sky-200 bg-sky-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors";
+        statusMsg.className = "text-sm sm:text-base font-semibold text-sky-700 truncate w-full";
+        distDetail.className = "text-xs sm:text-sm font-mono text-sky-600/80 truncate w-full mt-0.5";
+      } else if (type === 'warning') {
+        infoBox.className = "h-[64px] sm:h-[70px] rounded-2xl border border-amber-200 bg-amber-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors";
+        statusMsg.className = "text-sm sm:text-base font-semibold text-amber-700 truncate w-full";
+        distDetail.className = "text-xs sm:text-sm font-mono text-amber-600/80 truncate w-full mt-0.5";
+      } else {
+        infoBox.className = "h-[64px] sm:h-[70px] rounded-2xl border border-zinc-200 bg-zinc-50 px-5 flex flex-col items-center justify-center text-center mb-4 sm:mb-5 transition-colors";
+        statusMsg.className = "text-sm sm:text-base font-semibold text-zinc-800 truncate w-full";
+        distDetail.className = "text-xs sm:text-sm font-mono text-zinc-500 truncate w-full mt-0.5";
+      }
+    }
+
+    function handleSlotClick(idx) {
+      if (history.length >= 4 && state.filter(s => s === 2).length < 4) {
+        setInfoBox("Лимит в 4 хода исчерпан.", "Отмените ход или нажмите «Сброс».", "warning");
+        return;
+      }
+
+      if (selectedIdx === null) {
+        if (state[idx] === 0) {
+          setInfoBox(`Позиция ${idx + 1} пуста.`, "Выберите позицию с монетой.", "neutral");
+          return;
+        }
+        if (state[idx] > 1) {
+          setInfoBox(`На позиции ${idx + 1} уже стопка из 2 монет.`, "Разделять стопку нельзя — берите одиночную монету.", "error");
+          return;
+        }
+        selectedIdx = idx;
+        const validTargets = [];
+        for (let t = 0; t < 8; t++) {
+          if (t !== idx && isValidMove(idx, t).valid) validTargets.push(t + 1);
+        }
+        if (validTargets.length > 0) {
+          setInfoBox(`Монета ${idx + 1} выбрана.`, `Доступные цели: [${validTargets.join(', ')}] (ровно через 2 монеты)`, "active");
+        } else {
+          setInfoBox(`Монета ${idx + 1} выбрана.`, "Отсюда нет ходов ровно через 2 монеты. Выберите другую.", "error");
+        }
+        render();
+      } else {
+        if (selectedIdx === idx) {
+          selectedIdx = null;
+          setInfoBox("Выбор отменён.", "Нажмите на любую одиночную монету.", "neutral");
+          render();
+          return;
+        }
+
+        const check = isValidMove(selectedIdx, idx);
+        if (!check.valid) {
+          setInfoBox(check.reason, `Расчет: ${check.formula || 'недопустимо'}`, "error");
+          return;
+        }
+
+        history.push({
+          stateBefore: [...state],
+          from: selectedIdx,
+          to: idx
+        });
+
+        const fromPos = selectedIdx + 1;
+        const toPos = idx + 1;
+        const path = inspectPath(selectedIdx, idx);
+
+        state[selectedIdx] = 0;
+        state[idx] += 1;
+        selectedIdx = null;
+
+        setInfoBox(`Ход: монета ${fromPos} перенесена на ${toPos}!`, `Прыжок через 2 монеты: ${path.formula}`, "success");
+        render();
+      }
+    }
+
+    function undoMove() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      state = [...last.stateBefore];
+      selectedIdx = null;
+      setInfoBox("Ход отменён.", "Выберите монету для следующего хода.", "neutral");
+      render();
+    }
+
+    function resetBoard() {
+      state = [1, 1, 1, 1, 1, 1, 1, 1];
+      history = [];
+      selectedIdx = null;
+      setInfoBox("Поле сброшено.", "Цель: получить 4 стопки по 2 монеты.", "neutral");
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>

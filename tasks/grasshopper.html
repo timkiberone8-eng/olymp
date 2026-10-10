@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>№ 3 Кузнечик</title>
+  <script src="../assets/tailwind.js"></script>
+  <style>
+    /* Карандашный / скетчевый стиль */
+    :root {
+      --sketch-ink: #22262f;
+      --sketch-dim: #4b5563;
+      --sketch-paper: #fcfbf7;
+      --sketch-grid: #e5e7eb;
+      --sketch-accent: #374151;
+      --sketch-green: #15803d;
+      --sketch-red: #b91c1c;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--sketch-paper);
+      color: var(--sketch-ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      user-select: none;
+    }
+
+    /* Лист в тетрадную клетку на весь экран */
+    .paper-sheet-fullscreen {
+      background-color: var(--sketch-paper);
+      background-image: 
+        linear-gradient(var(--sketch-grid) 1.2px, transparent 1.2px),
+        linear-gradient(90deg, var(--sketch-grid) 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+      background-position: 0 0;
+    }
+
+    /* Карандашные неровные рамки */
+    .sketch-box {
+      border: 2px solid var(--sketch-ink);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      box-shadow: 3px 4px 0px rgba(34, 38, 47, 0.15);
+      background-color: rgba(255, 255, 255, 0.88);
+    }
+
+    .sketch-box-sm {
+      border: 1.5px solid var(--sketch-ink);
+      border-radius: 200px 10px 190px 12px / 12px 190px 10px 180px;
+    }
+
+    .sketch-btn {
+      border: 2px solid var(--sketch-ink);
+      border-radius: 255px 12px 225px 15px / 15px 225px 12px 255px;
+      box-shadow: 2.5px 3px 0px var(--sketch-ink);
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.1s ease;
+    }
+
+    .sketch-btn:hover {
+      background-color: #f3f4f6;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4.5px 0px var(--sketch-ink);
+    }
+
+    .sketch-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0.5px 0.5px 0px var(--sketch-ink);
+    }
+
+    .sketch-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 1.5px 1.5px 0px var(--sketch-ink);
+    }
+
+    /* Анимация прорисовки дуги прыжка карандашом */
+    .arc-path {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawPencil 1.15s ease-in-out forwards;
+    }
+
+    @keyframes drawPencil {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Штамп результата */
+    .sketch-stamp {
+      border: 2.5px dashed currentColor;
+      border-radius: 10px;
+      transform: rotate(-0.8deg);
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.06);
+    }
+  </style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body class="h-full flex flex-col paper-sheet-fullscreen p-3 sm:p-6 lg:p-8">
+
+  <!-- Основной контейнер на весь экран -->
+  <div class="flex-1 flex flex-col justify-between max-w-6xl w-full mx-auto sketch-box p-4 sm:p-6 lg:p-8">
+    
+    <!-- Шапка приложения -->
+    <header class="flex items-center justify-between border-b-2 border-gray-800 pb-3 mb-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-gray-900">
+            № 3. Кузнечик
+          </h1>
+          <span class="hidden sm:inline-block text-xs px-2.5 py-0.5 bg-gray-100 sketch-box-sm border border-gray-700 font-semibold text-gray-800">
+            Исполнитель
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-gray-600 mt-1">
+          Отрезок: <strong>[0..5]</strong> &bull; Старт: <strong>0</strong> &bull; Финиш: <strong>5</strong> &bull; Цель: <strong>побывать над числами 1, 2, 3, 4, 5</strong>
+        </p>
+      </div>
+
+      <!-- Переключатель скорости -->
+      <div class="flex items-center gap-1.5 sketch-box-sm px-2.5 py-1.5 bg-white border border-gray-700 text-xs sm:text-sm font-semibold">
+        <span class="text-gray-600 hidden sm:inline">Скорость:</span>
+        <select id="speedSelect" class="bg-transparent font-bold text-gray-900 cursor-pointer focus:outline-none">
+          <option value="slow" selected>🐢 Медленно (1.8 с)</option>
+          <option value="normal">🚶 Умеренно (1.2 с)</option>
+          <option value="fast">🐇 Быстро (0.6 с)</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Центральная область: Интерактивная числовая ось (адаптивная SVG) -->
+    <div class="flex-1 flex flex-col justify-center min-h-[220px] bg-white/80 sketch-box-sm p-4 sm:p-6 border-2 border-gray-800 relative mb-4">
+      
+      <svg id="axisSvg" class="w-full h-44 sm:h-56 lg:h-64" viewBox="0 0 960 210" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <!-- Стрелка карандаша (обычная) -->
+          <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#22262f" />
+          </marker>
+          <!-- Стрелка карандаша (ошибка вылета) -->
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#b91c1c" />
+          </marker>
+        </defs>
+
+        <!-- Запретная зона слева (<0) -->
+        <line x1="20" y1="140" x2="120" y2="140" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 4"/>
+        <text x="65" y="128" font-size="13" font-family="monospace" fill="#9ca3af" text-anchor="middle">выход &lt; 0</text>
+        
+        <!-- Запретная зона справа (>5) -->
+        <line x1="840" y1="140" x2="940" y2="140" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 4"/>
+        <text x="895" y="128" font-size="13" font-family="monospace" fill="#9ca3af" text-anchor="middle">выход &gt; 5</text>
+
+        <!-- Основная числовая ось [0..5] -->
+        <line x1="110" y1="140" x2="855" y2="140" stroke="#22262f" stroke-width="3.5" stroke-linecap="round"/>
+        <polyline points="847,133 857,140 847,147" fill="none" stroke="#22262f" stroke-width="3.5" stroke-linecap="round"/>
+
+        <!-- Деления 0, 1, 2, 3, 4, 5 (генерируются в JS) -->
+        <g id="ticksGroup"></g>
+
+        <!-- Контейнер траекторий прыжков -->
+        <g id="arcsGroup"></g>
+
+        <!-- Фигурка Кузнечика (стилизованный скетч) -->
+        <g id="grasshopper" transform="translate(130, 140)">
+          <!-- Тело кузнечика -->
+          <ellipse cx="0" cy="-10" rx="9" ry="7" fill="#ffffff" stroke="#22262f" stroke-width="2.5" />
+          <!-- Усики -->
+          <line x1="-3" y1="-17" x2="-9" y2="-26" stroke="#22262f" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="-17" x2="9" y2="-26" stroke="#22262f" stroke-width="2" stroke-linecap="round"/>
+          <!-- Глазик -->
+          <circle cx="3" cy="-11" r="1.8" fill="#22262f"/>
+          <!-- Прыжковые лапки -->
+          <polyline points="-5,-6 -12,-14 -8,0" fill="none" stroke="#22262f" stroke-width="2.2" stroke-linecap="round"/>
+        </g>
+      </svg>
+
+      <!-- Информационная строка под осью (крупные индикаторы шагов и позиции) -->
+      <div id="stepBanner" class="flex flex-wrap items-center justify-between gap-3 pt-3 pb-1 border-t-2 border-dashed border-gray-400 text-sm sm:text-base text-gray-800">
+        <div class="flex items-center gap-3 sm:gap-5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-gray-600 text-xs sm:text-sm font-bold uppercase tracking-wider">Шаг:</span>
+            <span id="stepCountBadge" class="text-base sm:text-xl lg:text-2xl font-mono font-extrabold text-gray-900 bg-white px-3 py-1 rounded sketch-box-sm border border-gray-700">
+              0 <span class="text-gray-400 text-xs sm:text-sm font-normal">из</span> 5
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-gray-600 text-xs sm:text-sm font-bold uppercase tracking-wider">Позиция:</span>
+            <strong id="currentPosLabel" class="text-base sm:text-xl lg:text-2xl font-mono font-extrabold text-gray-950 bg-white px-3 py-1 rounded sketch-box-sm border border-gray-700">0</strong>
+          </div>
+        </div>
+        <div id="jumpDetailLabel" class="text-sm sm:text-lg font-mono text-gray-900 font-bold bg-amber-50/90 px-3.5 py-1.5 rounded sketch-box-sm border border-gray-700">
+          готов к запуску
+        </div>
+      </div>
+    </div>
+
+    <!-- Чек-лист целей (посещение всех чисел от 1 до 5) -->
+    <div class="mb-4 p-3 sm:p-4 bg-white/70 sketch-box-sm border border-gray-400">
+      <div class="flex items-center justify-between text-xs sm:text-sm mb-2">
+        <span class="font-bold text-gray-800 uppercase tracking-wide">Контроль посещённых чисел (1..5):</span>
+        <span id="visitSummary" class="text-gray-700 font-mono font-bold text-sm">0 из 5</span>
+      </div>
+      <div class="grid grid-cols-5 gap-2 sm:gap-3 text-center text-xs sm:text-sm">
+        <div id="badge-1" class="py-2 px-1 border border-gray-400 rounded bg-gray-50 text-gray-500 font-mono transition-all">
+          1: <span class="status-icon font-bold">○</span>
+        </div>
+        <div id="badge-2" class="py-2 px-1 border border-gray-400 rounded bg-gray-50 text-gray-500 font-mono transition-all">
+          2: <span class="status-icon font-bold">○</span>
+        </div>
+        <div id="badge-3" class="py-2 px-1 border border-gray-400 rounded bg-gray-50 text-gray-500 font-mono transition-all">
+          3: <span class="status-icon font-bold">○</span>
+        </div>
+        <div id="badge-4" class="py-2 px-1 border border-gray-400 rounded bg-gray-50 text-gray-500 font-mono transition-all">
+          4: <span class="status-icon font-bold">○</span>
+        </div>
+        <div id="badge-5" class="py-2 px-1 border border-gray-400 rounded bg-gray-50 text-gray-500 font-mono transition-all">
+          5: <span class="status-icon font-bold">○</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок ввода и управления командами -->
+    <div class="space-y-3 mb-2">
+      <!-- Поле ввода программы -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            id="programInput" 
+            placeholder="Введите программу (кнопками 1 / 2 или с клавиатуры)" 
+            value=""
+            class="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base font-mono tracking-widest uppercase bg-white border-2 border-gray-800 rounded sketch-box-sm focus:outline-none focus:ring-2 focus:ring-gray-700 font-bold"
+          />
+        </div>
+        <button id="btnClear" class="sketch-btn px-4 py-2.5 sm:py-3 text-sm sm:text-base font-mono text-gray-700" title="Очистить строку">
+          ⌫ Стереть
+        </button>
+      </div>
+
+      <!-- Кнопки быстрого добавления команд -->
+      <div class="grid grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
+        <button id="btnAdd1" class="sketch-btn py-2.5 px-4 text-left flex items-center justify-between">
+          <span class="font-bold text-gray-900">Команда 1: Вправо 4</span>
+          <span class="text-gray-600 font-mono font-bold">+4</span>
+        </button>
+        <button id="btnAdd2" class="sketch-btn py-2.5 px-4 text-left flex items-center justify-between">
+          <span class="font-bold text-gray-900">Команда 2: Влево 1</span>
+          <span class="text-gray-600 font-mono font-bold">-1</span>
+        </button>
+      </div>
+
+      <!-- Главные кнопки выполнения -->
+      <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-1">
+        <button id="btnRun" class="sketch-btn py-3 px-4 text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider text-gray-950 bg-amber-50/80 border-gray-950">
+          ▶ Запустить
+        </button>
+        <button id="btnStep" class="sketch-btn py-3 px-4 text-xs sm:text-sm lg:text-base font-bold text-gray-900">
+          Шаг ➔
+        </button>
+        <button id="btnReset" class="sketch-btn py-3 px-4 text-xs sm:text-sm lg:text-base font-medium text-gray-700">
+          ↺ Сброс в 0
+        </button>
+      </div>
+    </div>
+
+    <!-- Всплывающий карандашный штамп с вердиктом -->
+    <div id="resultBox" class="mt-3 hidden p-3 sm:p-4 text-xs sm:text-sm transition-all"></div>
+
+  </div>
+
+  <script>
+    // Масштабированная сетка под широкий экран (viewBox 960x210)
+    // Шаг деления: 140px. 0 -> 130, 1 -> 270, 2 -> 410, 3 -> 550, 4 -> 690, 5 -> 830
+    const X_MAP = {
+      0: 130,
+      1: 270,
+      2: 410,
+      3: 550,
+      4: 690,
+      5: 830
+    };
+    const BASE_Y = 140;
+
+    // Состояние программы
+    let state = {
+      pos: 0,
+      visited: new Set(),
+      stepIndex: 0,
+      commands: [],
+      isRunning: false,
+      isAnimating: false
+    };
+
+    let activeAnimFrameId = null;
+
+    // DOM-узлы
+    const ticksGroup = document.getElementById('ticksGroup');
+    const arcsGroup = document.getElementById('arcsGroup');
+    const grasshopper = document.getElementById('grasshopper');
+    const currentPosLabel = document.getElementById('currentPosLabel');
+    const stepCountBadge = document.getElementById('stepCountBadge');
+    const jumpDetailLabel = document.getElementById('jumpDetailLabel');
+    const programInput = document.getElementById('programInput');
+    const btnAdd1 = document.getElementById('btnAdd1');
+    const btnAdd2 = document.getElementById('btnAdd2');
+    const btnClear = document.getElementById('btnClear');
+    const btnRun = document.getElementById('btnRun');
+    const btnStep = document.getElementById('btnStep');
+    const btnReset = document.getElementById('btnReset');
+    const resultBox = document.getElementById('resultBox');
+    const visitSummary = document.getElementById('visitSummary');
+    const speedSelect = document.getElementById('speedSelect');
+
+    // Настройки скорости анимации
+    const SPEED_PRESETS = {
+      slow: { stepDelay: 2000, arcDuration: 1.35 },
+      normal: { stepDelay: 1300, arcDuration: 0.85 },
+      fast: { stepDelay: 650, arcDuration: 0.42 }
+    };
+    let currentSpeed = SPEED_PRESETS.slow; // По умолчанию медленно
+
+    speedSelect.addEventListener('change', (e) => {
+      currentSpeed = SPEED_PRESETS[e.target.value] || SPEED_PRESETS.slow;
+    });
+
+    // Рисование делений оси
+    function renderTicks() {
+      ticksGroup.innerHTML = '';
+      for (let i = 0; i <= 5; i++) {
+        const x = X_MAP[i];
+        
+        // Черточка деления
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x);
+        line.setAttribute('y1', BASE_Y - 9);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', BASE_Y + 9);
+        line.setAttribute('stroke', '#22262f');
+        line.setAttribute('stroke-width', '3');
+        ticksGroup.appendChild(line);
+
+        // Число под черточкой
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', BASE_Y + 34);
+        text.setAttribute('font-size', '19');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('font-family', 'monospace');
+        text.setAttribute('fill', '#22262f');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = i;
+        ticksGroup.appendChild(text);
+
+        // Подпись старт / финиш
+        if (i === 0 || i === 5) {
+          const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          sub.setAttribute('x', x);
+          sub.setAttribute('y', BASE_Y + 50);
+          sub.setAttribute('font-size', '11');
+          sub.setAttribute('font-weight', 'bold');
+          sub.setAttribute('fill', '#6b7280');
+          sub.setAttribute('text-anchor', 'middle');
+          sub.textContent = (i === 0 ? 'СТАРТ' : 'ФИНИШ');
+          ticksGroup.appendChild(sub);
+        }
+      }
+    }
+
+    // Обновление чек-листа посещения точек
+    function updateChecklist() {
+      let visitedCount = 0;
+      for (let i = 1; i <= 5; i++) {
+        const badge = document.getElementById(`badge-${i}`);
+        const icon = badge.querySelector('.status-icon');
+        if (state.visited.has(i)) {
+          visitedCount++;
+          badge.classList.remove('bg-gray-50', 'text-gray-500', 'border-gray-400');
+          badge.classList.add('bg-emerald-50', 'text-emerald-900', 'border-emerald-600', 'font-bold');
+          icon.textContent = '✓';
+        } else {
+          badge.classList.remove('bg-emerald-50', 'text-emerald-900', 'border-emerald-600', 'font-bold');
+          badge.classList.add('bg-gray-50', 'text-gray-500', 'border-gray-400');
+          icon.textContent = '○';
+        }
+      }
+      visitSummary.textContent = `${visitedCount} из 5`;
+    }
+
+    // Сброс состояния
+    function resetSimulation() {
+      if (activeAnimFrameId) {
+        cancelAnimationFrame(activeAnimFrameId);
+        activeAnimFrameId = null;
+      }
+      state.pos = 0;
+      state.visited = new Set();
+      state.stepIndex = 0;
+      state.commands = parseCommands();
+      state.isRunning = false;
+      state.isAnimating = false;
+
+      arcsGroup.innerHTML = '';
+      grasshopper.setAttribute('transform', `translate(${X_MAP[0]}, ${BASE_Y}) scale(1, 1)`);
+      currentPosLabel.textContent = '0';
+      currentPosLabel.classList.remove('text-red-600');
+      stepCountBadge.innerHTML = `0 <span class="text-gray-400 text-xs sm:text-sm font-normal">из</span> ${state.commands.length}`;
+      updateChecklist();
+
+      jumpDetailLabel.textContent = 'готов к запуску';
+      resultBox.classList.add('hidden');
+      resultBox.innerHTML = '';
+      btnRun.disabled = false;
+      btnStep.disabled = false;
+    }
+
+    // Анимация прыжка кузнечика, строго синхронизированная с острием рисуемой дуги
+    function animateJump(fromPos, toPos, cmdNum, isOutOfBounds) {
+      return new Promise((resolve) => {
+        const fromX = X_MAP[fromPos] || (fromPos < 0 ? 55 : 905);
+        const toX = X_MAP[toPos] || (toPos < 0 ? 55 : 905);
+
+        const distance = Math.abs(toPos - fromPos);
+        const arcHeight = distance >= 4 ? 92 : 46;
+        const midX = (fromX + toX) / 2;
+        // Квадратичный Безье: y(0.5) = BASE_Y - arcHeight => midY = BASE_Y - arcHeight * 2
+        const midY = BASE_Y - arcHeight * 2;
+
+        // Создаем дугу (пока без стрелки marker-end, чтобы стрелка не висела заранее на финише!)
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const d = `M ${fromX} ${BASE_Y} Q ${midX} ${midY} ${toX} ${BASE_Y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', isOutOfBounds ? '#b91c1c' : '#22262f');
+        path.setAttribute('stroke-width', '2.5');
+        path.setAttribute('stroke-linecap', 'round');
+        arcsGroup.appendChild(path);
+
+        const totalLength = path.getTotalLength();
+        path.style.strokeDasharray = totalLength;
+        path.style.strokeDashoffset = totalLength;
+
+        // Подпись команды в вершине дуги (крупная и контрастная)
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', midX);
+        text.setAttribute('y', BASE_Y - arcHeight - 12);
+        text.setAttribute('font-size', '23');
+        text.setAttribute('font-weight', '900');
+        text.setAttribute('font-family', 'monospace');
+        text.setAttribute('fill', isOutOfBounds ? '#b91c1c' : '#1e232b');
+        text.setAttribute('stroke', '#ffffff');
+        text.setAttribute('stroke-width', '5');
+        text.setAttribute('paint-order', 'stroke fill');
+        text.setAttribute('stroke-linejoin', 'round');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = (cmdNum === 1 ? '№ 1 (+4)' : '№ 2 (-1)');
+        text.style.opacity = '0';
+        text.style.transition = 'opacity 0.2s ease';
+        arcsGroup.appendChild(text);
+
+        // Направление взгляда кузнечика (1 = вправо, -1 = влево)
+        const dir = toX >= fromX ? 1 : -1;
+        const duration = currentSpeed.arcDuration * 1000;
+        const startTime = performance.now();
+
+        function frame(now) {
+          const elapsed = now - startTime;
+          const u = Math.min(1, elapsed / duration);
+          // Плавное ускорение и замедление
+          const p = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+
+          // Рисуем дугу ровно до текущего прогресса p
+          const currentDist = totalLength * p;
+          path.style.strokeDashoffset = totalLength * (1 - p);
+
+          // Точка острия карандашной линии в данный момент
+          const pt = path.getPointAtLength(currentDist);
+
+          // Кузнечик строго привязан к острию линии и летит вместе с ним
+          grasshopper.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${dir}, 1)`);
+
+          if (p >= 0.45) {
+            text.style.opacity = '1';
+          }
+
+          if (u < 1) {
+            activeAnimFrameId = requestAnimationFrame(frame);
+          } else {
+            activeAnimFrameId = null;
+            // Приземление: фиксируем дугу и ставим стрелку в точке касания
+            path.style.strokeDashoffset = '0';
+            if (isOutOfBounds) {
+              path.style.strokeDasharray = '5 3';
+              path.setAttribute('marker-end', 'url(#arrow-red)');
+            } else {
+              path.style.strokeDasharray = 'none';
+              path.setAttribute('marker-end', 'url(#arrow)');
+            }
+            grasshopper.setAttribute('transform', `translate(${toX}, ${BASE_Y}) scale(${dir}, 1)`);
+            resolve();
+          }
+        }
+
+        activeAnimFrameId = requestAnimationFrame(frame);
+      });
+    }
+
+    // Парсинг строки команд
+    function parseCommands() {
+      const raw = programInput.value.replace(/[^12]/g, '');
+      return raw.split('').map(Number);
+    }
+
+    // Выполнение одного шага
+    async function stepSimulation() {
+      if (state.isAnimating) return false;
+
+      if (state.commands.length === 0) {
+        state.commands = parseCommands();
+      }
+
+      if (state.commands.length === 0) {
+        jumpDetailLabel.textContent = 'Сначала введите команды!';
+        return false;
+      }
+
+      if (state.stepIndex >= state.commands.length) {
+        finishEvaluation();
+        return false;
+      }
+
+      state.isAnimating = true;
+      btnStep.disabled = true;
+      btnRun.disabled = true;
+
+      const cmd = state.commands[state.stepIndex];
+      const fromPos = state.pos;
+      const delta = (cmd === 1 ? 4 : -1);
+      const newPos = fromPos + delta;
+      state.stepIndex++;
+
+      // Обновляем крупный счетчик шагов: 1 из 5, 2 из 5...
+      stepCountBadge.innerHTML = `<span class="text-blue-900 font-black">${state.stepIndex}</span> <span class="text-gray-400 text-xs sm:text-sm font-normal">из</span> ${state.commands.length}`;
+
+      const isOutOfBounds = (newPos < 0 || newPos > 5);
+
+      // Анимируем полет строго по дуге к острию стрелки
+      await animateJump(fromPos, newPos, cmd, isOutOfBounds);
+
+      state.pos = newPos;
+      currentPosLabel.textContent = newPos;
+
+      if (isOutOfBounds) {
+        currentPosLabel.classList.add('text-red-600');
+        jumpDetailLabel.innerHTML = `Команда <strong>${cmd}</strong> (${delta > 0 ? '+'+delta : delta}) ➔ <span class="text-red-600 font-black">ВЫЛЕТ ЗА ГРАНИЦУ!</span>`;
+        showResult(
+          false, 
+          `<strong>Ошибка! Выход за пределы отрезка [0, 5] на шаге ${state.stepIndex}.</strong><br>` +
+          `Попытка прыжка из точки <strong>${fromPos}</strong> в <strong>${newPos}</strong>.`
+        );
+        state.isRunning = false;
+        state.isAnimating = false;
+        btnRun.disabled = true;
+        btnStep.disabled = true;
+        return false;
+      }
+
+      // Успешный шаг внутри границ
+      currentPosLabel.classList.remove('text-red-600');
+      if (newPos >= 1 && newPos <= 5) {
+        state.visited.add(newPos);
+      }
+      updateChecklist();
+      jumpDetailLabel.innerHTML = `Команда <strong>${cmd}</strong> (${delta > 0 ? '+'+delta : delta}) ➔ точка <strong>${newPos}</strong>`;
+
+      state.isAnimating = false;
+
+      if (state.stepIndex >= state.commands.length) {
+        finishEvaluation();
+        return false;
+      }
+
+      if (!state.isRunning) {
+        btnStep.disabled = false;
+        btnRun.disabled = false;
+      }
+
+      return true;
+    }
+
+    // Итоговая проверка
+    function finishEvaluation() {
+      state.isRunning = false;
+      state.isAnimating = false;
+      btnRun.disabled = true;
+      btnStep.disabled = true;
+
+      const visitedAll = [1, 2, 3, 4, 5].every(n => state.visited.has(n));
+      const endAt5 = (state.pos === 5);
+
+      if (visitedAll && endAt5) {
+        window.Olymp && Olymp.stars(3);
+        showResult(
+          true,
+          `<strong>Верно! Задача решена успешно.</strong><br>` +
+          `Кузнечик посетил все контрольные точки 1, 2, 3, 4, 5 и финишировал в точке 5 без нарушений границ.`
+        );
+      } else {
+        let reasons = [];
+        if (!endAt5) {
+          reasons.push(`конечное положение: ${state.pos} (требуется: 5)`);
+        }
+        if (!visitedAll) {
+          const missing = [1, 2, 3, 4, 5].filter(n => !state.visited.has(n)).join(', ');
+          reasons.push(`не посещены числа: [${missing}]`);
+        }
+        showResult(
+          false,
+          `<strong>Программа выполнена, но условие не соблюдено:</strong><br>&bull; ` + reasons.join('<br>&bull; ')
+        );
+      }
+    }
+
+    // Плашка с вердиктом
+    function showResult(isSuccess, messageHtml) {
+      resultBox.classList.remove('hidden');
+      if (isSuccess) {
+        resultBox.className = "mt-3 p-3.5 sm:p-4 text-xs sm:text-sm sketch-stamp text-emerald-900 bg-emerald-50/90 border-emerald-700 font-medium";
+      } else {
+        resultBox.className = "mt-3 p-3.5 sm:p-4 text-xs sm:text-sm sketch-stamp text-red-900 bg-red-50/90 border-red-700 font-medium";
+      }
+      resultBox.innerHTML = messageHtml;
+    }
+
+    // Автоматический прогон
+    async function runAuto() {
+      if (state.isRunning || state.isAnimating) return;
+      state.commands = parseCommands();
+      if (state.commands.length === 0) {
+        jumpDetailLabel.textContent = 'Сначала введите команды!';
+        return;
+      }
+      resetSimulation();
+      state.isRunning = true;
+      btnRun.disabled = true;
+      btnStep.disabled = true;
+
+      while (state.isRunning && state.stepIndex < state.commands.length) {
+        const canContinue = await stepSimulation();
+        if (!canContinue) break;
+        if (state.stepIndex < state.commands.length) {
+          const pause = Math.max(350, currentSpeed.stepDelay - (currentSpeed.arcDuration * 1000));
+          await new Promise(r => setTimeout(r, pause));
+        }
+      }
+      state.isRunning = false;
+    }
+
+    // Слушатели событий
+    btnAdd1.addEventListener('click', () => {
+      if (state.isAnimating || state.isRunning) return;
+      programInput.value = (programInput.value + ' 1').trim();
+      resetSimulation();
+    });
+
+    btnAdd2.addEventListener('click', () => {
+      if (state.isAnimating || state.isRunning) return;
+      programInput.value = (programInput.value + ' 2').trim();
+      resetSimulation();
+    });
+
+    btnClear.addEventListener('click', () => {
+      if (state.isAnimating || state.isRunning) return;
+      programInput.value = '';
+      resetSimulation();
+    });
+
+    programInput.addEventListener('input', () => {
+      if (state.isAnimating || state.isRunning) return;
+      resetSimulation();
+    });
+
+    btnRun.addEventListener('click', () => {
+      if (state.isAnimating || state.isRunning) return;
+      runAuto();
+    });
+
+    btnStep.addEventListener('click', async () => {
+      if (state.isAnimating || state.isRunning) return;
+      if (state.stepIndex === 0) {
+        state.commands = parseCommands();
+      }
+      await stepSimulation();
+    });
+
+    btnReset.addEventListener('click', resetSimulation);
+
+    // Старт
+    renderTicks();
+    resetSimulation();
+  </script>
+</body>
+</html>

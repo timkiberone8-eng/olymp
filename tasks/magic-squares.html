@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Магические квадраты</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #fafaf9;
+      color: #262626;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(12px, 2vh, 22px);
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    h1 {
+      font-size: clamp(22px, 3.2vmin, 32px);
+      font-weight: 700;
+      color: #171717;
+      letter-spacing: -0.3px;
+    }
+
+    .timer {
+      font-family: 'Ink Free', 'Segoe Print', cursive, monospace;
+      font-size: clamp(16px, 2.2vmin, 20px);
+      color: #737373;
+    }
+
+    .pencil-line {
+      height: 2.5px;
+      background: #404040;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      filter: url(#pencil-texture);
+      opacity: 0.7;
+      width: 100%;
+    }
+
+    .task-desc {
+      font-size: clamp(15px, 2vmin, 18px);
+      line-height: 1.45;
+      color: #404040;
+      text-align: center;
+      max-width: 720px;
+    }
+
+    /* Tabs 1) 2) 3) */
+    .tabs-row {
+      display: flex;
+      gap: 14px;
+    }
+
+    .tab-btn {
+      padding: 8px 24px;
+      background: #f5f5f4;
+      border: 2px solid #525252;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      filter: url(#pencil-texture);
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(18px, 2.4vmin, 22px);
+      font-weight: 700;
+      color: #525252;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background: #e7e5e4;
+      color: #171717;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      border-color: #171717;
+      color: #171717;
+      box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-btn.done::after {
+      content: " ✓";
+      color: #15803d;
+    }
+
+    /* Magic Square Grid - Large & Responsive */
+    .grid-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(14px, 2.2vh, 24px);
+    }
+
+    .magic-square {
+      display: grid;
+      grid-template-columns: repeat(3, clamp(96px, 17vmin, 148px));
+      grid-template-rows: repeat(3, clamp(96px, 17vmin, 148px));
+      background: #262626; /* Hand-drawn pencil line */
+      gap: 2.5px;          /* Unbreakable solid grid divider */
+      border: 3.5px solid #262626;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.14);
+      filter: url(#pencil-texture);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cell {
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Printed / Hand-drawn numbers */
+    .cell.printed {
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(42px, 7.5vmin, 62px);
+      font-weight: 700;
+      color: #1f2421;
+      user-select: none;
+    }
+
+    /* Handwritten pencil input */
+    .cell-input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      text-align: center;
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(42px, 7.5vmin, 62px);
+      font-weight: 700;
+      color: #2d3748;
+      -moz-appearance: textfield;
+      transition: background-color 0.15s;
+    }
+
+    .cell-input::-webkit-outer-spin-button,
+    .cell-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .cell-input:focus {
+      background: #fafaf9;
+    }
+
+    .cell-input.err {
+      background: #fee2e2 !important;
+      color: #b91c1c !important;
+    }
+
+    .cell-input.ok {
+      background: #f0fdf4 !important;
+      color: #15803d !important;
+    }
+
+    /* Buttons */
+    .actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 10px 32px;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      filter: url(#pencil-texture);
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(17px, 2.3vmin, 20px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-submit {
+      background: #f5f5f4;
+      border: 2px solid #262626;
+      color: #171717;
+      box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-submit:hover {
+      background: #e7e5e4;
+      transform: translateY(-1px);
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1.5px solid #737373;
+      color: #737373;
+    }
+
+    .btn-reset:hover {
+      border-color: #262626;
+      color: #171717;
+    }
+
+    /* Status note */
+    .status-note {
+      min-height: 28px;
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(16px, 2.2vmin, 20px);
+      text-align: center;
+      color: #525252;
+    }
+
+    .status-note.err {
+      color: #b91c1c;
+    }
+
+    .status-note.ok {
+      color: #15803d;
+    }
+
+    /* Hint */
+    .hint-wrap {
+      text-align: center;
+    }
+
+    .hint-btn {
+      background: none;
+      border: none;
+      color: #a3a3a3;
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .hint-btn:hover {
+      color: #525252;
+    }
+
+    .hint-content {
+      display: none;
+      margin-top: 8px;
+      font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
+      font-size: clamp(15px, 2vmin, 18px);
+      color: #1e3a8a;
+      background: #eff6ff;
+      border: 1.5px dashed #60a5fa;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      padding: 8px 16px;
+      line-height: 1.45;
+      max-width: 680px;
+    }
+
+    .hint-content.show {
+      display: block;
+    }
+  </style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body>
+
+  <!-- SVG Filter for Natural Pencil Graphite Texture -->
+  <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+    <defs>
+      <filter id="pencil-texture" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="container">
+    
+    <header>
+      <div class="header-row">
+        <h1>№ 1 Магические квадраты</h1>
+        <div class="timer" id="timer">00:00</div>
+      </div>
+      <div class="pencil-line"></div>
+    </header>
+
+    <div class="tabs-row">
+      <button class="tab-btn active" data-idx="0">1)</button>
+      <button class="tab-btn" data-idx="1">2)</button>
+      <button class="tab-btn" data-idx="2">3)</button>
+    </div>
+
+    <p class="task-desc">
+      В магическом квадрате суммы чисел по строкам, столбцам и диагоналям равны между собой. Заполни квадраты недостающими числами.
+    </p>
+
+    <div class="grid-section">
+      <div class="magic-square" id="grid">
+        <!-- 9 cells rendered via JS -->
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-submit" id="checkBtn">Проверить</button>
+        <button class="btn btn-reset" id="resetBtn">Стереть</button>
+      </div>
+
+      <div class="status-note" id="statusNote"></div>
+
+      <div class="hint-wrap">
+        <button class="hint-btn" id="hintToggle">Подсказка</button>
+        <div class="hint-content" id="hintContent"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SQUARES = [
+      {
+        magicSum: 15,
+        grid: [
+          [null, 9,    null],
+          [null, 5,    null],
+          [8,    1,    null]
+        ],
+        solution: [
+          [4, 9, 2],
+          [3, 5, 7],
+          [8, 1, 6]
+        ],
+        hint: "Посмотри на средний столбец: 9 + 5 + 1 = 15. Значит, везде сумма должна быть 15!"
+      },
+      {
+        magicSum: 24,
+        grid: [
+          [14,   1,    null],
+          [null, 8,    null],
+          [null, null, 2   ]
+        ],
+        solution: [
+          [14, 1,  9 ],
+          [3,  8,  13],
+          [7,  15, 2 ]
+        ],
+        hint: "Посмотри на диагональ из верхнего левого угла: 14 + 8 + 2 = 24. Везде сумма 24!"
+      },
+      {
+        magicSum: 42,
+        grid: [
+          [11,   18,   13  ],
+          [null, null, null],
+          [null, 10,   null]
+        ],
+        solution: [
+          [11, 18, 13],
+          [16, 14, 12],
+          [15, 10, 17]
+        ],
+        hint: "Верхняя строка полностью заполнена: 11 + 18 + 13 = 42. Везде сумма 42!"
+      }
+    ];
+
+    let currentIdx = 0;
+    const completed = [false, false, false];
+    let seconds = 0;
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    const gridEl = document.getElementById('grid');
+    const checkBtn = document.getElementById('checkBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusNote = document.getElementById('statusNote');
+    const hintToggle = document.getElementById('hintToggle');
+    const hintContent = document.getElementById('hintContent');
+    const timerEl = document.getElementById('timer');
+
+    // Timer
+    setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
+    }, 1000);
+
+    function render(idx) {
+      currentIdx = idx;
+      const data = SQUARES[idx];
+
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active', i === idx);
+        tab.classList.toggle('done', completed[i]);
+      });
+
+      hintContent.classList.remove('show');
+      hintContent.textContent = data.hint;
+      hintToggle.textContent = 'Подсказка';
+
+      if (completed[idx]) {
+        statusNote.className = 'status-note ok';
+        statusNote.textContent = `✓ Верно! Сумма линий равна ${data.magicSum}.`;
+      } else {
+        statusNote.className = 'status-note';
+        statusNote.textContent = '';
+      }
+
+      gridEl.innerHTML = '';
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+
+          const val = data.grid[r][c];
+          if (val !== null) {
+            cell.classList.add('printed');
+            cell.textContent = val;
+          } else {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'cell-input';
+            if (completed[idx]) {
+              input.value = data.solution[r][c];
+              input.disabled = true;
+              input.classList.add('ok');
+            }
+            cell.appendChild(input);
+          }
+          gridEl.appendChild(cell);
+        }
+      }
+    }
+
+    checkBtn.addEventListener('click', () => {
+      const data = SQUARES[currentIdx];
+      const targetSum = data.magicSum;
+      const matrix = [[0,0,0],[0,0,0],[0,0,0]];
+      let empty = false;
+
+      const cells = gridEl.querySelectorAll('.cell');
+      cells.forEach(cell => {
+        const r = parseInt(cell.dataset.r, 10);
+        const c = parseInt(cell.dataset.c, 10);
+        const input = cell.querySelector('input');
+
+        if (input) {
+          input.classList.remove('err', 'ok');
+          const val = parseInt(input.value.trim(), 10);
+          if (isNaN(val)) {
+            empty = true;
+          } else {
+            matrix[r][c] = val;
+          }
+        } else {
+          matrix[r][c] = parseInt(cell.textContent, 10);
+        }
+      });
+
+      if (empty) {
+        statusNote.className = 'status-note err';
+        statusNote.textContent = 'Заполни все клетки!';
+        return;
+      }
+
+      let err = null;
+
+      // Rows
+      for (let r = 0; r < 3; r++) {
+        const s = matrix[r][0] + matrix[r][1] + matrix[r][2];
+        if (s !== targetSum) { err = { type: 'row', idx: r + 1, sum: s }; break; }
+      }
+
+      // Cols
+      if (!err) {
+        for (let c = 0; c < 3; c++) {
+          const s = matrix[0][c] + matrix[1][c] + matrix[2][c];
+          if (s !== targetSum) { err = { type: 'col', idx: c + 1, sum: s }; break; }
+        }
+      }
+
+      // Diagonals
+      if (!err) {
+        const d1 = matrix[0][0] + matrix[1][1] + matrix[2][2];
+        if (d1 !== targetSum) err = { type: 'diag', name: 'главной диагонали', sum: d1 };
+      }
+      if (!err) {
+        const d2 = matrix[0][2] + matrix[1][1] + matrix[2][0];
+        if (d2 !== targetSum) err = { type: 'diag', name: 'побочной диагонали', sum: d2 };
+      }
+
+      if (err) {
+        statusNote.className = 'status-note err';
+        let desc = err.type === 'row' ? `в строке ${err.idx}` : (err.type === 'col' ? `в столбце ${err.idx}` : `в ${err.name}`);
+        statusNote.textContent = `Ошибка ${desc}: сумма ${err.sum} вместо ${targetSum}.`;
+
+        cells.forEach(cell => {
+          const r = parseInt(cell.dataset.r, 10);
+          const c = parseInt(cell.dataset.c, 10);
+          const input = cell.querySelector('input');
+          if (input) {
+            if (
+              (err.type === 'row' && r === err.idx - 1) ||
+              (err.type === 'col' && c === err.idx - 1) ||
+              (err.type === 'diag' && err.name.includes('главн') && r === c) ||
+              (err.type === 'diag' && err.name.includes('побочн') && r + c === 2)
+            ) {
+              input.classList.add('err');
+            }
+          }
+        });
+      } else {
+        completed[currentIdx] = true;
+        window.Olymp && Olymp.stars(completed.filter(Boolean).length);
+        statusNote.className = 'status-note ok';
+        statusNote.textContent = `✓ Верно! Все суммы равны ${targetSum}.`;
+
+        cells.forEach(cell => {
+          const input = cell.querySelector('input');
+          if (input) {
+            input.classList.add('ok');
+            input.disabled = true;
+          }
+        });
+        tabs[currentIdx].classList.add('done');
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      const inputs = gridEl.querySelectorAll('input');
+      inputs.forEach(input => {
+        if (!input.disabled) {
+          input.value = '';
+          input.classList.remove('err', 'ok');
+        }
+      });
+      statusNote.className = 'status-note';
+      statusNote.textContent = '';
+    });
+
+    hintToggle.addEventListener('click', () => {
+      const isShown = hintContent.classList.toggle('show');
+      hintToggle.textContent = isShown ? 'Скрыть подсказку' : 'Подсказка';
+    });
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => render(i));
+    });
+
+    render(0);
+  </script>
+</body>
+</html>

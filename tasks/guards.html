@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Стражники</title>
+<style>
+  :root {
+    --cell: min(11vw, 56px);
+    --ok: #2e9e5b;
+    --bad: #d64545;
+    --line: #8a94a6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6fa;
+    color: #1d2433;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 { margin: 4px 0 8px; font-size: 26px; }
+  .task {
+    max-width: 560px;
+    font-size: 16px;
+    line-height: 1.45;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(7, var(--cell)) calc(var(--cell) * .8);
+    gap: 0;
+    background: #fff;
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .cell {
+    width: var(--cell);
+    height: var(--cell);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cell::before, .cell::after {
+    content: "";
+    position: absolute;
+    background: var(--line);
+  }
+  .cell::before { left: 0; right: 0; top: 50%; height: 3px; transform: translateY(-50%); }
+  .cell::after { top: 0; bottom: 0; left: 50%; width: 3px; transform: translateX(-50%); }
+  .cell .dot {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--line);
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+  .cell.on .dot {
+    width: calc(var(--cell) * .7);
+    height: calc(var(--cell) * .7);
+    background: #3b6fd8;
+    box-shadow: 0 2px 4px rgba(0,0,0,.25);
+  }
+  .cell.on .dot::after {
+    content: "🛡️";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(var(--cell) * .38);
+  }
+  .count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--bad);
+  }
+  .count.ok { color: var(--ok); }
+  .bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #total.over { color: var(--bad); font-weight: 700; }
+  button {
+    font: inherit;
+    font-size: 16px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid #c3cad8;
+    background: #fff;
+    cursor: pointer;
+  }
+  label { font-size: 16px; cursor: pointer; }
+  #msg {
+    margin-top: 14px;
+    min-height: 32px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+  }
+  #msg.win { color: var(--ok); }
+  #msg.warn { color: var(--bad); }
+  .hidden-counts .count { visibility: hidden; }
+</style>
+  <script src="../assets/olymp.js"></script>
+</head>
+<body>
+  <h1>Стражники</h1>
+  <div class="task">
+    Город состоит из 7 горизонтальных и 7 вертикальных улиц, у них 49 перекрёстков.
+    Улица безопасна, если на ней стоят хотя бы 3 стражника.
+    Расставь <b>не больше 21</b> стражника на перекрёстках так, чтобы безопасными стали <b>все 14 улиц</b>.
+    Нажми на перекрёсток, чтобы поставить или убрать стражника.
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="bar">
+    <span id="total">Стражников: 0 из 21</span>
+    <button id="reset">Очистить</button>
+    <label><input type="checkbox" id="showCounts" checked> Показывать счёт по улицам</label>
+  </div>
+  <div id="msg"></div>
+
+<script>
+  const N = 7;
+  const NEED = 3;
+  const LIMIT = 21;
+  const grid = Array.from({ length: N }, () => Array(N).fill(false));
+  const board = document.getElementById("board");
+  const cells = [];
+  const rowCounts = [];
+  const colCounts = [];
+
+  for (let r = 0; r < N; r++) {
+    cells.push([]);
+    for (let c = 0; c < N; c++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.innerHTML = '<span class="dot"></span>';
+      cell.addEventListener("click", () => {
+        grid[r][c] = !grid[r][c];
+        update();
+      });
+      board.appendChild(cell);
+      cells[r].push(cell);
+    }
+    const rc = document.createElement("div");
+    rc.className = "count";
+    board.appendChild(rc);
+    rowCounts.push(rc);
+  }
+  for (let c = 0; c < N; c++) {
+    const cc = document.createElement("div");
+    cc.className = "count";
+    board.appendChild(cc);
+    colCounts.push(cc);
+  }
+
+  function update() {
+    let total = 0;
+    let safe = 0;
+    for (let r = 0; r < N; r++) {
+      let n = 0;
+      for (let c = 0; c < N; c++) {
+        cells[r][c].classList.toggle("on", grid[r][c]);
+        if (grid[r][c]) n++;
+      }
+      total += n;
+      if (n >= NEED) safe++;
+      rowCounts[r].textContent = n;
+      rowCounts[r].classList.toggle("ok", n >= NEED);
+    }
+    for (let c = 0; c < N; c++) {
+      let n = 0;
+      for (let r = 0; r < N; r++) if (grid[r][c]) n++;
+      if (n >= NEED) safe++;
+      colCounts[c].textContent = n;
+      colCounts[c].classList.toggle("ok", n >= NEED);
+    }
+
+    const totalEl = document.getElementById("total");
+    totalEl.textContent = `Стражников: ${total} из ${LIMIT}`;
+    totalEl.classList.toggle("over", total > LIMIT);
+
+    const msg = document.getElementById("msg");
+    msg.className = "";
+    if (total > LIMIT) {
+      msg.textContent = "Слишком много стражников, нужно не больше 21";
+      msg.classList.add("warn");
+    } else if (safe === 2 * N) {
+      msg.textContent = "🎉 Все 14 улиц безопасны!";
+      msg.classList.add("win");
+      window.Olymp && Olymp.stars(3);
+    } else if (total > 0) {
+      msg.textContent = `Безопасных улиц: ${safe} из 14`;
+    } else {
+      msg.textContent = "";
+    }
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    for (const row of grid) row.fill(false);
+    update();
+  });
+  document.getElementById("showCounts").addEventListener("change", (e) => {
+    board.classList.toggle("hidden-counts", !e.target.checked);
+  });
+
+  update();
+</script>
+</body>
+</html>

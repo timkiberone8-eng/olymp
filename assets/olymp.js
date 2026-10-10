@@ -57,12 +57,13 @@
   function addChrome() {
     const style = document.createElement("style");
     style.textContent = `
-      .olymp-back, .olymp-toast { font: 600 15px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; }
-      .olymp-back { position: fixed; left: 12px; bottom: 12px; z-index: 2147483000; padding: 9px 14px;
-        border-radius: 999px; background: #1f2937; color: #fff; text-decoration: none;
-        box-shadow: 0 4px 14px rgba(0,0,0,.25); opacity: .9; }
-      .olymp-back:hover { opacity: 1; }
-      .olymp-back.center { left: 50%; transform: translateX(-50%); }
+      .olymp-nav a, .olymp-toast { font: 600 15px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .olymp-nav { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 2147483000;
+        display: flex; justify-content: space-between; gap: 10px; pointer-events: none; }
+      .olymp-nav.center { justify-content: center; }
+      .olymp-nav a { pointer-events: auto; padding: 9px 14px; border-radius: 999px; background: #1f2937; color: #fff;
+        text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,.25); opacity: .9; }
+      .olymp-nav a:hover { opacity: 1; }
       .olymp-toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 2147483001;
         display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 16px;
         background: #fff7d6; color: #3b2f05; border: 2px solid #f2c94c; box-shadow: 0 8px 24px rgba(0,0,0,.2);
@@ -71,11 +72,32 @@
       .olymp-stars { color: #f2b705; font-size: 24px; letter-spacing: 2px; }
     `;
     document.head.appendChild(style);
-    const back = document.createElement("a");
-    back.className = document.body.dataset.olympBack === "center" ? "olymp-back center" : "olymp-back";
-    back.href = `../${group}/`;
-    back.textContent = "← Все задачи";
-    document.body.appendChild(back);
+    const nav = document.createElement("nav");
+    nav.className = document.body.dataset.olympBack === "center" ? "olymp-nav center" : "olymp-nav";
+    nav.innerHTML = `<a href="../${group}/">← Все задачи</a>`;
+    document.body.appendChild(nav);
+
+    const data = document.createElement("script");
+    data.src = "../data/groups.js";
+    data.onload = () => {
+      const next = nextTask();
+      if (!next) return;
+      const link = document.createElement("a");
+      link.href = `${next}.html?g=${group}`;
+      link.title = window.OLYMP_TASKS[next].title;
+      link.textContent = "Следующая задача →";
+      nav.appendChild(link);
+    };
+    document.head.appendChild(data);
+  }
+
+  function nextTask() {
+    const g = window.OLYMP_GROUPS && window.OLYMP_GROUPS[group];
+    if (!g) return null;
+    const lesson = g.lessons[g.lessons.length - 1];
+    const list = [...lesson.today, ...lesson.review];
+    const i = list.indexOf(task);
+    return i >= 0 ? list[i + 1] || null : null;
   }
 
   if (group && /\/tasks\//.test(location.pathname)) {

@@ -34,9 +34,12 @@
   }
 
   function toast(n) {
+    const g = window.OLYMP_GROUPS && window.OLYMP_GROUPS[group];
+    const plain = g && g.stars === false;
+    if (plain && n < MAX) return;
     const el = document.createElement("div");
     el.className = "olymp-toast";
-    el.innerHTML = `<span class="olymp-stars">${starsText(n)}</span>` +
+    el.innerHTML = plain ? "Задача решена!" : `<span class="olymp-stars">${starsText(n)}</span>` +
       (n === MAX ? "Задача решена! Все звёзды твои" : "Звёзды сохранены, можно лучше");
     document.body.appendChild(el);
     setTimeout(() => el.classList.add("hide"), 3500);
@@ -95,7 +98,7 @@
     const g = window.OLYMP_GROUPS && window.OLYMP_GROUPS[group];
     if (!g) return null;
     const lesson = g.lessons[g.lessons.length - 1];
-    const list = [...lesson.today, ...lesson.review];
+    const list = lesson.tasks || [...lesson.today, ...lesson.review];
     const i = list.indexOf(task);
     return i >= 0 ? list[i + 1] || null : null;
   }

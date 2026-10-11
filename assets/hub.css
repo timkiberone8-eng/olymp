@@ -44,6 +44,7 @@ h2 { margin: 30px 0 14px; font-size: 24px; }
 .card .about { font-size: 15px; line-height: 1.4; color: #4c4a7a; flex: 1; }
 .stars { font-size: 26px; letter-spacing: 3px; color: #d6d3e8; }
 .stars .on { color: #f59e0b; }
+.done { font-size: 18px; font-weight: 800; color: #15803d; }
 
 .win {
   margin: 8px 0 4px; padding: 18px 22px; border-radius: 22px; text-align: center;

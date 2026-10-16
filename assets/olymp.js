@@ -29,32 +29,60 @@
     save(data);
   }
 
+  let usedHint = false;
+
+  function markHintUsed() {
+    if (usedHint) return;
+    usedHint = true;
+    const el = document.createElement("div");
+    el.className = "olymp-toast olymp-toast-hint";
+    el.innerHTML = "<span>💡 Подсказка открыта</span> <span style='font-size:12px;opacity:0.85;'>(-1 ⭐ от награды)</span>";
+    document.body.appendChild(el);
+    setTimeout(() => el.classList.add("hide"), 2800);
+    setTimeout(() => el.remove(), 3500);
+  }
+
   function starsText(n) {
     return "★".repeat(n) + "☆".repeat(MAX - n);
   }
 
-  function toast(n) {
+  function toast(n, penalized = false) {
     const g = window.OLYMP_GROUPS && window.OLYMP_GROUPS[group];
     const plain = g && g.stars === false;
-    if (plain && n < MAX) return;
+    if (plain && n < MAX && !penalized) return;
     const el = document.createElement("div");
     el.className = "olymp-toast";
-    el.innerHTML = plain ? "Задача решена!" : `<span class="olymp-stars">${starsText(n)}</span>` +
-      (n === MAX ? "Задача решена! Все звёзды твои" : "Звёзды сохранены, можно лучше");
+    let msg = "";
+    if (plain) {
+      msg = "Задача решена!";
+    } else if (penalized) {
+      msg = "Решено с подсказкой (-1 ⭐)";
+    } else if (n === MAX) {
+      msg = "Задача решена! Все звёзды твои";
+    } else {
+      msg = "Звёзды сохранены, можно лучше";
+    }
+    el.innerHTML = plain ? msg : `<span class="olymp-stars">${starsText(n)}</span> <span>${msg}</span>`;
     document.body.appendChild(el);
-    setTimeout(() => el.classList.add("hide"), 3500);
-    setTimeout(() => el.remove(), 4200);
+    setTimeout(() => el.classList.add("hide"), 3800);
+    setTimeout(() => el.remove(), 4500);
   }
 
   function stars(n = MAX) {
     if (!group) return;
+    let penalized = false;
+    if (usedHint && n > 1) {
+      n = Math.max(1, n - 1);
+      penalized = true;
+    }
     n = Math.max(0, Math.min(MAX, n));
     const data = load();
     const mine = data[group] || (data[group] = {});
-    if ((mine[task] || 0) >= n) return;
-    mine[task] = n;
-    save(data);
-    toast(n);
+    if ((mine[task] || 0) < n) {
+      mine[task] = n;
+      save(data);
+    }
+    toast(n, penalized);
   }
 
   function addChrome() {
@@ -72,6 +100,7 @@
         background: #fff7d6; color: #3b2f05; border: 2px solid #f2c94c; box-shadow: 0 8px 24px rgba(0,0,0,.2);
         transition: opacity .6s, transform .6s; }
       .olymp-toast.hide { opacity: 0; transform: translate(-50%, -12px); }
+      .olymp-toast-hint { background: #eff6ff; color: #1e3a8a; border-color: #93c5fd; font-size: 14px; padding: 10px 18px; }
       .olymp-stars { color: #f2b705; font-size: 24px; letter-spacing: 2px; }
     `;
     document.head.appendChild(style);
@@ -103,9 +132,47 @@
     return i >= 0 ? list[i + 1] || null : null;
   }
 
+  // Global listeners for hints
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("button, a, summary, [data-hint]");
+    if (!btn) return;
+    const text = (btn.textContent || "").toLowerCase();
+    const id = (btn.id || "").toLowerCase();
+    const cls = (btn.className || "").toLowerCase();
+    if (
+      btn.hasAttribute("data-hint") ||
+      id.includes("hint") ||
+      cls.includes("hint") ||
+      text.includes("подсказ")
+    ) {
+      markHintUsed();
+    }
+  }, true);
+
+  document.addEventListener("toggle", (e) => {
+    if (e.target.tagName === "DETAILS" && e.target.open) {
+      const summary = e.target.querySelector("summary");
+      const sumText = (summary ? summary.textContent : e.target.textContent || "").toLowerCase();
+      if (sumText.includes("подсказ") || sumText.includes("hint")) {
+        markHintUsed();
+      }
+    }
+  }, true);
+
   if (group && /\/tasks\//.test(location.pathname)) {
     document.addEventListener("DOMContentLoaded", addChrome);
   }
 
-  window.Olymp = { MAX, group, task, stars, read, reset, starsText, best: () => (group ? read(group)[task] || 0 : 0) };
+  window.Olymp = {
+    MAX,
+    group,
+    task,
+    stars,
+    read,
+    reset,
+    starsText,
+    useHint: markHintUsed,
+    usedHint: () => usedHint,
+    best: () => (group ? read(group)[task] || 0 : 0)
+  };
 })();

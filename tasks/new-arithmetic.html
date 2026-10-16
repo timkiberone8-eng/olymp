@@ -25,26 +25,26 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-zinc-800 p-4 sm:p-6 flex flex-col items-center justify-center">
+<body class="min-h-[100dvh] text-zinc-800 p-2 sm:p-4 flex flex-col items-center justify-center">
 
-  <div class="w-full max-w-4xl bg-white border border-zinc-200/90 rounded-3xl p-5 sm:p-8 shadow-xl">
+  <div class="w-full max-w-4xl bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-xl flex flex-col justify-between my-auto">
     
     <!-- Заголовок -->
-    <div class="flex items-center justify-between border-b border-zinc-100 pb-4 mb-5">
+    <div class="flex items-center justify-between border-b border-zinc-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
       <div>
-        <div class="text-xs uppercase tracking-wider text-amber-600 font-semibold">Олимпиада KIBERone · 4 неделя</div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">Новая арифметика Софы</h1>
+        <div class="text-[11px] sm:text-xs uppercase tracking-wider text-amber-600 font-semibold">Олимпиада KIBERone · 4 неделя</div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">Новая арифметика Софы</h1>
       </div>
       <div class="text-right">
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
           Логика и уравнения
         </span>
       </div>
     </div>
 
     <!-- Условие задачи -->
-    <details open class="text-sm sm:text-base text-zinc-700 bg-amber-50/50 border border-amber-200/70 rounded-2xl px-4 sm:px-5 py-3 mb-6">
-      <summary class="cursor-pointer font-bold text-zinc-900">Условие задачи</summary>
+    <details class="text-xs sm:text-sm text-zinc-700 bg-amber-50/50 border border-amber-200/70 rounded-xl px-3 sm:px-4 py-2 mb-3">
+      <summary class="cursor-pointer font-bold text-zinc-900">Условие задачи (нажми, чтобы развернуть)</summary>
       <div class="mt-2 text-zinc-600 leading-relaxed space-y-1">
         <p>Софа придумала свою арифметику! Она складывает геометрические фигуры в таблице 3×3.</p>
         <p>Суммы фигур в строках подписаны <b>справа</b>, а суммы в столбцах — <b>снизу</b>.</p>
@@ -52,7 +52,7 @@
       </div>
     </details>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-start">
       
       <!-- Сетка 3x3 с суммами -->
       <div class="lg:col-span-7 flex flex-col items-center">
@@ -219,10 +219,10 @@
         </div>
 
         <!-- Подсказка -->
-        <button id="btn-hint" class="text-xs text-zinc-500 hover:text-zinc-800 underline text-left self-start">
-          💡 Нужна подсказка?
+        <button id="btn-hint" class="text-xs text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl font-medium text-left self-start flex items-center gap-1.5 transition">
+          <span>💡</span> <span>Подсказка (-1 ⭐)</span>
         </button>
-        <div id="hint-box" class="hidden text-xs text-zinc-600 bg-zinc-100 p-3 rounded-xl border border-zinc-200 space-y-1">
+        <div id="hint-box" class="hidden text-xs text-zinc-600 bg-amber-50/60 p-3 rounded-xl border border-amber-200 space-y-1">
           <p>• <b>Подсказка 1:</b> Посмотри на вторую строку: <i>2 Квадрата + 1 Треугольник = 11</i>.</p>
           <p>• <b>Подсказка 2 (Трюк гения):</b> Сложи все строки: 14 + 11 + 19 = 44. Сумма столбцов 1 и 2: 14 + 14 = 28. Сколько остаётся на третий столбец?</p>
         </div>
@@ -411,7 +411,10 @@
     });
 
     hintBtn.addEventListener('click', () => {
-      hintBox.classList.toggle('hidden');
+      const isHidden = hintBox.classList.toggle('hidden');
+      hintBtn.innerHTML = isHidden 
+        ? "<span>💡</span> <span>Подсказка (-1 ⭐)</span>" 
+        : "<span>✕</span> <span>Скрыть подсказку</span>";
     });
 
   </script>

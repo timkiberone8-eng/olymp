@@ -12,7 +12,7 @@
   </style>
   <script src="../assets/olymp.js"></script>
 </head>
-<body class="bg-zinc-100 text-zinc-900 antialiased p-3 sm:p-6 md:p-8 min-h-screen flex flex-col items-center justify-center select-none font-sans">
+<body class="bg-zinc-100 text-zinc-900 antialiased p-3 sm:p-6 md:p-8 min-h-[100dvh] flex flex-col items-center justify-center select-none font-sans">
   <div class="w-full max-w-5xl bg-white text-zinc-900 border border-zinc-200 rounded-3xl p-5 sm:p-8 shadow-xl">
     
     <!-- Верхняя панель: Название и счетчики -->
@@ -61,17 +61,24 @@
     </div>
 
     <!-- Нижняя панель действий -->
-    <div class="flex items-center justify-between pt-1">
-      <div class="flex items-center gap-3">
-        <button id="undo-btn" onclick="undoMove()" disabled class="px-5 py-2.5 text-sm sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 disabled:opacity-40 disabled:pointer-events-none transition shadow-2xs">
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="undo-btn" onclick="undoMove()" disabled class="px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 disabled:opacity-40 disabled:pointer-events-none transition shadow-2xs">
           ← Отменить ход
         </button>
-        <button id="reset-btn" onclick="resetBoard()" class="px-5 py-2.5 text-sm sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition shadow-2xs">
+        <button id="reset-btn" onclick="resetBoard()" class="px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-base font-medium rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition shadow-2xs">
           Сброс
+        </button>
+        <button id="btn-hint" class="px-3.5 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-base font-medium rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 transition">
+          💡 Подсказка (-1 ⭐)
         </button>
       </div>
 
       <div id="result-badge" class="hidden text-sm sm:text-base font-medium px-4 py-1.5 rounded-full border"></div>
+    </div>
+
+    <div id="hint-box" class="hidden mt-3 text-xs sm:text-sm text-amber-900 bg-amber-50/90 border border-amber-300 rounded-xl p-2.5 text-center">
+      💡 <b>Первый ход:</b> прыгни монетой <b>4</b> на монету <b>7</b> (перепрыгивая ровно через 2 монеты: 5 и 6)!
     </div>
 
   </div>
@@ -312,6 +319,17 @@
       selectedIdx = null;
       setInfoBox("Поле сброшено.", "Цель: получить 4 стопки по 2 монеты.", "neutral");
       render();
+    }
+
+    const hintBtn = document.getElementById("btn-hint");
+    const hintBox = document.getElementById("hint-box");
+    if (hintBtn) {
+      hintBtn.addEventListener("click", () => {
+        const isHidden = hintBox.classList.toggle("hidden");
+        hintBtn.innerHTML = isHidden 
+          ? "💡 Подсказка (-1 ⭐)" 
+          : "✕ Скрыть подсказку";
+      });
     }
 
     render();

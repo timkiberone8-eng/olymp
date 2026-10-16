@@ -15,12 +15,12 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: #fafaf9;
       color: #262626;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 24px;
+      padding: 10px 16px;
     }
 
     .container {
@@ -29,7 +29,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(12px, 2vh, 22px);
+      gap: clamp(8px, 1.6vh, 18px);
     }
 
     /* Header */
@@ -123,8 +123,8 @@
 
     .magic-square {
       display: grid;
-      grid-template-columns: repeat(3, clamp(96px, 17vmin, 148px));
-      grid-template-rows: repeat(3, clamp(96px, 17vmin, 148px));
+      grid-template-columns: repeat(3, clamp(72px, 15vmin, 132px));
+      grid-template-rows: repeat(3, clamp(72px, 15vmin, 132px));
       background: #262626; /* Hand-drawn pencil line */
       gap: 2.5px;          /* Unbreakable solid grid divider */
       border: 3.5px solid #262626;
@@ -334,7 +334,7 @@
       <div class="status-note" id="statusNote"></div>
 
       <div class="hint-wrap">
-        <button class="hint-btn" id="hintToggle">Подсказка</button>
+        <button class="hint-btn" id="hintToggle">💡 Подсказка (-1 ⭐)</button>
         <div class="hint-content" id="hintContent"></div>
       </div>
     </div>
@@ -419,7 +419,7 @@
 
       hintContent.classList.remove('show');
       hintContent.textContent = data.hint;
-      hintToggle.textContent = 'Подсказка';
+      hintToggle.textContent = '💡 Подсказка (-1 ⭐)';
 
       if (completed[idx]) {
         statusNote.className = 'status-note ok';
@@ -565,7 +565,7 @@
 
     hintToggle.addEventListener('click', () => {
       const isShown = hintContent.classList.toggle('show');
-      hintToggle.textContent = isShown ? 'Скрыть подсказку' : 'Подсказка';
+      hintToggle.textContent = isShown ? 'Скрыть подсказку' : '💡 Подсказка (-1 ⭐)';
     });
 
     tabs.forEach((tab, i) => {

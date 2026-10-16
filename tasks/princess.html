@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Задача для принцесс</title>
+  <script src="../assets/tailwind.js"></script>
+  <script src="../assets/olymp.js"></script>
+  <style>
+    body {
+      background-color: #faf5ff;
+      background-image: 
+        radial-gradient(#e9d5ff 1.2px, transparent 1.2px),
+        radial-gradient(#f3e8ff 1.2px, #faf5ff 1.2px);
+      background-size: 28px 28px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .door-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .door-card:hover:not(.disabled) {
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] w-full text-zinc-800 p-2 sm:p-4 md:p-6 flex flex-col justify-between box-border">
+
+  <!-- Главный контейнер на всю ширину -->
+  <div class="w-full max-w-[1680px] mx-auto flex-1 flex flex-col justify-between bg-white border-2 border-purple-200/90 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl">
+    
+    <!-- Шапка -->
+    <div class="flex items-center justify-between border-b-2 border-purple-100 pb-2 mb-2 sm:mb-3">
+      <div>
+        <div class="text-[11px] sm:text-xs uppercase tracking-wider text-purple-600 font-bold">Олимпиада KIBERone · Неделя 3 · № 3</div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-zinc-900 mt-0.5 tracking-tight flex items-center gap-2">
+          <span>👑 Задача для принцесс</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-semibold bg-purple-50 text-purple-800 border border-purple-200">
+          Логика и исключение
+        </span>
+      </div>
+    </div>
+
+    <!-- Условие задачи -->
+    <details class="text-xs sm:text-sm text-zinc-700 bg-purple-50/70 border border-purple-200 rounded-2xl px-3 sm:px-4 py-2 mb-2 sm:mb-3">
+      <summary class="cursor-pointer font-bold text-purple-950">Условие задачи (нажми, чтобы развернуть)</summary>
+      <div class="mt-2 text-zinc-700 leading-relaxed space-y-1">
+        <p>— <i>Задаю тебе последнюю задачу,</i> — сказала принцесса Иванушке, — <i>найди единственный верный путь из этой комнаты в зимний сад и сорви для меня самую красивую розу 🌹. Из этой комнаты ты пройдёшь через левую, правую или среднюю дверь во вторую комнату; такие же три вида дверей будут при переходе из второй в третью и из третьей — в сад.</i></p>
+        <p><b>Советы принцессы:</b> 1️⃣ Из 1-й комнаты: пройди через <b>правую</b> дверь. 2️⃣ Из 2-й комнаты: <b>не</b> через правую дверь. 3️⃣ Из 3-й комнаты: <b>не</b> через левую дверь.</p>
+        <p>⚠️ Иванушка знал, что из трёх советов принцессы <b>ровно 2 ложные</b> (значит, правдивый только один!).</p>
+        <p>🤫 А служанка шепнула: <b>надо пройти через дверь каждого вида ровно по одному разу</b> (одна Левая, одна Средняя, одна Правая в любом порядке).</p>
+        <p class="font-bold text-purple-900">Каким маршрутом следует пройти Иванушке?</p>
+      </div>
+    </details>
+
+    <!-- Основная интерактивная зона: 3 комнаты -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-4 my-auto">
+      
+      <!-- Комната 1 -->
+      <div class="bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-3 sm:p-5 flex flex-col justify-between shadow-xs">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-2 mb-3">
+          <span class="text-xs sm:text-sm uppercase font-bold text-zinc-500">Шаг 1</span>
+          <span class="font-bold text-zinc-900 text-sm sm:text-base">Комната № 1</span>
+        </div>
+        <div class="text-xs text-zinc-500 mb-2">Выбери дверь во 2-ю комнату:</div>
+        <div class="grid grid-cols-3 gap-2" id="doors-room-1">
+          <button onclick="pickDoor(0, 'left')" id="btn-0-left" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Левая</span>
+          </button>
+          <button onclick="pickDoor(0, 'mid')" id="btn-0-mid" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Средняя</span>
+          </button>
+          <button onclick="pickDoor(0, 'right')" id="btn-0-right" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Правая</span>
+          </button>
+        </div>
+        <div class="mt-3 text-[11px] sm:text-xs text-purple-700 bg-purple-50 p-2 rounded-lg border border-purple-200">
+          Совет 1: «Иди через правую»
+        </div>
+      </div>
+
+      <!-- Комната 2 -->
+      <div class="bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-3 sm:p-5 flex flex-col justify-between shadow-xs">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-2 mb-3">
+          <span class="text-xs sm:text-sm uppercase font-bold text-zinc-500">Шаг 2</span>
+          <span class="font-bold text-zinc-900 text-sm sm:text-base">Комната № 2</span>
+        </div>
+        <div class="text-xs text-zinc-500 mb-2">Выбери дверь в 3-ю комнату:</div>
+        <div class="grid grid-cols-3 gap-2" id="doors-room-2">
+          <button onclick="pickDoor(1, 'left')" id="btn-1-left" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Левая</span>
+          </button>
+          <button onclick="pickDoor(1, 'mid')" id="btn-1-mid" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Средняя</span>
+          </button>
+          <button onclick="pickDoor(1, 'right')" id="btn-1-right" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Правая</span>
+          </button>
+        </div>
+        <div class="mt-3 text-[11px] sm:text-xs text-purple-700 bg-purple-50 p-2 rounded-lg border border-purple-200">
+          Совет 2: «НЕ через правую»
+        </div>
+      </div>
+
+      <!-- Комната 3 -->
+      <div class="bg-zinc-50 border-2 border-zinc-200 rounded-2xl p-3 sm:p-5 flex flex-col justify-between shadow-xs">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-2 mb-3">
+          <span class="text-xs sm:text-sm uppercase font-bold text-zinc-500">Шаг 3</span>
+          <span class="font-bold text-zinc-900 text-sm sm:text-base">Комната № 3</span>
+        </div>
+        <div class="text-xs text-zinc-500 mb-2">Выбери дверь в Зимний сад 🌹:</div>
+        <div class="grid grid-cols-3 gap-2" id="doors-room-3">
+          <button onclick="pickDoor(2, 'left')" id="btn-2-left" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Левая</span>
+          </button>
+          <button onclick="pickDoor(2, 'mid')" id="btn-2-mid" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Средняя</span>
+          </button>
+          <button onclick="pickDoor(2, 'right')" id="btn-2-right" class="door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs">
+            <span class="text-xl sm:text-2xl">🚪</span>
+            <span>Правая</span>
+          </button>
+        </div>
+        <div class="mt-3 text-[11px] sm:text-xs text-purple-700 bg-purple-50 p-2 rounded-lg border border-purple-200">
+          Совет 3: «НЕ через левую»
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Интерактивный верификатор условий (Детектор истины) -->
+    <div class="bg-purple-50/80 border-2 border-purple-200 rounded-2xl p-3 sm:p-4 my-2 sm:my-3">
+      <div class="text-xs sm:text-sm font-bold text-purple-950 uppercase tracking-wide mb-2 flex items-center justify-between">
+        <span>Проверка маршрута: <b id="route-display" class="font-mono text-purple-700">не выбран</b></span>
+        <span id="all-unique-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-zinc-200 text-zinc-600">Все 3 двери разные: —</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-sm">
+        <div id="check-s1" class="p-2 rounded-xl bg-white border border-zinc-200 flex items-center justify-between">
+          <span>Совет 1 (Комната 1):</span>
+          <span class="font-bold text-zinc-400">—</span>
+        </div>
+        <div id="check-s2" class="p-2 rounded-xl bg-white border border-zinc-200 flex items-center justify-between">
+          <span>Совет 2 (Комната 2):</span>
+          <span class="font-bold text-zinc-400">—</span>
+        </div>
+        <div id="check-s3" class="p-2 rounded-xl bg-white border border-zinc-200 flex items-center justify-between">
+          <span>Совет 3 (Комната 3):</span>
+          <span class="font-bold text-zinc-400">—</span>
+        </div>
+      </div>
+      <div id="truth-summary" class="text-xs sm:text-sm font-semibold text-zinc-600 mt-2 text-center">
+        Выбери двери во всех трёх комнатах, чтобы проверить советы принцессы
+      </div>
+    </div>
+
+    <!-- Панель управления и кнопка подсказки -->
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button id="btn-check" onclick="checkSolution()" class="px-6 py-2.5 sm:py-3 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md transition duration-150">
+          Проверить маршрут 🌹
+        </button>
+        <button onclick="resetRoute()" class="px-4 py-2.5 sm:py-3 bg-zinc-200 hover:bg-zinc-300 active:scale-95 text-zinc-700 font-bold text-sm sm:text-base rounded-2xl transition duration-150">
+          Сброс 🔄
+        </button>
+        <button id="btn-hint" class="px-3.5 py-2.5 sm:py-3 text-xs sm:text-sm font-bold rounded-2xl border-2 border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 transition flex items-center gap-1.5">
+          <span>💡</span> <span>Подсказка (-1 ⭐)</span>
+        </button>
+      </div>
+      <div id="result-msg" class="text-sm sm:text-base font-bold min-h-[24px]"></div>
+    </div>
+
+    <!-- Блок подсказки -->
+    <div id="hint-box" class="hidden mt-3 text-xs sm:text-sm text-amber-900 bg-amber-50/95 border-2 border-amber-300 rounded-2xl p-3 sm:p-4 leading-relaxed space-y-1">
+      <p>💡 <b>Логическая подсказка:</b></p>
+      <p>• Служанка сказала, что все три двери разные — значит маршрут это перестановка (Левая, Средняя, Правая).</p>
+      <p>• Из 3 советов принцессы ровно <b>один</b> правдивый, а два — ложь. Что если 1-й совет («иди через правую») ложь? Значит в 1-й комнате дверь <b>не</b> правая!</p>
+      <p>• А если 2-й совет («НЕ через правую») ложь? Это значит, что во 2-й комнате дверь как раз <b>ПРАВАЯ</b>! Попробуй это направление!</p>
+    </div>
+
+    <!-- Карточка триумфа и разбора -->
+    <div id="solution-card" class="hidden mt-4 bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-4 sm:p-5 text-zinc-800">
+      <div class="text-base sm:text-lg font-black text-emerald-800 flex items-center gap-2 mb-2">
+        <span>🎉 Браво! Маршрут «Левая → Правая → Средняя» единственно верный!</span>
+      </div>
+      <div class="text-xs sm:text-sm text-zinc-700 space-y-1 leading-relaxed">
+        <p><b>Почему это работает:</b></p>
+        <p>1. В 1-й комнате идём в <b>Левую</b> 🚪 → совет 1 («иди в правую») оказывается <b>ЛОЖЬЮ</b> ❌.</p>
+        <p>2. Во 2-й комнате идём в <b>Правую</b> 🚪 → совет 2 («не через правую») оказывается <b>ЛОЖЬЮ</b> ❌.</p>
+        <p>3. В 3-й комнате идём в <b>Среднюю</b> 🚪 → совет 3 («не через левую») оказывается <b>ПРАВДОЙ</b> ✅.</p>
+        <p class="font-bold text-emerald-900 pt-1">Итог: ровно 1 совет правдив (совет 3), ровно 2 совета ложны, и все три двери (Левая, Правая, Средняя) использованы ровно по одному разу! Иванушка в саду и роза у принцессы!</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const route = [null, null, null]; // [room0, room1, room2] -> 'left' | 'mid' | 'right'
+    const DOOR_NAMES = { left: 'Левая', mid: 'Средняя', right: 'Правая' };
+
+    function pickDoor(roomIdx, doorType) {
+      route[roomIdx] = doorType;
+      // UI update for room buttons
+      ['left', 'mid', 'right'].forEach(d => {
+        const btn = document.getElementById(`btn-${roomIdx}-${d}`);
+        if (d === doorType) {
+          btn.className = "door-card py-3 px-1 rounded-xl border-2 border-purple-600 bg-purple-100 font-extrabold text-xs sm:text-sm text-purple-900 shadow-md ring-2 ring-purple-400";
+        } else {
+          btn.className = "door-card py-3 px-1 rounded-xl border-2 border-zinc-200 bg-white font-bold text-xs sm:text-sm text-zinc-500 hover:border-zinc-300";
+        }
+      });
+      updateDetector();
+    }
+
+    function updateDetector() {
+      const r0 = route[0];
+      const r1 = route[1];
+      const r2 = route[2];
+
+      const parts = route.map(d => d ? DOOR_NAMES[d] : '—');
+      document.getElementById('route-display').innerText = parts.join(' → ');
+
+      // Check unique
+      const chosen = route.filter(Boolean);
+      const isUnique = new Set(chosen).size === chosen.length && chosen.length === 3;
+      const uniqueBadge = document.getElementById('all-unique-badge');
+      if (chosen.length === 3) {
+        uniqueBadge.className = isUnique 
+          ? "text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300"
+          : "text-xs px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold border border-rose-300";
+        uniqueBadge.innerText = isUnique ? "Все 3 двери разные: Да ✓" : "Все 3 двери разные: Нет ✕";
+      } else {
+        uniqueBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-zinc-200 text-zinc-600";
+        uniqueBadge.innerText = "Все 3 двери разные: —";
+      }
+
+      // Check advice 1: Room 1 door is right
+      const checkS1 = document.getElementById('check-s1');
+      let trueCount = 0;
+      if (r0) {
+        const s1True = (r0 === 'right');
+        if (s1True) trueCount++;
+        checkS1.innerHTML = `<span>Совет 1 («в правую»):</span> <span class="font-bold ${s1True ? 'text-emerald-600' : 'text-rose-600'}">${s1True ? 'Правда ✅' : 'Ложь ❌'}</span>`;
+      } else {
+        checkS1.innerHTML = `<span>Совет 1:</span> <span class="font-bold text-zinc-400">—</span>`;
+      }
+
+      // Check advice 2: Room 2 door is NOT right
+      const checkS2 = document.getElementById('check-s2');
+      if (r1) {
+        const s2True = (r1 !== 'right');
+        if (s2True) trueCount++;
+        checkS2.innerHTML = `<span>Совет 2 («НЕ в правую»):</span> <span class="font-bold ${s2True ? 'text-emerald-600' : 'text-rose-600'}">${s2True ? 'Правда ✅' : 'Ложь ❌'}</span>`;
+      } else {
+        checkS2.innerHTML = `<span>Совет 2:</span> <span class="font-bold text-zinc-400">—</span>`;
+      }
+
+      // Check advice 3: Room 3 door is NOT left
+      const checkS3 = document.getElementById('check-s3');
+      if (r2) {
+        const s3True = (r2 !== 'left');
+        if (s3True) trueCount++;
+        checkS3.innerHTML = `<span>Совет 3 («НЕ в левую»):</span> <span class="font-bold ${s3True ? 'text-emerald-600' : 'text-rose-600'}">${s3True ? 'Правда ✅' : 'Ложь ❌'}</span>`;
+      } else {
+        checkS3.innerHTML = `<span>Совет 3:</span> <span class="font-bold text-zinc-400">—</span>`;
+      }
+
+      const summary = document.getElementById('truth-summary');
+      if (chosen.length === 3) {
+        if (trueCount === 1) {
+          summary.className = "text-xs sm:text-sm font-bold text-emerald-700 mt-2 text-center";
+          summary.innerText = `Истинных советов ровно 1 из 3 (как и должно быть!)`;
+        } else {
+          summary.className = "text-xs sm:text-sm font-bold text-rose-600 mt-2 text-center";
+          summary.innerText = `Истинных советов: ${trueCount} из 3. А нужно, чтобы был РОВНО 1 (2 ложных)!`;
+        }
+      } else {
+        summary.className = "text-xs sm:text-sm font-semibold text-zinc-600 mt-2 text-center";
+        summary.innerText = "Выбери двери во всех трёх комнатах, чтобы проверить советы принцессы";
+      }
+    }
+
+    function checkSolution() {
+      const resultMsg = document.getElementById('result-msg');
+      if (route.some(d => d === null)) {
+        resultMsg.className = "text-sm sm:text-base font-bold text-rose-600";
+        resultMsg.innerText = "Сначала выбери дверь в каждой из 3 комнат!";
+        return;
+      }
+
+      const isUnique = new Set(route).size === 3;
+      if (!isUnique) {
+        resultMsg.className = "text-sm sm:text-base font-bold text-rose-600";
+        resultMsg.innerText = "Служанка предупреждала: все 3 двери должны быть разного вида!";
+        return;
+      }
+
+      const s1 = route[0] === 'right';
+      const s2 = route[1] !== 'right';
+      const s3 = route[2] !== 'left';
+      const trueCount = (s1 ? 1 : 0) + (s2 ? 1 : 0) + (s3 ? 1 : 0);
+
+      if (trueCount !== 1) {
+        resultMsg.className = "text-sm sm:text-base font-bold text-rose-600";
+        resultMsg.innerText = `Не сходится: здесь ${trueCount} правдивых совета, а принцесса солгала ровно дважды!`;
+        return;
+      }
+
+      // Valid! (route is left, right, mid)
+      resultMsg.className = "text-sm sm:text-base font-black text-emerald-700";
+      resultMsg.innerText = "✓ Идеально! Маршрут найден верно!";
+      document.getElementById('solution-card').classList.remove('hidden');
+
+      if (window.Olymp) {
+        Olymp.stars(3);
+      }
+    }
+
+    function resetRoute() {
+      route[0] = null;
+      route[1] = null;
+      route[2] = null;
+      for (let r = 0; r < 3; r++) {
+        ['left', 'mid', 'right'].forEach(d => {
+          const btn = document.getElementById(`btn-${r}-${d}`);
+          btn.className = "door-card py-3 px-1 rounded-xl border-2 border-zinc-300 bg-white font-bold text-xs sm:text-sm text-zinc-700 flex flex-col items-center gap-1 shadow-xs";
+        });
+      }
+      document.getElementById('result-msg').innerText = '';
+      document.getElementById('solution-card').classList.add('hidden');
+      updateDetector();
+    }
+
+    const hintBtn = document.getElementById("btn-hint");
+    const hintBox = document.getElementById("hint-box");
+    if (hintBtn) {
+      hintBtn.addEventListener("click", () => {
+        const isHidden = hintBox.classList.toggle("hidden");
+        hintBtn.innerHTML = isHidden 
+          ? "<span>💡</span> <span>Подсказка (-1 ⭐)</span>" 
+          : "<span>✕</span> <span>Скрыть подсказку</span>";
+      });
+    }
+
+    updateDetector();
+  </script>
+</body>
+</html>

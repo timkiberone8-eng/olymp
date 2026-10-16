@@ -25,25 +25,25 @@
     }
   </style>
 </head>
-<body class="min-h-[100dvh] text-zinc-800 p-2 sm:p-4 flex flex-col items-center justify-center">
+<body class="min-h-[100dvh] w-full text-zinc-800 p-2 sm:p-4 md:p-6 flex flex-col justify-between box-border">
 
-  <div class="w-full max-w-4xl bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-xl flex flex-col justify-between my-auto">
+  <div class="w-full max-w-[1680px] mx-auto flex-1 bg-white border-2 border-amber-200/90 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl flex flex-col justify-between my-auto">
     
     <!-- Заголовок -->
-    <div class="flex items-center justify-between border-b border-zinc-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
+    <div class="flex items-center justify-between border-b-2 border-zinc-100 pb-3 mb-3 sm:mb-4">
       <div>
-        <div class="text-[11px] sm:text-xs uppercase tracking-wider text-amber-600 font-semibold">Олимпиада KIBERone · 4 неделя</div>
-        <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">Новая арифметика Софы</h1>
+        <div class="text-xs sm:text-sm uppercase tracking-wider text-amber-600 font-bold">Олимпиада KIBERone · 4 неделя · № 3</div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">📐 Новая арифметика Софы</h1>
       </div>
       <div class="text-right">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200">
           Логика и уравнения
         </span>
       </div>
     </div>
 
     <!-- Условие задачи -->
-    <details class="text-xs sm:text-sm text-zinc-700 bg-amber-50/50 border border-amber-200/70 rounded-xl px-3 sm:px-4 py-2 mb-3">
+    <details class="text-xs sm:text-sm md:text-base text-zinc-700 bg-amber-50/60 border border-amber-200/80 rounded-2xl px-4 py-2.5 mb-3 sm:mb-4">
       <summary class="cursor-pointer font-bold text-zinc-900">Условие задачи (нажми, чтобы развернуть)</summary>
       <div class="mt-2 text-zinc-600 leading-relaxed space-y-1">
         <p>Софа придумала свою арифметику! Она складывает геометрические фигуры в таблице 3×3.</p>
@@ -52,12 +52,12 @@
       </div>
     </details>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-center my-auto">
       
       <!-- Сетка 3x3 с суммами -->
       <div class="lg:col-span-7 flex flex-col items-center">
-        <div class="inline-block p-3 sm:p-4 bg-zinc-50 border border-zinc-200 rounded-3xl shadow-inner">
-          <div class="grid grid-cols-4 gap-2 sm:gap-3 text-center">
+        <div class="inline-block p-4 sm:p-6 bg-zinc-50 border-2 border-zinc-200 rounded-3xl shadow-inner">
+          <div class="grid grid-cols-4 gap-2.5 sm:gap-4 text-center">
             
             <!-- Строка 1: Треугольник, Квадрат, Круг -> 14 -->
             <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-emerald-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="triangle">

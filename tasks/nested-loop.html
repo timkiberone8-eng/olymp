@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Вложенный цикл</title>
+  <script src="../assets/tailwind.js"></script>
+  <script src="../assets/olymp.js"></script>
+  <style>
+    body {
+      background-color: #fafaf9;
+      background-image: 
+        linear-gradient(#f0eee6 1px, transparent 1px),
+        linear-gradient(90deg, #f0eee6 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .code-line {
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .code-line.active {
+      background-color: #fef08a !important; /* amber-200 */
+      border-left-color: #d97706 !important; /* amber-600 */
+    }
+  </style>
+</head>
+<body class="min-h-screen text-zinc-800 p-4 sm:p-6 flex flex-col items-center justify-center">
+
+  <div class="w-full max-w-4xl bg-white border border-zinc-200/90 rounded-3xl p-5 sm:p-8 shadow-xl">
+    
+    <!-- Заголовок -->
+    <div class="flex items-center justify-between border-b border-zinc-100 pb-4 mb-5">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-indigo-600 font-semibold">Олимпиада KIBERone · 4 неделя</div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">Вложенный цикл</h1>
+      </div>
+      <div class="text-right">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+          Трассировка кода
+        </span>
+      </div>
+    </div>
+
+    <!-- Условие задачи -->
+    <details open class="text-sm sm:text-base text-zinc-700 bg-indigo-50/50 border border-indigo-200/70 rounded-2xl px-4 sm:px-5 py-3 mb-6">
+      <summary class="cursor-pointer font-bold text-zinc-900">Условие задачи</summary>
+      <div class="mt-2 text-zinc-600 leading-relaxed space-y-1">
+        <p>Вычислите, чему будет равно значение переменной <b>S</b> после выполнения фрагмента алгоритма.</p>
+        <p>Вы можете посчитать в уме или на листке, либо запустить пошаговый симулятор выполнения!</p>
+      </div>
+    </details>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Код программы и симулятор -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        
+        <!-- Переключатель языка -->
+        <div class="flex items-center justify-between bg-zinc-100 p-1 rounded-xl">
+          <div class="flex gap-1 text-xs font-bold">
+            <button id="tab-algo" class="px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition">Кумир (Алгоритмический)</button>
+            <button id="tab-py" class="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition">Python</button>
+          </div>
+          <span class="text-[11px] font-mono text-zinc-400 pr-2">Трассировщик</span>
+        </div>
+
+        <!-- Окно кода -->
+        <div class="bg-zinc-900 text-zinc-100 p-4 rounded-2xl font-mono text-sm sm:text-base shadow-inner border border-zinc-800 overflow-x-auto">
+          
+          <!-- Кумир код -->
+          <div id="code-algo" class="space-y-1 leading-relaxed">
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent" data-line="0">S := 0</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300" data-line="1">нц для i от 1 до 2</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300" data-line="2">нц для j от 2 до 3</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-10 text-emerald-400 font-bold" data-line="3">S := S + i + j</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300" data-line="4">кц</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300" data-line="5">кц</div>
+          </div>
+
+          <!-- Python код -->
+          <div id="code-py" class="hidden space-y-1 leading-relaxed">
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent" data-line="0">S = 0</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300" data-line="1">for i in range(1, 3):  <span class="text-zinc-500 text-xs"># 1, 2</span></div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300" data-line="2">for j in range(2, 4):  <span class="text-zinc-500 text-xs"># 2, 3</span></div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-10 text-emerald-400 font-bold" data-line="3">S = S + i + j</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent" data-line="4"><span class="text-zinc-500 text-xs"># конец цикла j</span></div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent" data-line="5"><span class="text-zinc-500 text-xs"># конец цикла i</span></div>
+          </div>
+
+        </div>
+
+        <!-- Кнопки управления трассировкой -->
+        <div class="flex items-center gap-2">
+          <button id="btn-step" class="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl shadow transition duration-150 flex items-center justify-center gap-2 text-sm">
+            <span>Шаг вперёд</span>
+            <span class="text-xs">▶</span>
+          </button>
+          <button id="btn-reset" class="py-2.5 px-4 bg-zinc-200 hover:bg-zinc-300 active:scale-95 text-zinc-700 font-semibold rounded-xl transition duration-150 text-sm">
+            Сброс 🔄
+          </button>
+        </div>
+
+        <!-- Живые переменные -->
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-2.5">
+            <div class="text-[11px] uppercase font-bold text-indigo-500">Переменная i</div>
+            <div id="val-i" class="text-2xl font-mono font-extrabold text-indigo-800 mt-0.5">—</div>
+          </div>
+          <div class="bg-purple-50 border border-purple-200 rounded-xl p-2.5">
+            <div class="text-[11px] uppercase font-bold text-purple-500">Переменная j</div>
+            <div id="val-j" class="text-2xl font-mono font-extrabold text-purple-800 mt-0.5">—</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-300 rounded-xl p-2.5">
+            <div class="text-[11px] uppercase font-bold text-emerald-600">Сумма S</div>
+            <div id="val-s" class="text-2xl font-mono font-extrabold text-emerald-800 mt-0.5">0</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Правая колонка: Проверка ответа и таблица шагов -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- Проверка ответа -->
+        <div class="bg-indigo-50/70 border-2 border-indigo-200 rounded-2xl p-4">
+          <label for="inp-answer" class="block font-bold text-zinc-900 text-sm mb-1.5">
+            Итоговое значение S = ?
+          </label>
+          <div class="flex gap-2">
+            <input type="number" id="inp-answer" class="w-full px-3 py-2 border-2 border-indigo-300 rounded-xl font-mono text-xl font-extrabold text-center text-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" placeholder="Твой ответ">
+            <button id="btn-check" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl shadow transition duration-100 flex-shrink-0">
+              Проверить
+            </button>
+          </div>
+          <div id="result-msg" class="text-sm font-semibold mt-2.5 min-h-[22px]"></div>
+        </div>
+
+        <!-- Таблица трассировки шагов -->
+        <div class="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex-1">
+          <div class="text-xs uppercase font-bold text-zinc-500 mb-2">Таблица шагов:</div>
+          <div class="overflow-hidden border border-zinc-200 rounded-xl bg-white">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-zinc-100 text-zinc-600 font-bold border-b border-zinc-200">
+                <tr>
+                  <th class="py-1.5 px-3">Шаг</th>
+                  <th class="py-1.5 px-3">i</th>
+                  <th class="py-1.5 px-3">j</th>
+                  <th class="py-1.5 px-3">Вычисление S</th>
+                </tr>
+              </thead>
+              <tbody id="trace-body" class="font-mono divide-y divide-zinc-100 text-zinc-700">
+                <tr id="empty-row" class="text-zinc-400 italic">
+                  <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Решение и разбор ловушек -->
+    <div id="solution-card" class="hidden mt-6 bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-5 text-zinc-800">
+      <div class="flex items-center gap-2 text-emerald-800 font-extrabold text-lg mb-2">
+        <span>🎉 Браво! S = 16 — правильный ответ!</span>
+      </div>
+      <div class="text-xs sm:text-sm text-zinc-700 space-y-2 mt-2 leading-relaxed">
+        <p><b>Как работает алгоритм:</b> Внешний цикл запускается для $i=1$ и $i=2$. Внутри каждого шага переменная $j$ пробегает значения $2$ и $3$. Всего сложение выполняется 4 раза ($2 \times 2 = 4$ шага):</p>
+        <div class="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-xl border border-emerald-200">
+          <div>При i = 1: S = 0 + 1 + 2 = <b>3</b><br>S = 3 + 1 + 3 = <b>7</b></div>
+          <div>При i = 2: S = 7 + 2 + 2 = <b>11</b><br>S = 11 + 2 + 3 = <b>16</b></div>
+        </div>
+        <p class="text-[11px] text-zinc-500 pt-1">⚠️ <b>Частые ошибки:</b> сложить $i$ и $j$ только один раз ($8$) или забыть, что $S$ накапливается от шага к шагу.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const STEPS = [
+      { line: 0, i: null, j: null, s: 0, text: "Инициализация: S = 0" },
+      { line: 1, i: 1, j: null, s: 0, text: "Вход во внешний цикл: i = 1" },
+      { line: 2, i: 1, j: 2, s: 0, text: "Вход во внутренний цикл: j = 2" },
+      { line: 3, i: 1, j: 2, s: 3, calc: "0 + 1 + 2 = 3", text: "S := S + 1 + 2 = 3" },
+      { line: 2, i: 1, j: 3, s: 3, text: "Следующий j = 3" },
+      { line: 3, i: 1, j: 3, s: 7, calc: "3 + 1 + 3 = 7", text: "S := S + 1 + 3 = 7" },
+      { line: 1, i: 2, j: null, s: 7, text: "Следующий i = 2" },
+      { line: 2, i: 2, j: 2, s: 7, text: "Вход во внутренний цикл: j = 2" },
+      { line: 3, i: 2, j: 2, s: 11, calc: "7 + 2 + 2 = 11", text: "S := S + 2 + 2 = 11" },
+      { line: 2, i: 2, j: 3, s: 11, text: "Следующий j = 3" },
+      { line: 3, i: 2, j: 3, s: 16, calc: "11 + 2 + 3 = 16", text: "S := S + 2 + 3 = 16" },
+      { line: 5, i: 2, j: 3, s: 16, text: "Конец циклов! Итог S = 16" }
+    ];
+
+    let currentStep = -1;
+    let traceStepCount = 0;
+
+    const valI = document.getElementById('val-i');
+    const valJ = document.getElementById('val-j');
+    const valS = document.getElementById('val-s');
+    const stepBtn = document.getElementById('btn-step');
+    const resetBtn = document.getElementById('btn-reset');
+    const traceBody = document.getElementById('trace-body');
+    const emptyRow = document.getElementById('empty-row');
+    const answerInput = document.getElementById('inp-answer');
+    const checkBtn = document.getElementById('btn-check');
+    const resultMsg = document.getElementById('result-msg');
+    const solutionCard = document.getElementById('solution-card');
+
+    const tabAlgo = document.getElementById('tab-algo');
+    const tabPy = document.getElementById('tab-py');
+    const codeAlgo = document.getElementById('code-algo');
+    const codePy = document.getElementById('code-py');
+
+    tabAlgo.addEventListener('click', () => {
+      tabAlgo.className = "px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition";
+      tabPy.className = "px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition";
+      codeAlgo.classList.remove('hidden');
+      codePy.classList.add('hidden');
+    });
+
+    tabPy.addEventListener('click', () => {
+      tabPy.className = "px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition";
+      tabAlgo.className = "px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition";
+      codePy.classList.remove('hidden');
+      codeAlgo.classList.add('hidden');
+    });
+
+    function highlightLine(lineIdx) {
+      document.querySelectorAll('.code-line').forEach(el => {
+        if (parseInt(el.dataset.line, 10) === lineIdx) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    function doStep() {
+      if (currentStep >= STEPS.length - 1) {
+        stepBtn.disabled = true;
+        stepBtn.classList.add('opacity-50');
+        return;
+      }
+
+      currentStep++;
+      const step = STEPS[currentStep];
+
+      highlightLine(step.line);
+
+      valI.textContent = step.i !== null ? step.i : '—';
+      valJ.textContent = step.j !== null ? step.j : '—';
+      valS.textContent = step.s;
+
+      if (step.calc) {
+        traceStepCount++;
+        if (emptyRow) emptyRow.remove();
+        const tr = document.createElement('tr');
+        tr.className = "bg-emerald-50/50";
+        tr.innerHTML = `
+          <td class="py-1.5 px-3 font-bold text-zinc-800">${traceStepCount}</td>
+          <td class="py-1.5 px-3 text-indigo-700">${step.i}</td>
+          <td class="py-1.5 px-3 text-purple-700">${step.j}</td>
+          <td class="py-1.5 px-3 font-bold text-emerald-800">${step.calc}</td>
+        `;
+        traceBody.appendChild(tr);
+      }
+
+      if (currentStep === STEPS.length - 1) {
+        stepBtn.innerHTML = "<span>Завершено! S = 16</span>";
+        stepBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        stepBtn.classList.add('bg-emerald-600', 'cursor-default');
+        if (!answerInput.value) answerInput.value = 16;
+      }
+    }
+
+    function resetSimulation() {
+      currentStep = -1;
+      traceStepCount = 0;
+      highlightLine(-1);
+      valI.textContent = '—';
+      valJ.textContent = '—';
+      valS.textContent = '0';
+      traceBody.innerHTML = `
+        <tr id="empty-row" class="text-zinc-400 italic">
+          <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи</td>
+        </tr>
+      `;
+      stepBtn.disabled = false;
+      stepBtn.classList.remove('opacity-50', 'bg-emerald-600', 'cursor-default');
+      stepBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+      stepBtn.innerHTML = "<span>Шаг вперёд</span><span class='text-xs'>▶</span>";
+    }
+
+    stepBtn.addEventListener('click', doStep);
+    resetBtn.addEventListener('click', resetSimulation);
+
+    function checkAnswer() {
+      const val = parseInt(answerInput.value, 10);
+      if (isNaN(val)) {
+        resultMsg.className = "text-sm font-semibold mt-2.5 text-rose-600";
+        resultMsg.textContent = "Введи число!";
+        return;
+      }
+
+      if (val === 16) {
+        resultMsg.className = "text-sm font-bold mt-2.5 text-emerald-700";
+        resultMsg.textContent = "✓ Верно! Значение переменной S в конце равно 16!";
+        solutionCard.classList.remove('hidden');
+        answerInput.disabled = true;
+        checkBtn.disabled = true;
+        checkBtn.className = "px-5 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow cursor-default";
+
+        if (window.Olymp) {
+          Olymp.stars(3);
+        }
+      } else {
+        resultMsg.className = "text-sm font-semibold mt-2.5 text-rose-600";
+        resultMsg.textContent = "Не сходится. Проследи за всеми 4 шагами циклов (i=1..2, j=2..3)!";
+      }
+    }
+
+    checkBtn.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+  </script>
+</body>
+</html>

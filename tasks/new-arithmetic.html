@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Новая арифметика</title>
+  <script src="../assets/tailwind.js"></script>
+  <script src="../assets/olymp.js"></script>
+  <style>
+    body {
+      background-color: #fafaf9;
+      background-image: 
+        linear-gradient(#f0eee6 1px, transparent 1px),
+        linear-gradient(90deg, #f0eee6 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .shape-card {
+      transition: all 0.15s ease;
+    }
+    .shape-card:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-zinc-800 p-4 sm:p-6 flex flex-col items-center justify-center">
+
+  <div class="w-full max-w-4xl bg-white border border-zinc-200/90 rounded-3xl p-5 sm:p-8 shadow-xl">
+    
+    <!-- Заголовок -->
+    <div class="flex items-center justify-between border-b border-zinc-100 pb-4 mb-5">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-amber-600 font-semibold">Олимпиада KIBERone · 4 неделя</div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-0.5 tracking-tight">Новая арифметика Софы</h1>
+      </div>
+      <div class="text-right">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+          Логика и уравнения
+        </span>
+      </div>
+    </div>
+
+    <!-- Условие задачи -->
+    <details open class="text-sm sm:text-base text-zinc-700 bg-amber-50/50 border border-amber-200/70 rounded-2xl px-4 sm:px-5 py-3 mb-6">
+      <summary class="cursor-pointer font-bold text-zinc-900">Условие задачи</summary>
+      <div class="mt-2 text-zinc-600 leading-relaxed space-y-1">
+        <p>Софа придумала свою арифметику! Она складывает геометрические фигуры в таблице 3×3.</p>
+        <p>Суммы фигур в строках подписаны <b>справа</b>, а суммы в столбцах — <b>снизу</b>.</p>
+        <p class="font-semibold text-zinc-800">Определи, чему равна сумма фигур в третьем столбце (вместо знака вопроса <span class="text-amber-600">«?»</span>)?</p>
+      </div>
+    </details>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Сетка 3x3 с суммами -->
+      <div class="lg:col-span-7 flex flex-col items-center">
+        <div class="inline-block p-3 sm:p-4 bg-zinc-50 border border-zinc-200 rounded-3xl shadow-inner">
+          <div class="grid grid-cols-4 gap-2 sm:gap-3 text-center">
+            
+            <!-- Строка 1: Треугольник, Квадрат, Круг -> 14 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-emerald-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="triangle">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3L2 20h20L12 3z"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-emerald-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-blue-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="square">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-blue-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-orange-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="circle">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="9"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-orange-700 mt-0.5">?</span>
+            </div>
+            <!-- Сумма строки 1 -->
+            <div id="row-sum-0" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span>
+              <span class="text-lg sm:text-xl font-mono text-zinc-800">14</span>
+              <span class="state-icon text-xs"></span>
+            </div>
+
+            <!-- Строка 2: Квадрат, Квадрат, Треугольник -> 11 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-blue-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="square">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-blue-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-blue-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="square">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-blue-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-emerald-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="triangle">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3L2 20h20L12 3z"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-emerald-700 mt-0.5">?</span>
+            </div>
+            <!-- Сумма строки 2 -->
+            <div id="row-sum-1" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span>
+              <span class="text-lg sm:text-xl font-mono text-zinc-800">11</span>
+              <span class="state-icon text-xs"></span>
+            </div>
+
+            <!-- Строка 3: Круг, Шестиугольник, Шестиугольник -> 19 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-orange-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="circle">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="9"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-orange-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-purple-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="hexagon">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2z"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-purple-700 mt-0.5">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-purple-300 rounded-2xl flex flex-col items-center justify-center p-1 shadow-sm shape-card" data-shape="hexagon">
+              <svg class="w-7 h-7 sm:w-9 sm:h-9 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2z"/>
+              </svg>
+              <span class="val-badge text-xs font-mono font-bold text-purple-700 mt-0.5">?</span>
+            </div>
+            <!-- Сумма строки 3 -->
+            <div id="row-sum-2" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span>
+              <span class="text-lg sm:text-xl font-mono text-zinc-800">19</span>
+              <span class="state-icon text-xs"></span>
+            </div>
+
+            <!-- Суммы столбцов (нижняя строка) -->
+            <div id="col-sum-0" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span>
+              <span class="text-lg sm:text-xl font-mono text-zinc-800">14</span>
+              <span class="state-icon text-xs"></span>
+            </div>
+            <div id="col-sum-1" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700">
+              <span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span>
+              <span class="text-lg sm:text-xl font-mono text-zinc-800">14</span>
+              <span class="state-icon text-xs"></span>
+            </div>
+            <div id="col-sum-2" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-amber-100 border-2 border-dashed border-amber-400 font-bold text-amber-900 shadow-sm">
+              <span class="text-xs text-amber-700 uppercase tracking-tighter">Ищем</span>
+              <span id="target-display" class="text-2xl font-mono text-amber-800 font-extrabold">?</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-zinc-300">
+              <span class="text-xs font-mono">3×3</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Панель ввода и проверки -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- Калькулятор догадок фигур -->
+        <div class="bg-zinc-50 border border-zinc-200 rounded-2xl p-4">
+          <div class="text-xs uppercase font-bold text-zinc-500 mb-2.5">Подбор значений фигур:</div>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            
+            <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-zinc-200">
+              <svg class="w-5 h-5 text-blue-600 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+              </svg>
+              <span class="font-medium text-xs text-zinc-700">Квадрат =</span>
+              <input type="number" id="inp-square" min="0" max="20" class="w-12 px-1.5 py-0.5 border border-zinc-300 rounded font-mono font-bold text-center text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="?">
+            </div>
+
+            <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-zinc-200">
+              <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3L2 20h20L12 3z"/>
+              </svg>
+              <span class="font-medium text-xs text-zinc-700">Треуг. =</span>
+              <input type="number" id="inp-triangle" min="0" max="20" class="w-12 px-1.5 py-0.5 border border-zinc-300 rounded font-mono font-bold text-center text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="?">
+            </div>
+
+            <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-zinc-200">
+              <svg class="w-5 h-5 text-purple-600 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2z"/>
+              </svg>
+              <span class="font-medium text-xs text-zinc-700">Шестиуг. =</span>
+              <input type="number" id="inp-hexagon" min="0" max="20" class="w-12 px-1.5 py-0.5 border border-zinc-300 rounded font-mono font-bold text-center text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="?">
+            </div>
+
+            <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-zinc-200">
+              <svg class="w-5 h-5 text-orange-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="9"/>
+              </svg>
+              <span class="font-medium text-xs text-zinc-700">Круг =</span>
+              <input type="number" id="inp-circle" min="0" max="20" class="w-12 px-1.5 py-0.5 border border-zinc-300 rounded font-mono font-bold text-center text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400" placeholder="?">
+            </div>
+
+          </div>
+          <p class="text-[11px] text-zinc-400 mt-2">Вводи числа — суммы строк и столбцов пересчитаются автоматически!</p>
+        </div>
+
+        <!-- Поле итогового ответа -->
+        <div class="bg-amber-50/70 border-2 border-amber-300 rounded-2xl p-4">
+          <label for="inp-answer" class="block font-bold text-zinc-900 text-sm mb-1.5">
+            Чему равна сумма 3-го столбца (?)
+          </label>
+          <div class="flex gap-2">
+            <input type="number" id="inp-answer" class="w-full px-3 py-2 border-2 border-amber-300 rounded-xl font-mono text-xl font-extrabold text-center text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white" placeholder="Введи число">
+            <button id="btn-check" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl shadow transition duration-100 flex-shrink-0">
+              Проверить
+            </button>
+          </div>
+          <div id="result-msg" class="text-sm font-semibold mt-2.5 min-h-[22px]"></div>
+        </div>
+
+        <!-- Подсказка -->
+        <button id="btn-hint" class="text-xs text-zinc-500 hover:text-zinc-800 underline text-left self-start">
+          💡 Нужна подсказка?
+        </button>
+        <div id="hint-box" class="hidden text-xs text-zinc-600 bg-zinc-100 p-3 rounded-xl border border-zinc-200 space-y-1">
+          <p>• <b>Подсказка 1:</b> Посмотри на вторую строку: <i>2 Квадрата + 1 Треугольник = 11</i>.</p>
+          <p>• <b>Подсказка 2 (Трюк гения):</b> Сложи все строки: 14 + 11 + 19 = 44. Сумма столбцов 1 и 2: 14 + 14 = 28. Сколько остаётся на третий столбец?</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Блок победы и объяснения -->
+    <div id="solution-card" class="hidden mt-6 bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-5 text-zinc-800">
+      <div class="flex items-center gap-2 text-emerald-800 font-extrabold text-lg mb-2">
+        <span>🎉 Великолепно! Ответ 16 абсолютно верный!</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mt-3 text-zinc-700">
+        <div class="bg-white/80 p-3 rounded-xl border border-emerald-200">
+          <div class="font-bold text-emerald-900 mb-1">Способ 1: Значения всех фигур</div>
+          <ul class="space-y-0.5 font-mono">
+            <li>Квадрат = <b>4</b></li>
+            <li>Треугольник = <b>3</b> (из 2-й строки: 4 + 4 + 3 = 11)</li>
+            <li>Шестиугольник = <b>6</b> (из 2-го столбца: 4 + 4 + 6 = 14)</li>
+            <li>Круг = <b>7</b> (из 1-й строки: 3 + 4 + 7 = 14)</li>
+            <li class="pt-1 text-emerald-800 font-bold">Столбец 3: 7 + 3 + 6 = 16!</li>
+          </ul>
+        </div>
+        <div class="bg-white/80 p-3 rounded-xl border border-emerald-200">
+          <div class="font-bold text-emerald-900 mb-1">Способ 2: Секретный трюк за 5 секунд</div>
+          <p class="leading-relaxed">
+            Сумма всех 9 ячеек таблицы не меняется, как бы мы их ни считали — по строкам или по столбцам!<br>
+            Сумма всех строк: <b>14 + 11 + 19 = 44</b>.<br>
+            Сумма 1-го и 2-го столбцов: <b>14 + 14 = 28</b>.<br>
+            Третий столбец = <b>44 − 28 = 16</b>!
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const TARGETS = {
+      rows: [14, 11, 19],
+      cols: [14, 14, 16]
+    };
+
+    // Сетка: [row][col] -> имя фигуры
+    const GRID = [
+      ["triangle", "square", "circle"],
+      ["square", "square", "triangle"],
+      ["circle", "hexagon", "hexagon"]
+    ];
+
+    const inputs = {
+      square: document.getElementById('inp-square'),
+      triangle: document.getElementById('inp-triangle'),
+      hexagon: document.getElementById('inp-hexagon'),
+      circle: document.getElementById('inp-circle')
+    };
+
+    const answerInput = document.getElementById('inp-answer');
+    const checkBtn = document.getElementById('btn-check');
+    const resultMsg = document.getElementById('result-msg');
+    const solutionCard = document.getElementById('solution-card');
+    const hintBtn = document.getElementById('btn-hint');
+    const hintBox = document.getElementById('hint-box');
+    const targetDisplay = document.getElementById('target-display');
+
+    function getValues() {
+      return {
+        square: parseInt(inputs.square.value, 10),
+        triangle: parseInt(inputs.triangle.value, 10),
+        hexagon: parseInt(inputs.hexagon.value, 10),
+        circle: parseInt(inputs.circle.value, 10)
+      };
+    }
+
+    function updateGrid() {
+      const vals = getValues();
+
+      // Обновляем бейджики внутри клеток
+      document.querySelectorAll('.shape-card').forEach(card => {
+        const shape = card.dataset.shape;
+        const badge = card.querySelector('.val-badge');
+        const v = vals[shape];
+        badge.textContent = Number.isInteger(v) ? v : '?';
+      });
+
+      // Пересчитываем строки
+      for (let r = 0; r < 3; r++) {
+        const sumEl = document.getElementById(`row-sum-${r}`);
+        const target = TARGETS.rows[r];
+        const v0 = vals[GRID[r][0]];
+        const v1 = vals[GRID[r][1]];
+        const v2 = vals[GRID[r][2]];
+
+        if (Number.isInteger(v0) && Number.isInteger(v1) && Number.isInteger(v2)) {
+          const currentSum = v0 + v1 + v2;
+          if (currentSum === target) {
+            sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-emerald-100 border-2 border-emerald-400 font-bold text-emerald-800 transition";
+            sumEl.innerHTML = `<span class="text-[10px] uppercase font-bold text-emerald-700">Верно!</span><span class="text-xl font-mono">${currentSum} ✓</span>`;
+          } else {
+            sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-rose-50 border-2 border-rose-300 font-bold text-rose-800 transition";
+            sumEl.innerHTML = `<span class="text-[10px] text-rose-600">Надо: ${target}</span><span class="text-lg font-mono">${currentSum}</span>`;
+          }
+        } else {
+          sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700";
+          sumEl.innerHTML = `<span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span><span class="text-lg sm:text-xl font-mono text-zinc-800">${target}</span>`;
+        }
+      }
+
+      // Пересчитываем столбцы 0 и 1
+      for (let c = 0; c < 2; c++) {
+        const sumEl = document.getElementById(`col-sum-${c}`);
+        const target = TARGETS.cols[c];
+        const v0 = vals[GRID[0][c]];
+        const v1 = vals[GRID[1][c]];
+        const v2 = vals[GRID[2][c]];
+
+        if (Number.isInteger(v0) && Number.isInteger(v1) && Number.isInteger(v2)) {
+          const currentSum = v0 + v1 + v2;
+          if (currentSum === target) {
+            sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-emerald-100 border-2 border-emerald-400 font-bold text-emerald-800 transition";
+            sumEl.innerHTML = `<span class="text-[10px] uppercase font-bold text-emerald-700">Верно!</span><span class="text-xl font-mono">${currentSum} ✓</span>`;
+          } else {
+            sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-rose-50 border-2 border-rose-300 font-bold text-rose-800 transition";
+            sumEl.innerHTML = `<span class="text-[10px] text-rose-600">Надо: ${target}</span><span class="text-lg font-mono">${currentSum}</span>`;
+          }
+        } else {
+          sumEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center bg-zinc-200/70 border border-zinc-300 font-bold text-zinc-700";
+          sumEl.innerHTML = `<span class="text-xs text-zinc-500 uppercase tracking-tighter">Сумма</span><span class="text-lg sm:text-xl font-mono text-zinc-800">${target}</span>`;
+        }
+      }
+
+      // Столбец 2 (целевой)
+      const c2_0 = vals[GRID[0][2]];
+      const c2_1 = vals[GRID[1][2]];
+      const c2_2 = vals[GRID[2][2]];
+      if (Number.isInteger(c2_0) && Number.isInteger(c2_1) && Number.isInteger(c2_2)) {
+        targetDisplay.textContent = c2_0 + c2_1 + c2_2;
+        if (!answerInput.value) {
+          answerInput.value = c2_0 + c2_1 + c2_2;
+        }
+      } else {
+        targetDisplay.textContent = '?';
+      }
+    }
+
+    Object.values(inputs).forEach(inp => {
+      inp.addEventListener('input', updateGrid);
+    });
+
+    function checkAnswer() {
+      const ans = parseInt(answerInput.value, 10);
+      if (isNaN(ans)) {
+        resultMsg.className = "text-sm font-semibold mt-2.5 text-rose-600";
+        resultMsg.textContent = "Введи число!";
+        return;
+      }
+
+      if (ans === 16) {
+        resultMsg.className = "text-sm font-bold mt-2.5 text-emerald-700";
+        resultMsg.textContent = "✓ Правильно! В 3-м столбце получается ровно 16!";
+        solutionCard.classList.remove('hidden');
+        answerInput.disabled = true;
+        checkBtn.disabled = true;
+        checkBtn.className = "px-5 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow cursor-default";
+        
+        // Автозаполнение верных значений фигур, если еще не ввели
+        if (!inputs.square.value) inputs.square.value = 4;
+        if (!inputs.triangle.value) inputs.triangle.value = 3;
+        if (!inputs.hexagon.value) inputs.hexagon.value = 6;
+        if (!inputs.circle.value) inputs.circle.value = 7;
+        updateGrid();
+
+        if (window.Olymp) {
+          Olymp.stars(3);
+        }
+      } else {
+        resultMsg.className = "text-sm font-semibold mt-2.5 text-rose-600";
+        resultMsg.textContent = "Пока не то. Проверь суммы в строках или попробуй сложить уравнения!";
+      }
+    }
+
+    checkBtn.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+    hintBtn.addEventListener('click', () => {
+      hintBox.classList.toggle('hidden');
+    });
+
+  </script>
+</body>
+</html>

@@ -155,12 +155,12 @@
                   <th class="py-1.5 px-3">Шаг</th>
                   <th class="py-1.5 px-3">i</th>
                   <th class="py-1.5 px-3">j</th>
-                  <th class="py-1.5 px-3">Вычисление S</th>
+                  <th class="py-1.5 px-3">Действие над S</th>
                 </tr>
               </thead>
               <tbody id="trace-body" class="font-mono divide-y divide-zinc-100 text-zinc-700">
                 <tr id="empty-row" class="text-zinc-400 italic">
-                  <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи</td>
+                  <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи шагов</td>
                 </tr>
               </tbody>
             </table>
@@ -190,22 +190,23 @@
 
   <script>
     const STEPS = [
-      { line: 0, i: null, j: null, s: 0, text: "Инициализация: S = 0" },
-      { line: 1, i: 1, j: null, s: 0, text: "Вход во внешний цикл: i = 1" },
-      { line: 2, i: 1, j: 2, s: 0, text: "Вход во внутренний цикл: j = 2" },
-      { line: 3, i: 1, j: 2, s: 3, calc: "0 + 1 + 2 = 3", text: "S := S + 1 + 2 = 3" },
-      { line: 2, i: 1, j: 3, s: 3, text: "Следующий j = 3" },
-      { line: 3, i: 1, j: 3, s: 7, calc: "3 + 1 + 3 = 7", text: "S := S + 1 + 3 = 7" },
-      { line: 1, i: 2, j: null, s: 7, text: "Следующий i = 2" },
-      { line: 2, i: 2, j: 2, s: 7, text: "Вход во внутренний цикл: j = 2" },
-      { line: 3, i: 2, j: 2, s: 11, calc: "7 + 2 + 2 = 11", text: "S := S + 2 + 2 = 11" },
-      { line: 2, i: 2, j: 3, s: 11, text: "Следующий j = 3" },
-      { line: 3, i: 2, j: 3, s: 16, calc: "11 + 2 + 3 = 16", text: "S := S + 2 + 3 = 16" },
-      { line: 5, i: 2, j: 3, s: 16, text: "Конец циклов! Итог S = 16" }
+      { line: 0, i: null, j: null, action: null, calc: null, text: "Инициализация: S = 0" },
+      { line: 1, i: 1, j: null, action: null, calc: null, text: "Вход во внешний цикл: i = 1" },
+      { line: 2, i: 1, j: 2, action: null, calc: null, text: "Вход во внутренний цикл: j = 2" },
+      { line: 3, i: 1, j: 2, action: "S := S + 1 + 2", calc: "0 + 1 + 2 = 3", text: "Шаг 1: S := S + 1 + 2" },
+      { line: 2, i: 1, j: 3, action: null, calc: null, text: "Следующий j = 3" },
+      { line: 3, i: 1, j: 3, action: "S := S + 1 + 3", calc: "3 + 1 + 3 = 7", text: "Шаг 2: S := S + 1 + 3" },
+      { line: 1, i: 2, j: null, action: null, calc: null, text: "Следующий i = 2" },
+      { line: 2, i: 2, j: 2, action: null, calc: null, text: "Вход во внутренний цикл: j = 2" },
+      { line: 3, i: 2, j: 2, action: "S := S + 2 + 2", calc: "7 + 2 + 2 = 11", text: "Шаг 3: S := S + 2 + 2" },
+      { line: 2, i: 2, j: 3, action: null, calc: null, text: "Следующий j = 3" },
+      { line: 3, i: 2, j: 3, action: "S := S + 2 + 3", calc: "11 + 2 + 3 = 16", text: "Шаг 4: S := S + 2 + 3" },
+      { line: 5, i: 2, j: 3, action: null, calc: null, text: "Конец циклов!" }
     ];
 
     let currentStep = -1;
     let traceStepCount = 0;
+    let isSolved = false;
 
     const valI = document.getElementById('val-i');
     const valJ = document.getElementById('val-j');
@@ -266,27 +267,33 @@
 
       valI.textContent = step.i !== null ? step.i : '—';
       valJ.textContent = step.j !== null ? step.j : '—';
-      valS.textContent = step.s;
+      if (!isSolved) {
+        valS.textContent = currentStep === 0 ? '0' : '?';
+      }
 
-      if (step.calc) {
+      if (step.action) {
         traceStepCount++;
-        if (emptyRow) emptyRow.remove();
+        const curEmpty = document.getElementById('empty-row');
+        if (curEmpty) curEmpty.remove();
+
         const tr = document.createElement('tr');
         tr.className = "bg-emerald-50/50";
         tr.innerHTML = `
           <td class="py-1.5 px-3 font-bold text-zinc-800">${traceStepCount}</td>
-          <td class="py-1.5 px-3 text-indigo-700">${step.i}</td>
-          <td class="py-1.5 px-3 text-purple-700">${step.j}</td>
-          <td class="py-1.5 px-3 font-bold text-emerald-800">${step.calc}</td>
+          <td class="py-1.5 px-3 text-indigo-700 font-bold">${step.i}</td>
+          <td class="py-1.5 px-3 text-purple-700 font-bold">${step.j}</td>
+          <td class="py-1.5 px-3 text-zinc-700 step-action-cell" data-calc="${step.calc}">
+            ${isSolved ? `<b class="text-emerald-700 font-bold">${step.calc}</b>` : `<span>${step.action} <span class="text-zinc-400 font-normal">(= ?)</span></span>`}
+          </td>
         `;
         traceBody.appendChild(tr);
       }
 
       if (currentStep === STEPS.length - 1) {
-        stepBtn.innerHTML = "<span>Завершено! S = 16</span>";
+        stepBtn.innerHTML = "<span>Все шаги пройдены! Чему равно S?</span>";
         stepBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-        stepBtn.classList.add('bg-emerald-600', 'cursor-default');
-        if (!answerInput.value) answerInput.value = 16;
+        stepBtn.classList.add('bg-zinc-700', 'cursor-default');
+        stepBtn.disabled = true;
       }
     }
 
@@ -296,14 +303,14 @@
       highlightLine(-1);
       valI.textContent = '—';
       valJ.textContent = '—';
-      valS.textContent = '0';
+      valS.textContent = isSolved ? '16' : '0';
       traceBody.innerHTML = `
         <tr id="empty-row" class="text-zinc-400 italic">
-          <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи</td>
+          <td colspan="4" class="py-4 text-center">Нажимай «Шаг вперёд» для записи шагов</td>
         </tr>
       `;
       stepBtn.disabled = false;
-      stepBtn.classList.remove('opacity-50', 'bg-emerald-600', 'cursor-default');
+      stepBtn.classList.remove('opacity-50', 'bg-emerald-600', 'bg-zinc-700', 'cursor-default');
       stepBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
       stepBtn.innerHTML = "<span>Шаг вперёд</span><span class='text-xs'>▶</span>";
     }
@@ -320,12 +327,23 @@
       }
 
       if (val === 16) {
+        isSolved = true;
+        valS.textContent = '16';
+        valS.className = "text-2xl font-mono font-extrabold text-emerald-700 mt-0.5";
+
+        // Показываем полные вычисления во всех строках таблицы
+        document.querySelectorAll('.step-action-cell').forEach(td => {
+          if (td.dataset.calc) {
+            td.innerHTML = `<b class="text-emerald-700 font-bold">${td.dataset.calc}</b>`;
+          }
+        });
+
         resultMsg.className = "text-sm font-bold mt-2.5 text-emerald-700";
         resultMsg.textContent = "✓ Верно! Значение переменной S в конце равно 16!";
         solutionCard.classList.remove('hidden');
         answerInput.disabled = true;
         checkBtn.disabled = true;
-        checkBtn.className = "px-5 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow cursor-default";
+        checkBtn.className = "px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-extrabold text-base rounded-xl shadow cursor-default flex-shrink-0";
 
         if (window.Olymp) {
           Olymp.stars(3);

@@ -8,13 +8,13 @@
   <style>
     /* Тетрадь в клетку на фоне */
     body {
-      background-color: #f5f2e9;
+      background-color: light-dark(#f5f2e9, #433a1e);
       background-image: 
-        linear-gradient(#e3decb 1px, transparent 1px),
-        linear-gradient(90deg, #e3decb 1px, transparent 1px);
+        linear-gradient(light-dark(#e3decb, #3f3922) 1px, transparent 1px),
+        linear-gradient(90deg, light-dark(#e3decb, #3f3922) 1px, transparent 1px);
       background-size: 24px 24px;
       font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
-      color: #2b2b2b;
+      color: light-dark(#2b2b2b, #e8e8e8);
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
@@ -22,25 +22,25 @@
 
     /* Рукописные контуры */
     .hand-drawn-card {
-      border: 3px solid #2d3134;
+      border: 3px solid light-dark(#2d3134, #848d95);
       border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     }
 
     .hand-drawn-btn {
-      border: 2.5px solid #2d3134;
+      border: 2.5px solid light-dark(#2d3134, #848d95);
       border-radius: 255px 20px 220px 18px / 20px 225px 18px 250px;
-      box-shadow: 2px 3px 0px #2d3134;
+      box-shadow: 2px 3px 0px light-dark(#2d3134, #2d3134);
       transition: all 0.1s ease;
     }
 
     .hand-drawn-btn:active {
       transform: translate(2px, 2px);
-      box-shadow: 0px 1px 0px #2d3134;
+      box-shadow: 0px 1px 0px light-dark(#2d3134, #2d3134);
     }
 
     /* Клетки сетки */
     .hand-drawn-cell {
-      border: 2px solid #3a3f44;
+      border: 2px solid light-dark(#3a3f44, #838c95);
       border-radius: 12px 5px 14px 6px / 6px 14px 5px 12px;
       transition: background-color 0.1s ease, transform 0.05s ease;
     }
@@ -51,50 +51,50 @@
 
     /* Штриховка карандашами */
     .pencil-empty {
-      background-color: #ffffff;
+      background-color: light-dark(#ffffff, #212121);
     }
 
     .pencil-blue {
-      background: #e3effd;
+      background: light-dark(#e3effd, #162e4b);
       background-image: repeating-linear-gradient(
         45deg,
-        rgba(70, 130, 220, 0.4),
-        rgba(70, 130, 220, 0.4) 4px,
-        rgba(100, 160, 245, 0.6) 4px,
-        rgba(100, 160, 245, 0.6) 8px
+        light-dark(rgba(70, 130, 220, 0.4), rgba(37,73,126,0.4)),
+        light-dark(rgba(70, 130, 220, 0.4), rgba(37,73,126,0.4)) 4px,
+        light-dark(rgba(100, 160, 245, 0.6), rgba(22,44,75,0.6)) 4px,
+        light-dark(rgba(100, 160, 245, 0.6), rgba(22,44,75,0.6)) 8px
       );
     }
 
     .pencil-green {
-      background: #e6f7ec;
+      background: light-dark(#e6f7ec, #174929);
       background-image: repeating-linear-gradient(
         -45deg,
-        rgba(46, 160, 90, 0.4),
-        rgba(46, 160, 90, 0.4) 4px,
-        rgba(75, 190, 120, 0.6) 4px,
-        rgba(75, 190, 120, 0.6) 8px
+        light-dark(rgba(46, 160, 90, 0.4), rgba(37,126,71,0.4)),
+        light-dark(rgba(46, 160, 90, 0.4), rgba(37,126,71,0.4)) 4px,
+        light-dark(rgba(75, 190, 120, 0.6), rgba(43,120,73,0.6)) 4px,
+        light-dark(rgba(75, 190, 120, 0.6), rgba(43,120,73,0.6)) 8px
       );
     }
 
     .pencil-orange {
-      background: #fef4e2;
+      background: light-dark(#fef4e2, #4b3816);
       background-image: repeating-linear-gradient(
         35deg,
-        rgba(235, 150, 40, 0.4),
-        rgba(235, 150, 40, 0.4) 4px,
-        rgba(250, 180, 70, 0.6) 4px,
-        rgba(250, 180, 70, 0.6) 8px
+        light-dark(rgba(235, 150, 40, 0.4), rgba(126,87,37,0.4)),
+        light-dark(rgba(235, 150, 40, 0.4), rgba(126,87,37,0.4)) 4px,
+        light-dark(rgba(250, 180, 70, 0.6), rgba(126,92,37,0.6)) 4px,
+        light-dark(rgba(250, 180, 70, 0.6), rgba(126,92,37,0.6)) 8px
       );
     }
 
     .pencil-purple {
-      background: #f6e8fa;
+      background: light-dark(#f6e8fa, #3f164b);
       background-image: repeating-linear-gradient(
         -35deg,
-        rgba(165, 80, 200, 0.4),
-        rgba(165, 80, 200, 0.4) 4px,
-        rgba(195, 110, 230, 0.6) 4px,
-        rgba(195, 110, 230, 0.6) 8px
+        light-dark(rgba(165, 80, 200, 0.4), rgba(99,39,124,0.4)),
+        light-dark(rgba(165, 80, 200, 0.4), rgba(99,39,124,0.4)) 4px,
+        light-dark(rgba(195, 110, 230, 0.6), rgba(60,22,75,0.6)) 4px,
+        light-dark(rgba(195, 110, 230, 0.6), rgba(60,22,75,0.6)) 8px
       );
     }
 
@@ -102,11 +102,11 @@
     .washi-tape {
       width: 120px;
       height: 26px;
-      background: rgba(240, 225, 160, 0.7);
+      background: light-dark(rgba(240, 225, 160, 0.7), rgba(75,65,22,0.7));
       box-shadow: 0 1px 3px rgba(0,0,0,0.12);
       transform: rotate(-1.5deg);
-      border-left: 2px dashed rgba(200, 180, 110, 0.5);
-      border-right: 2px dashed rgba(200, 180, 110, 0.5);
+      border-left: 2px dashed light-dark(rgba(200, 180, 110, 0.5), rgba(133,115,50,0.5));
+      border-right: 2px dashed light-dark(rgba(200, 180, 110, 0.5), rgba(133,115,50,0.5));
     }
 
     /* Адаптивный квадрат игрового поля: подстраивается и под высоту (vh), и под ширину (vw) */
@@ -117,6 +117,8 @@
     }
   </style>
   <script src="../assets/olymp.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body class="min-h-[100dvh] w-screen flex flex-col items-center justify-center p-2 sm:p-4 box-border">
 

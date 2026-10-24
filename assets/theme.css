@@ -1,0 +1,34 @@
+:root { color-scheme: light dark; --o-bg:light-dark(#f5f3ff,#121722); --o-paper:light-dark(#fff,#202837); --o-ink:light-dark(#1e1b4b,#edf1fa); --o-muted:light-dark(#4c4a7a,#bdc7dc); --o-border:light-dark(#d8d7eb,#49576d); --o-accent:light-dark(#6d28d9,#c4b5fd); --o-warm:light-dark(#fffbeb,#332c22); --o-cool:light-dark(#eff6ff,#1b3047); --o-green:light-dark(#ecfdf5,#193c31); }
+:root[data-theme="light"] {color-scheme:light}
+:root[data-theme="dark"] {color-scheme:dark}
+.theme {position:absolute;top:12px;right:12px;width:40px;height:40px;padding:0;min-height:0;border:0;border-radius:50%;background:none;cursor:pointer;opacity:.22;color:light-dark(#e3a008,#b9cdf5);-webkit-tap-highlight-color:transparent;transition:opacity .35s,filter .35s;z-index:100}
+.theme:not(.dark) {opacity:.4}
+.theme:hover,.theme.awake,.theme:focus-visible {opacity:1;filter:drop-shadow(0 0 3px currentColor) drop-shadow(0 0 10px currentColor)}
+.theme:focus-visible {outline:2px solid currentColor;outline-offset:2px}
+.theme svg {position:absolute;inset:8px;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:opacity .5s,transform .6s cubic-bezier(.4,0,.2,1)}
+.theme .moon {fill:currentColor;stroke:none}
+.theme .moon,.theme.dark .sun {opacity:0;transform:rotate(-90deg) scale(.4)}
+.theme.dark .moon {opacity:1;transform:none}
+::view-transition-old(root),::view-transition-new(root) {animation:none;mix-blend-mode:normal}
+html.olymp-task body {padding-top:58px!important;padding-bottom:76px!important}
+html:not(.olymp-task) #app {padding-top:58px}
+:is([class~="bg-white"],[class*="bg-white/"]) {background-color:var(--o-paper)!important}
+:is([class*="bg-zinc-50"],[class*="bg-zinc-100"],[class*="bg-gray-50"],[class*="bg-gray-100"],[class*="bg-slate-50"],[class*="bg-slate-100"]) {background-color:light-dark(#f4f4f5,#182231)!important}
+:is([class*="text-zinc-9"],[class*="text-zinc-8"],[class*="text-gray-9"],[class*="text-gray-8"],[class*="text-slate-9"],[class*="text-slate-8"],[class~="text-black"]) {color:var(--o-ink)!important}
+:is([class*="text-zinc-7"],[class*="text-zinc-6"],[class*="text-zinc-5"],[class*="text-gray-7"],[class*="text-gray-6"],[class*="text-gray-5"],[class*="text-slate-7"],[class*="text-slate-6"],[class*="text-slate-5"]) {color:var(--o-muted)!important}
+:is([class*="border-zinc-"],[class*="border-gray-"],[class*="border-slate-"]) {border-color:var(--o-border)!important}
+:is([class*="bg-amber-50"],[class*="bg-yellow-50"],[class*="bg-orange-50"]) {background-color:var(--o-warm)!important}
+:is([class*="bg-blue-50"],[class*="bg-indigo-50"],[class*="bg-purple-50"]) {background-color:var(--o-cool)!important}
+:is([class*="bg-emerald-50"],[class*="bg-green-50"]) {background-color:var(--o-green)!important}
+:is([class*="text-amber-7"],[class*="text-amber-8"],[class*="text-yellow-7"],[class*="text-orange-7"]) {color:light-dark(#92400e,#f5cd8b)!important}
+:is([class*="text-emerald-7"],[class*="text-emerald-8"],[class*="text-green-7"]) {color:light-dark(#047857,#a0dfbf)!important}
+:is([class*="text-blue-7"],[class*="text-indigo-7"],[class*="text-purple-7"]) {color:light-dark(#4338ca,#bccbff)!important}
+input,select,textarea {color-scheme:inherit}
+[class*="bg-zinc-200"],[class*="bg-gray-200"],[class*="bg-slate-200"],[class*="bg-zinc-300"],[class*="bg-gray-300"],[class*="bg-slate-300"] {background-color:light-dark(#e4e4e7,#303c50)!important}
+[class*="bg-amber-100"],[class*="bg-amber-200"],[class*="bg-yellow-100"],[class*="bg-yellow-200"],[class*="bg-orange-100"] {background-color:var(--o-warm)!important}
+[class*="from-zinc-"],[class*="from-gray-"],[class*="from-slate-"] {--tw-gradient-from:light-dark(#e4e4e7,#303c50)!important;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)!important}
+[class*="to-zinc-"],[class*="to-gray-"],[class*="to-slate-"] {--tw-gradient-to:light-dark(#d4d4d8,#253044)!important}
+[class*="from-amber-50"],[class*="from-amber-100"],[class*="from-yellow-50"],[class*="from-yellow-100"] {--tw-gradient-from:var(--o-warm)!important;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)!important}
+[class*="to-amber-50"],[class*="to-amber-100"],[class*="to-yellow-50"],[class*="to-yellow-100"] {--tw-gradient-to:var(--o-warm)!important}
+.qr img {background:#fff!important}
+@media(prefers-reduced-motion:reduce){.theme,.theme svg {transition:none}}

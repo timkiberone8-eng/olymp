@@ -8,10 +8,10 @@
   <script src="../assets/olymp.js"></script>
   <style>
     body {
-      background-color: #fafaf9;
+      background-color: light-dark(#fafaf9, #24241e);
       background-image: 
-        linear-gradient(#f0eee6 1px, transparent 1px),
-        linear-gradient(90deg, #f0eee6 1px, transparent 1px);
+        linear-gradient(light-dark(#f0eee6, #3d3824) 1px, transparent 1px),
+        linear-gradient(90deg, light-dark(#f0eee6, #3d3824) 1px, transparent 1px);
       background-size: 24px 24px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       user-select: none;
@@ -21,10 +21,12 @@
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
     .code-line.active {
-      background-color: #fef08a !important; /* amber-200 */
-      border-left-color: #d97706 !important; /* amber-600 */
+      background-color: light-dark(#fef08a, #4b4516) !important; /* amber-200 */
+      border-left-color: light-dark(#d97706, #cb914d) !important; /* amber-600 */
     }
   </style>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body class="min-h-[100dvh] w-full text-zinc-800 p-2 sm:p-4 md:p-6 flex flex-col justify-between box-border">
 

@@ -58,31 +58,31 @@
       text-shadow: 1.5px 1.5px 0 rgba(30, 23, 19, 0.35);
     }
     .cuphead-box-shadow {
-      box-shadow: 4px 4px 0 #1e1713;
+      box-shadow: 4px 4px 0 light-dark(#1e1713, #1e1713);
     }
     .cuphead-box-shadow-lg {
-      box-shadow: 7px 7px 0 #1e1713;
+      box-shadow: 7px 7px 0 light-dark(#1e1713, #1e1713);
     }
     .cuphead-btn {
-      border: 3.5px solid #1e1713;
-      box-shadow: 4px 4px 0 #1e1713;
+      border: 3.5px solid light-dark(#1e1713, #a68572);
+      box-shadow: 4px 4px 0 light-dark(#1e1713, #1e1713);
       transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .cuphead-btn:hover {
       transform: translate(-1.5px, -1.5px);
-      box-shadow: 5.5px 5.5px 0 #1e1713;
+      box-shadow: 5.5px 5.5px 0 light-dark(#1e1713, #1e1713);
     }
     .cuphead-btn:active {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0 #1e1713;
+      box-shadow: 2px 2px 0 light-dark(#1e1713, #1e1713);
     }
 
     /* Vintage Paper Background & Vignette */
     .vintage-paper {
-      background-color: #f7eed7;
+      background-color: light-dark(#f7eed7, #4b3c16);
       background-image: 
-        radial-gradient(circle at 50% 40%, rgba(255,255,255,0.4) 0%, rgba(220,195,150,0.3) 70%, rgba(180,150,100,0.45) 100%),
-        repeating-linear-gradient(45deg, rgba(30,20,10,0.015) 0px, rgba(30,20,10,0.015) 2px, transparent 2px, transparent 6px);
+        radial-gradient(circle at 50% 40%, light-dark(rgba(255,255,255,0.4), rgba(33,33,33,0.4)) 0%, light-dark(rgba(220,195,150,0.3), rgba(73,55,24,0.3)) 70%, light-dark(rgba(180,150,100,0.45), rgba(110,89,53,0.45)) 100%),
+        repeating-linear-gradient(45deg, light-dark(rgba(30,20,10,0.015), rgba(30,20,10,0.015)) 0px, light-dark(rgba(30,20,10,0.015), rgba(30,20,10,0.015)) 2px, transparent 2px, transparent 6px);
     }
 
     .vignette-overlay {
@@ -97,6 +97,8 @@
     * { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
   <script src="../assets/olymp.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body class="vintage-paper text-[#1e1713] w-screen h-screen overflow-hidden flex flex-col font-sans select-none antialiased relative vignette-overlay" data-olymp-back="center">
 

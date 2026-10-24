@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Одну на три · Олимпиада KIBERone</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<script src="../assets/olymp.js"></script>
+
+
+<style>
+:root { color-scheme:light dark; --bg:light-dark(#f3f5f9,#10151e); --ink:light-dark(#20304a,#e5ebf4); --muted:light-dark(#65738a,#a1aec2); --line:light-dark(#d2dbe8,#415069); --paper:light-dark(#fff,#19212d); --accent:light-dark(#425bc0,#a8b9ff); --p1:light-dark(#d8e8ff,#264269); --p2:light-dark(#ffe1c4,#633d24); --p3:light-dark(#d9efdf,#274e37); }
+* {box-sizing:border-box} body {margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,sans-serif} main {max-width:760px;margin:auto;padding:28px 20px 48px} h1 {font-size:32px;line-height:1.2;font-weight:600;margin:12px 0 18px} p {margin:12px 0 20px} .muted {color:var(--muted)}
+button {font:inherit;cursor:pointer;min-height:44px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:8px 14px} button:focus-visible {outline:3px solid var(--accent);outline-offset:3px} button:disabled {opacity:.5;cursor:default} .tools {display:flex;flex-wrap:wrap;gap:8px;align-items:center} .paint[aria-pressed=true] {outline:2px solid var(--accent);outline-offset:2px} .paint[data-part="1"] {background:var(--p1)} .paint[data-part="2"] {background:var(--p2)} .paint[data-part="3"] {background:var(--p3)}
+.board {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;max-width:476px;margin:30px auto;touch-action:none;user-select:none} .cell {aspect-ratio:1;min-width:0;min-height:0;padding:0;border-radius:3px;font-weight:600} .cell[data-part="1"] {background:var(--p1)} .cell[data-part="2"] {background:var(--p2)} .cell[data-part="3"] {background:var(--p3)} .counts {font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;margin-bottom:22px} .check {background:var(--accent);color:var(--bg);border-color:var(--accent)} .feedback {min-height:58px;margin-top:18px} .cell-gap {aspect-ratio:1} .actions {justify-content:center} .finished {font-weight:600}
+@media(prefers-reduced-motion:no-preference){.cell {transition:background .12s}}
+body {background-color:var(--o-bg);background-image:linear-gradient(light-dark(#e5e0f1,#232d3f) 1px,transparent 1px),linear-gradient(90deg,light-dark(#e5e0f1,#232d3f) 1px,transparent 1px);background-size:24px 24px;font-size:18px;padding:60px 16px 24px}
+main {max-width:1120px;margin:0 auto;padding:24px 32px 36px;background:var(--o-paper);border:2px solid var(--o-border);border-radius:28px;box-shadow:0 12px 45px light-dark(#37216b15,#0005)}
+h1 {font-size:clamp(30px,4vw,46px)}.board {max-width:490px}.cell {border:2px solid light-dark(#85809d,#71839f);border-radius:9px 4px 10px 5px;font-size:21px}.tools {gap:12px}
+@media(max-width:600px){main {padding:20px 14px;border-radius:20px}body {font-size:16px;padding-inline:8px}.board {gap:2px}.cell {font-size:18px}.tools {gap:8px}.tools button {padding:8px 10px}}
+</style>
+<main>
+  <div class="muted">Олимпиада KIBERone · 5 неделя · № 1</div>
+  <h1>Одну на три</h1>
+  <p>Раздели фигуру по сторонам клеток на <strong>три одинаковые по форме и размеру части</strong>. Каждая часть должна быть цельной. Части можно поворачивать и переворачивать.</p>
+  <div class="tools" aria-label="Чем рисовать">
+    <button class="paint" data-part="1" aria-pressed="true">Часть 1</button>
+    <button class="paint" data-part="2" aria-pressed="false">Часть 2</button>
+    <button class="paint" data-part="3" aria-pressed="false">Часть 3</button>
+    <button class="paint" data-part="0" aria-pressed="false">Ластик</button>
+  </div>
+  <p class="muted">Раскрашивай клетки нажатием или проведи по ним мышью либо пальцем.</p>
+  <div class="board" aria-label="Фигура из 24 клеток"></div>
+  <div class="counts"><span data-count="1">Часть 1: 0</span><span data-count="2">Часть 2: 0</span><span data-count="3">Часть 3: 0</span></div>
+  <div class="tools actions"><button class="check" data-check>Проверить весь вариант</button><button data-undo disabled>Отменить ход</button><button data-clear>Очистить</button></div>
+  <p class="feedback" aria-live="polite"></p>
+</main>
+<script src="../assets/partition-core.js"></script>
+<script>
+(() => {
+  const {cells,validate}=PartitionPuzzle;
+  const board=document.querySelector('.board');
+  const feedback=document.querySelector('.feedback');
+  const undo=document.querySelector('[data-undo]');
+  const storageKey='kiberone-one-into-three-v1:'+new URLSearchParams(location.search).get('g');
+  let assignment=Array(cells.length).fill(0), selected=1, history=[], stroke=null;
+  try {const v=JSON.parse(localStorage.getItem(storageKey));if(Array.isArray(v)&&v.length===24&&v.every(n=>[0,1,2,3].includes(n)))assignment=v;}catch{}
+  for(let y=0;y<6;y++)for(let x=0;x<7;x++){
+    const i=cells.findIndex(p=>p[0]===x&&p[1]===y);
+    const item=document.createElement(i<0?'span':'button');
+    if(i<0)item.className='cell-gap';
+    else {item.type='button';item.className='cell';item.dataset.index=i;item.dataset.x=x;item.dataset.y=y;}
+    board.append(item);
+  }
+  const buttons=[...board.querySelectorAll('.cell')];
+  function draw(){
+    buttons.forEach(cell=>{const i=Number(cell.dataset.index), part=assignment[i];cell.dataset.part=part;cell.textContent=part||'';cell.setAttribute('aria-label',`Строка ${Number(cell.dataset.y)+1}, столбец ${Number(cell.dataset.x)+1}: ${part?'часть '+part:'не закрашено'}`);});
+    [1,2,3].forEach(p=>{document.querySelector(`[data-count="${p}"]`).textContent=`Часть ${p}: ${assignment.filter(v=>v===p).length}`;});
+    undo.disabled=!history.length;
+  }
+  function persist(){try{localStorage.setItem(storageKey,JSON.stringify(assignment));}catch{}}
+  function changed(){feedback.textContent='';feedback.classList.remove('finished');draw();}
+  function paint(cell){if(!cell?.classList.contains('cell'))return;const i=Number(cell.dataset.index);if(assignment[i]!==selected){assignment[i]=selected;changed();}}
+  function finish(){if(stroke&&stroke.some((v,i)=>v!==assignment[i])){history.push(stroke);if(history.length>60)history.shift();persist();}stroke=null;draw();}
+  document.querySelectorAll('.paint').forEach(button=>button.addEventListener('click',()=>{selected=Number(button.dataset.part);document.querySelectorAll('.paint').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
+  board.addEventListener('pointerdown',event=>{if(event.button!==0||!event.target.classList.contains('cell'))return;event.preventDefault();event.target.focus();stroke=assignment.slice();board.setPointerCapture(event.pointerId);paint(event.target);});
+  board.addEventListener('pointermove',event=>{if(stroke)paint(document.elementFromPoint(event.clientX,event.clientY));});
+  board.addEventListener('pointerup',finish);
+  board.addEventListener('pointercancel',finish);
+  board.addEventListener('lostpointercapture',finish);
+  board.addEventListener('click',event=>{if(event.detail===0&&event.target.classList.contains('cell')){stroke=assignment.slice();paint(event.target);finish();}});
+  board.addEventListener('keydown',event=>{const offsets={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};if(!offsets[event.key]||!event.target.classList.contains('cell'))return;event.preventDefault();const [dx,dy]=offsets[event.key];const x=Number(event.target.dataset.x),y=Number(event.target.dataset.y);let target=null;for(let k=1;k<8&&!target;k++)target=buttons.find(c=>Number(c.dataset.x)===x+dx*k&&Number(c.dataset.y)===y+dy*k);target?.focus();});
+  undo.addEventListener('click',()=>{if(history.length){assignment=history.pop();persist();changed();}});
+  document.querySelector('[data-clear]').addEventListener('click',()=>{if(assignment.some(Boolean)){history.push(assignment.slice());assignment=Array(24).fill(0);persist();changed();}});
+  document.querySelector('[data-check]').addEventListener('click',()=>{
+    const result=validate(assignment);
+    const messages={coverage:'Закрась все клетки, распределив их между тремя частями.',size:'Размеры частей пока различаются. В каждой должно быть по 8 клеток.',connected:'В каждой части все клетки должны соединяться сторонами. Касания уголками недостаточно.',shape:'Размеры подходят, но формы частей различаются. Проверь, совмещаются ли они при повороте или перевороте.',valid:'Верно: три цельные части по 8 клеток одинаковой формы. Объясни, как их можно совместить.'};
+    feedback.textContent=messages[result];feedback.classList.toggle('finished',result==='valid');if(result==='valid')window.Olymp?.stars(3);
+  });
+  draw();
+})();
+</script>
+</html>

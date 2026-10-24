@@ -1,4 +1,5 @@
 window.OLYMP_TASKS = {
+  "one-into-three": { title: "Одну на три", icon: "🧩", about: "Раздели фигуру на три одинаковые по форме и размеру части" },
   "magic-squares": { title: "Магические квадраты", icon: "🔢", about: "Впиши числа так, чтобы суммы во всех строках, столбцах и диагоналях совпали. Три квадрата" },
   "carpet": { title: "Коврик со звёздочкой", icon: "🧶", about: "Раздели коврик на 4 одинаковые части, в каждой ровно одна звёздочка" },
   "coins": { title: "Монетки", icon: "💰", about: "Собери 4 стопки по 2 монеты за 4 хода. Монета прыгает ровно через 2 монеты" },
@@ -19,6 +20,7 @@ window.OLYMP_GROUPS = {
     lessons: [
       { date: "2026-10-10", today: ["magic-squares", "carpet"], review: ["grasshopper", "wolves-foxes"] },
       { date: "2026-10-17", today: ["new-arithmetic"], review: ["princess"] },
+      { date: "2026-10-24", today: ["one-into-three"], review: ["new-arithmetic"] },
     ],
   },
   "sb-1220": {
@@ -26,6 +28,7 @@ window.OLYMP_GROUPS = {
     lessons: [
       { date: "2026-10-10", today: ["magic-squares", "carpet", "coins"], review: ["grasshopper", "guards", "wolves-foxes"] },
       { date: "2026-10-17", today: ["new-arithmetic", "nested-loop", "boxes"], review: ["princess", "magic-squares", "coins"] },
+      { date: "2026-10-24", today: ["one-into-three"], review: ["new-arithmetic"] },
     ],
   },
   "zadachi": {

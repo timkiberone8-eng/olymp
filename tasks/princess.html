@@ -8,10 +8,10 @@
   <script src="../assets/olymp.js"></script>
   <style>
     body {
-      background-color: #faf5ff;
+      background-color: light-dark(#faf5ff, #210f33);
       background-image: 
-        radial-gradient(#e9d5ff 1.2px, transparent 1.2px),
-        radial-gradient(#f3e8ff 1.2px, #faf5ff 1.2px);
+        radial-gradient(light-dark(#e9d5ff, #2f164b) 1.2px, transparent 1.2px),
+        radial-gradient(light-dark(#f3e8ff, #200f33) 1.2px, light-dark(#faf5ff, #210f33) 1.2px);
       background-size: 28px 28px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       user-select: none;
@@ -24,6 +24,8 @@
       transform: translateY(-3px);
     }
   </style>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body class="min-h-[100dvh] w-full text-zinc-800 p-2 sm:p-4 md:p-6 flex flex-col justify-between box-border">
 

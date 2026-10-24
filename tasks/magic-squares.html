@@ -13,8 +13,8 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: #fafaf9;
-      color: #262626;
+      background-color: light-dark(#fafaf9, #24241e);
+      color: light-dark(#262626, #e8e8e8);
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
@@ -49,19 +49,19 @@
     h1 {
       font-size: clamp(22px, 3.2vmin, 32px);
       font-weight: 700;
-      color: #171717;
+      color: light-dark(#171717, #e8e8e8);
       letter-spacing: -0.3px;
     }
 
     .timer {
       font-family: 'Ink Free', 'Segoe Print', cursive, monospace;
       font-size: clamp(16px, 2.2vmin, 20px);
-      color: #737373;
+      color: light-dark(#737373, #c2c2c2);
     }
 
     .pencil-line {
       height: 2.5px;
-      background: #404040;
+      background: light-dark(#404040, #404040);
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
       filter: url(#pencil-texture);
       opacity: 0.7;
@@ -71,7 +71,7 @@
     .task-desc {
       font-size: clamp(15px, 2vmin, 18px);
       line-height: 1.45;
-      color: #404040;
+      color: light-dark(#404040, #e8e8e8);
       text-align: center;
       max-width: 720px;
     }
@@ -84,33 +84,33 @@
 
     .tab-btn {
       padding: 8px 24px;
-      background: #f5f5f4;
-      border: 2px solid #525252;
+      background: light-dark(#f5f5f4, #232320);
+      border: 2px solid light-dark(#525252, #8c8c8c);
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
       filter: url(#pencil-texture);
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: clamp(18px, 2.4vmin, 22px);
       font-weight: 700;
-      color: #525252;
+      color: light-dark(#525252, #e8e8e8);
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
     .tab-btn:hover {
-      background: #e7e5e4;
-      color: #171717;
+      background: light-dark(#e7e5e4, #33302e);
+      color: light-dark(#171717, #e8e8e8);
     }
 
     .tab-btn.active {
-      background: #ffffff;
-      border-color: #171717;
-      color: #171717;
+      background: light-dark(#ffffff, #212121);
+      border-color: light-dark(#171717, #8c8c8c);
+      color: light-dark(#171717, #e8e8e8);
       box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
     }
 
     .tab-btn.done::after {
       content: " ✓";
-      color: #15803d;
+      color: light-dark(#15803d, #dbf5e5);
     }
 
     /* Magic Square Grid - Large & Responsive */
@@ -125,9 +125,9 @@
       display: grid;
       grid-template-columns: repeat(3, clamp(72px, 15vmin, 132px));
       grid-template-rows: repeat(3, clamp(72px, 15vmin, 132px));
-      background: #262626; /* Hand-drawn pencil line */
+      background: light-dark(#262626, #262626); /* Hand-drawn pencil line */
       gap: 2.5px;          /* Unbreakable solid grid divider */
-      border: 3.5px solid #262626;
+      border: 3.5px solid light-dark(#262626, #8c8c8c);
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
       box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.14);
       filter: url(#pencil-texture);
@@ -136,7 +136,7 @@
     }
 
     .cell {
-      background: #ffffff;
+      background: light-dark(#ffffff, #212121);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -150,7 +150,7 @@
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: clamp(42px, 7.5vmin, 62px);
       font-weight: 700;
-      color: #1f2421;
+      color: light-dark(#1f2421, #e6eae8);
       user-select: none;
     }
 
@@ -165,7 +165,7 @@
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: clamp(42px, 7.5vmin, 62px);
       font-weight: 700;
-      color: #2d3748;
+      color: light-dark(#2d3748, #e3e7ed);
       -moz-appearance: textfield;
       transition: background-color 0.15s;
     }
@@ -177,17 +177,17 @@
     }
 
     .cell-input:focus {
-      background: #fafaf9;
+      background: light-dark(#fafaf9, #24241e);
     }
 
     .cell-input.err {
-      background: #fee2e2 !important;
-      color: #b91c1c !important;
+      background: light-dark(#fee2e2, #4b1616) !important;
+      color: light-dark(#b91c1c, #e3a0a0) !important;
     }
 
     .cell-input.ok {
-      background: #f0fdf4 !important;
-      color: #15803d !important;
+      background: light-dark(#f0fdf4, #0f331a) !important;
+      color: light-dark(#15803d, #dbf5e5) !important;
     }
 
     /* Buttons */
@@ -210,26 +210,26 @@
     }
 
     .btn-submit {
-      background: #f5f5f4;
-      border: 2px solid #262626;
-      color: #171717;
+      background: light-dark(#f5f5f4, #232320);
+      border: 2px solid light-dark(#262626, #8c8c8c);
+      color: light-dark(#171717, #e8e8e8);
       box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.15);
     }
 
     .btn-submit:hover {
-      background: #e7e5e4;
+      background: light-dark(#e7e5e4, #33302e);
       transform: translateY(-1px);
     }
 
     .btn-reset {
       background: transparent;
-      border: 1.5px solid #737373;
-      color: #737373;
+      border: 1.5px solid light-dark(#737373, #8c8c8c);
+      color: light-dark(#737373, #c2c2c2);
     }
 
     .btn-reset:hover {
-      border-color: #262626;
-      color: #171717;
+      border-color: light-dark(#262626, #8c8c8c);
+      color: light-dark(#171717, #e8e8e8);
     }
 
     /* Status note */
@@ -238,15 +238,15 @@
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: clamp(16px, 2.2vmin, 20px);
       text-align: center;
-      color: #525252;
+      color: light-dark(#525252, #e8e8e8);
     }
 
     .status-note.err {
-      color: #b91c1c;
+      color: light-dark(#b91c1c, #e3a0a0);
     }
 
     .status-note.ok {
-      color: #15803d;
+      color: light-dark(#15803d, #dbf5e5);
     }
 
     /* Hint */
@@ -257,7 +257,7 @@
     .hint-btn {
       background: none;
       border: none;
-      color: #a3a3a3;
+      color: light-dark(#a3a3a3, #c2c2c2);
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: 15px;
       cursor: pointer;
@@ -266,7 +266,7 @@
     }
 
     .hint-btn:hover {
-      color: #525252;
+      color: light-dark(#525252, #e8e8e8);
     }
 
     .hint-content {
@@ -274,9 +274,9 @@
       margin-top: 8px;
       font-family: 'Ink Free', 'Segoe Print', cursive, sans-serif;
       font-size: clamp(15px, 2vmin, 18px);
-      color: #1e3a8a;
-      background: #eff6ff;
-      border: 1.5px dashed #60a5fa;
+      color: light-dark(#1e3a8a, #dbe2f5);
+      background: light-dark(#eff6ff, #0f1f33);
+      border: 1.5px dashed light-dark(#60a5fa, #29578e);
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
       padding: 8px 16px;
       line-height: 1.45;
@@ -288,6 +288,8 @@
     }
   </style>
   <script src="../assets/olymp.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body>
 

@@ -7,17 +7,17 @@
 <style>
   :root {
     --cell: min(11vw, 56px);
-    --ok: #2e9e5b;
-    --bad: #d64545;
-    --line: #8a94a6;
+    --ok: light-dark(#2e9e5b, #257e49);
+    --bad: light-dark(#d64545, #7e2525);
+    --line: light-dark(#8a94a6, #474e5d);
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     padding: 16px;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: #f4f6fa;
-    color: #1d2433;
+    background: light-dark(#f4f6fa, #151d2e);
+    color: light-dark(#1d2433, #e2e6ee);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,7 +27,7 @@
     max-width: 560px;
     font-size: 16px;
     line-height: 1.45;
-    background: #fff;
+    background: light-dark(#fff, #212121);
     border-radius: 12px;
     padding: 12px 16px;
     margin-bottom: 16px;
@@ -37,7 +37,7 @@
     display: grid;
     grid-template-columns: repeat(7, var(--cell)) calc(var(--cell) * .8);
     gap: 0;
-    background: #fff;
+    background: light-dark(#fff, #212121);
     padding: 14px;
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,.08);
@@ -69,7 +69,7 @@
   .cell.on .dot {
     width: calc(var(--cell) * .7);
     height: calc(var(--cell) * .7);
-    background: #3b6fd8;
+    background: light-dark(#3b6fd8, #25427e);
     box-shadow: 0 2px 4px rgba(0,0,0,.25);
   }
   .cell.on .dot::after {
@@ -105,8 +105,8 @@
     font-size: 16px;
     padding: 8px 18px;
     border-radius: 8px;
-    border: 1px solid #c3cad8;
-    background: #fff;
+    border: 1px solid light-dark(#c3cad8, #48556f);
+    background: light-dark(#fff, #212121);
     cursor: pointer;
   }
   label { font-size: 16px; cursor: pointer; }
@@ -122,6 +122,8 @@
   .hidden-counts .count { visibility: hidden; }
 </style>
   <script src="../assets/olymp.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body>
   <h1>Стражники</h1>

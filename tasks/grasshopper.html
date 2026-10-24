@@ -8,13 +8,13 @@
   <style>
     /* Карандашный / скетчевый стиль */
     :root {
-      --sketch-ink: #22262f;
-      --sketch-dim: #4b5563;
-      --sketch-paper: #fcfbf7;
-      --sketch-grid: #e5e7eb;
-      --sketch-accent: #374151;
-      --sketch-green: #15803d;
-      --sketch-red: #b91c1c;
+      --sketch-ink: light-dark(#22262f, #22262f);
+      --sketch-dim: light-dark(#4b5563, #46505d);
+      --sketch-paper: light-dark(#fcfbf7, #302a12);
+      --sketch-grid: light-dark(#e5e7eb, #2a2e37);
+      --sketch-accent: light-dark(#374151, #374151);
+      --sketch-green: light-dark(#15803d, #227340);
+      --sketch-red: light-dark(#b91c1c, #7e2525);
     }
 
     html, body {
@@ -42,7 +42,7 @@
       border: 2px solid var(--sketch-ink);
       border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
       box-shadow: 3px 4px 0px rgba(34, 38, 47, 0.15);
-      background-color: rgba(255, 255, 255, 0.88);
+      background-color: light-dark(rgba(255, 255, 255, 0.88), rgba(33,33,33,0.88));
     }
 
     .sketch-box-sm {
@@ -54,13 +54,13 @@
       border: 2px solid var(--sketch-ink);
       border-radius: 255px 12px 225px 15px / 15px 225px 12px 255px;
       box-shadow: 2.5px 3px 0px var(--sketch-ink);
-      background-color: #ffffff;
+      background-color: light-dark(#ffffff, #212121);
       cursor: pointer;
       transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.1s ease;
     }
 
     .sketch-btn:hover {
-      background-color: #f3f4f6;
+      background-color: light-dark(#f3f4f6, #1c2026);
       transform: translate(-1px, -1px);
       box-shadow: 4px 4.5px 0px var(--sketch-ink);
     }
@@ -99,6 +99,8 @@
     }
   </style>
   <script src="../assets/olymp.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
 </head>
 <body class="h-full flex flex-col paper-sheet-fullscreen p-3 sm:p-6 lg:p-8">
 

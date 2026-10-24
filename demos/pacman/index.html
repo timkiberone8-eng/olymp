@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d1b">
+<title>Pac-Man · Игровая перемена</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header><a href="../">← Игровая перемена</a><span>АРКАДА / 01</span></header>
+  <div class="title"><h1>PAC<span>•</span>MAN</h1><p>Собери всё. Обхитри привидений.</p></div>
+  <section class="stats" aria-label="Счёт игры"><div>СЧЁТ<strong id="score">0</strong></div><div>РЕКОРД<strong id="best">0</strong></div><div>ЖИЗНИ<strong id="lives">● ● ●</strong></div><div>УРОВЕНЬ<strong id="level">01</strong></div></section>
+  <div class="board"><canvas id="game" width="504" height="552" aria-label="Лабиринт Pac-Man"></canvas><div id="overlay"><div class="badge">ГОТОВ К ПОГОНЕ?</div><h2 id="message">Твоя игровая<br>перемена</h2><p id="hint">Большие точки дают силу.<br>Синих привидений можно съесть!</p><button id="start">Начать игру <span>→</span></button></div></div>
+  <div class="toolbar"><span><i></i> Стрелки / WASD · пробел — пауза</span><button id="pause" aria-label="Пауза">Ⅱ</button><button id="sound" aria-label="Включить звук">Звук: выкл.</button><button id="restart">Заново ↻</button></div>
+  <nav class="controls" aria-label="Управление"><button data-dir="up" aria-label="Вверх">↑</button><div><button data-dir="left" aria-label="Влево">←</button><button data-dir="down" aria-label="Вниз">↓</button><button data-dir="right" aria-label="Вправо">→</button></div></nav>
+  <footer>Ещё одна попытка — и точно получится. <span>Для Дениса и ребят ✦</span></footer>
+</main><script src="game.js"></script>
+</body>
+</html>

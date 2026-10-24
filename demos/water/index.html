@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Условия как поток воды</title>
+<style>
+:root {--background:var(--o-paper);--foreground:var(--o-ink);--muted-foreground:var(--o-muted);--muted:light-dark(#e2e7ef,#364254);--border:var(--o-border);--viz-series-1:light-dark(#2679bb,#8bc7ff)}
+* {box-sizing:border-box}body {margin:0;background:var(--o-bg);color:var(--o-ink);font:20px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main {width:min(1180px,100% - 48px);margin:64px auto 32px;padding:28px 36px;background:var(--o-paper);border:1px solid var(--o-border);border-radius:28px;box-shadow:0 12px 45px light-dark(#37216b12,#0004)}
+h1 {margin:0 0 8px;font-size:clamp(28px,3vw,42px);line-height:1.2;letter-spacing:-.6px}.intro {margin:0 0 28px;color:var(--o-muted);font-size:18px;max-width:900px}
+.page-heading {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px}.page-heading h1 {margin:0}
+.viz-controls {display:grid;grid-template-columns:1fr 1fr;gap:32px}.form-label {display:block;font-size:22px;font-weight:600}.form-label output {float:right;font-size:30px;color:var(--o-accent);font-variant-numeric:tabular-nums}
+.form-range {display:block;width:100%;margin:18px 0 0;min-height:40px;accent-color:var(--o-accent);cursor:pointer}
+.text-destructive {color:light-dark(#b91c1c,#ffb5b5)}[data-caption] {font-size:18px;border-top:1px solid var(--o-border);padding-top:18px;min-height:48px}
+@media(max-width:600px){body {font-size:17px}main {width:calc(100% - 20px);margin-top:60px;padding:22px 14px;border-radius:20px}.intro {font-size:16px;margin-bottom:20px}.viz-controls {grid-template-columns:1fr;gap:12px}.form-label {font-size:18px}.form-label output {font-size:24px}.form-range {margin-top:8px;min-height:34px}[data-caption] {font-size:16px}}
+</style>
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/theme.js"></script>
+</head>
+<body>
+<main>
+<header class="page-heading"><h1>Условия как поток воды</h1></header>
+<p class="intro">Меняй числа: вода покажет, какая ветка сработает. Поток означает ход программы — не величину числа.</p>
+<div id="conditional-waterworks">
+  <div class="viz-controls">
+    <label class="form-label">Первое число · a = <output data-value="a" class="tabular-nums">7</output><input class="form-range" aria-label="Первое число a" name="a" type="range" min="-20" max="20" step="1" value="7"></label>
+    <label class="form-label">Второе число · b = <output data-value="b" class="tabular-nums">12</output><input class="form-range" aria-label="Второе число b" name="b" type="range" min="-20" max="20" step="1" value="12"></label>
+  </div>
+  <div class="text-destructive" role="alert" data-error hidden></div>
+  <div data-scene></div>
+  <div class="text-small" aria-live="polite" data-caption></div>
+</div>
+<style>
+#conditional-waterworks [data-scene] { margin:18px 0 10px; }
+#conditional-waterworks .water-diagram { display:block; width:100%; overflow:visible; }
+#conditional-waterworks .water-diagram text { font-size:20px; font-weight:400; fill:var(--foreground); }
+#conditional-waterworks .water-diagram .muted-label { fill:var(--muted-foreground); }
+#conditional-waterworks .water-diagram .keyword { font-family:ui-monospace,monospace; font-size:22px; font-weight:600; }
+#conditional-waterworks .water-diagram .gate-label { paint-order:stroke; stroke:var(--background); stroke-width:6; stroke-linejoin:round; }
+#conditional-waterworks .water-diagram .dry-pipe { stroke:var(--muted); stroke-width:8; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+#conditional-waterworks .water-diagram .wet-pipe { stroke:var(--viz-series-1); stroke-width:6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+#conditional-waterworks .water-diagram .vessel { fill:color-mix(in srgb,var(--foreground) 3%,transparent); stroke:var(--border); stroke-width:1.5; }
+#conditional-waterworks .water-diagram .water { fill:color-mix(in srgb,var(--viz-series-1) 35%,transparent); }
+#conditional-waterworks .water-diagram .surface { stroke:var(--viz-series-1); stroke-width:1.5; fill:none; }
+#conditional-waterworks .water-diagram .gate { fill:var(--background); stroke:var(--border); stroke-width:1.5; }
+#conditional-waterworks .water-diagram .lever { stroke:var(--foreground); stroke-width:2; stroke-linecap:round; }
+@media(max-width:600px){#conditional-waterworks .water-diagram text {font-size:15px}#conditional-waterworks .water-diagram .keyword {font-size:17px}}
+</style>
+<script>
+(() => {
+  const root=document.getElementById('conditional-waterworks');
+  const a=root.querySelector('[name="a"]'), b=root.querySelector('[name="b"]');
+  const scene=root.querySelector('[data-scene]'), caption=root.querySelector('[data-caption]');
+  const error=root.querySelector('[data-error]');
+  const quiet=matchMedia('(prefers-reduced-motion: reduce)');
+  let running=true;
+  let renderedActive;
+  let renderedWidth;
+  const values=()=>({a:Number(a.value),b:Number(b.value)});
+  function render(animate=false) {
+    const v=values();
+    root.querySelector('[data-value="a"]').textContent=v.a;
+    root.querySelector('[data-value="b"]').textContent=v.b;
+    const valid=a.value.trim()!==''&&b.value.trim()!==''&&Number.isSafeInteger(v.a)&&Number.isSafeInteger(v.b);
+    error.hidden=valid;
+    error.textContent=valid?'':'Введите два целых числа в диапазоне ±9 007 199 254 740 991.';
+    const active=valid&&running?(v.a>v.b?0:v.a<v.b?1:2):-1;
+    const width=Math.max(280,Math.round(scene.getBoundingClientRect().width));
+    if(active===renderedActive&&width===renderedWidth)return;
+    const flowChanged=renderedActive!==undefined&&active!==renderedActive;
+    renderedActive=active;
+    renderedWidth=width;
+    const x=Math.round(width*.23), tankX=Math.round(width*.58), tankWidth=width-tankX-12;
+    const spout=Math.round(tankX+tankWidth/2), ys=[110,260,410];
+    const names=['Первое больше','Второе больше','Числа равны'];
+    const keywords=['if a > b','elif a < b','else'];
+    const branch=i=>`M${x+16},${ys[i]} H${spout-12} Q${spout},${ys[i]} ${spout},${ys[i]+12} V${ys[i]+23}`;
+    const main=`M${x},45 V${ys[2]}`;
+    let html=`<svg class="water-diagram" viewBox="0 0 ${width} 530" height="530" role="img" aria-label="Вода обозначает ход программы. Условия проверяются сверху вниз; вода попадает только в один резервуар.">
+      <defs><linearGradient id="cw-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--viz-series-1)" stop-opacity=".16"/><stop offset="100%" stop-color="var(--viz-series-1)" stop-opacity=".5"/></linearGradient></defs>
+      <path class="dry-pipe" d="${main}"/>
+      <rect class="vessel" x="${x-24}" y="7" width="48" height="38" rx="10"/>
+      <path class="water" d="M${x-22} 26 Q${x-10} 21 ${x} 26 T${x+22} 26 V35 Q${x+22} 43 ${x+14} 43 H${x-14} Q${x-22} 43 ${x-22} 35Z"/>
+      <text x="${x+38}" y="30" class="muted-label">Поток выполнения</text>`;
+    ys.forEach((y,i)=>{
+      const selected=active===i;
+      html+=`<path class="dry-pipe" d="${branch(i)}"/>
+        <path class="vessel" d="M${tankX} ${y+38} V${y+59} Q${tankX} ${y+73} ${tankX+14} ${y+73} H${tankX+tankWidth-14} Q${tankX+tankWidth} ${y+73} ${tankX+tankWidth} ${y+59} V${y+38}"/>
+        <text x="${tankX+tankWidth/2}" y="${y+94}" text-anchor="middle">${names[i]}</text>`;
+      if (i<2)html+=`<text class="muted-label" x="${x+15}" y="${y+67}">${active>i?'дальше ↓':''}</text>`;
+      if(selected)html+=`<rect data-water x="${tankX+2}" y="${y+47}" width="${tankWidth-4}" height="24" rx="9" fill="url(#cw-water)"/>
+        <path class="surface" d="M${tankX+2} ${y+47} Q${tankX+tankWidth*.25} ${y+43} ${tankX+tankWidth*.5} ${y+47} T${tankX+tankWidth-2} ${y+47}"/>
+        <path class="wet-pipe" d="M${spout} ${y+23} V${y+45}"/>`;
+    });
+    if(active>=0){
+      const y=ys[active];
+      html+=`<path class="wet-pipe" data-flow d="M${x} 45 V${y-12} Q${x} ${y} ${x+16} ${y} H${spout-12} Q${spout} ${y} ${spout} ${y+12} V${y+23}"/>`;
+    }
+    ys.forEach((y,i)=>{
+      const selected=active===i;
+      const status=active<0?'':active<i?(i===2?'пропущено':'не проверяется'):i===2?'без условия':selected?'истина':'ложь';
+      html+=`<text class="keyword gate-label" x="${x}" y="${y-50}" text-anchor="middle">${keywords[i].replace('>','&gt;').replace('<','&lt;')}</text>
+        <text class="muted-label gate-label" x="${x}" y="${y-25}" text-anchor="middle">${status}</text>
+        <circle class="gate" cx="${x}" cy="${y}" r="15"/>
+        <circle cx="${x}" cy="${y}" r="3" fill="${selected?'var(--viz-series-1)':'var(--muted-foreground)'}"/>
+        <path class="lever" d="M${x-9} ${y} H${x+9}" transform="rotate(${selected?-35:90} ${x} ${y})"/>`;
+    });
+    html+='</svg>';
+    scene.innerHTML=html;
+    caption.textContent=active<0?'Поток остановлен':active===0?'if сработал → elif не проверяется → else пропущен':active===1?'if: ложь → elif: истина → else пропущен':'if: ложь → elif: ложь → выполняется else';
+    if(animate&&flowChanged&&!quiet.matches&&active>=0){
+      const flow=scene.querySelector('[data-flow]');
+      const length=flow.getTotalLength();
+      flow.animate([{strokeDasharray:`${length} ${length}`,strokeDashoffset:length},{strokeDasharray:`${length} ${length}`,strokeDashoffset:0}],{duration:850,easing:'ease-in-out'});
+      const water=scene.querySelector('[data-water]');
+      water.style.transformBox='fill-box'; water.style.transformOrigin='center bottom';
+      water.animate([{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:350,delay:600,fill:'backwards',easing:'ease-out'});
+    }
+  }
+  function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{kind:'conditional-waterworks',...values(),running},privateContent:null}).catch(()=>{});}
+  function restore(state){const s=state?.modelContent;if(s?.kind==='conditional-waterworks'&&Number.isSafeInteger(s.a)&&Number.isSafeInteger(s.b)){a.value=s.a;b.value=s.b;running=s.running!==false;}render();}
+  [a,b].forEach(input=>{
+    input.addEventListener('input',()=>{running=true;render(true);});
+    input.addEventListener('change',()=>{if(error.hidden)save();});
+  });
+  window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState)restore(e.detail.globals.widgetState);});
+  new ResizeObserver(()=>render()).observe(scene);
+  restore(window.openai?.widgetState);
+})();
+</script>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Рекламная пауза | Олимпиада</title>
+<style>:root { color-scheme: light dark; --o-bg:light-dark(#f5f3ff,#121722); --o-paper:light-dark(#fff,#202837); --o-ink:light-dark(#1e1b4b,#edf1fa); --o-muted:light-dark(#4c4a7a,#bdc7dc); --o-border:light-dark(#d8d7eb,#49576d); --o-accent:light-dark(#6d28d9,#c4b5fd); --o-warm:light-dark(#fffbeb,#332c22); --o-cool:light-dark(#eff6ff,#1b3047); --o-green:light-dark(#ecfdf5,#193c31); }
+:root[data-theme="light"] {color-scheme:light}
+:root[data-theme="dark"] {color-scheme:dark}
+.theme {position:absolute;top:12px;right:12px;width:40px;height:40px;padding:0;min-height:0;border:0;border-radius:50%;background:none;cursor:pointer;opacity:.22;color:light-dark(#e3a008,#b9cdf5);-webkit-tap-highlight-color:transparent;transition:opacity .35s,filter .35s;z-index:100}
+.theme:not(.dark) {opacity:.4}
+.theme:hover,.theme.awake,.theme:focus-visible {opacity:1;filter:drop-shadow(0 0 3px currentColor) drop-shadow(0 0 10px currentColor)}
+.theme:focus-visible {outline:2px solid currentColor;outline-offset:2px}
+.theme svg {position:absolute;inset:8px;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:opacity .5s,transform .6s cubic-bezier(.4,0,.2,1)}
+.theme .moon {fill:currentColor;stroke:none}
+.theme .moon,.theme.dark .sun {opacity:0;transform:rotate(-90deg) scale(.4)}
+.theme.dark .moon {opacity:1;transform:none}
+::view-transition-old(root),::view-transition-new(root) {animation:none;mix-blend-mode:normal}
+html.olymp-task body {padding-top:58px!important;padding-bottom:76px!important}
+html:not(.olymp-task) #app {padding-top:58px}
+:is([class~="bg-white"],[class*="bg-white/"]) {background-color:var(--o-paper)!important}
+:is([class*="bg-zinc-50"],[class*="bg-zinc-100"],[class*="bg-gray-50"],[class*="bg-gray-100"],[class*="bg-slate-50"],[class*="bg-slate-100"]) {background-color:light-dark(#f4f4f5,#182231)!important}
+:is([class*="text-zinc-9"],[class*="text-zinc-8"],[class*="text-gray-9"],[class*="text-gray-8"],[class*="text-slate-9"],[class*="text-slate-8"],[class~="text-black"]) {color:var(--o-ink)!important}
+:is([class*="text-zinc-7"],[class*="text-zinc-6"],[class*="text-zinc-5"],[class*="text-gray-7"],[class*="text-gray-6"],[class*="text-gray-5"],[class*="text-slate-7"],[class*="text-slate-6"],[class*="text-slate-5"]) {color:var(--o-muted)!important}
+:is([class*="border-zinc-"],[class*="border-gray-"],[class*="border-slate-"]) {border-color:var(--o-border)!important}
+:is([class*="bg-amber-50"],[class*="bg-yellow-50"],[class*="bg-orange-50"]) {background-color:var(--o-warm)!important}
+:is([class*="bg-blue-50"],[class*="bg-indigo-50"],[class*="bg-purple-50"]) {background-color:var(--o-cool)!important}
+:is([class*="bg-emerald-50"],[class*="bg-green-50"]) {background-color:var(--o-green)!important}
+:is([class*="text-amber-7"],[class*="text-amber-8"],[class*="text-yellow-7"],[class*="text-orange-7"]) {color:light-dark(#92400e,#f5cd8b)!important}
+:is([class*="text-emerald-7"],[class*="text-emerald-8"],[class*="text-green-7"]) {color:light-dark(#047857,#a0dfbf)!important}
+:is([class*="text-blue-7"],[class*="text-indigo-7"],[class*="text-purple-7"]) {color:light-dark(#4338ca,#bccbff)!important}
+input,select,textarea {color-scheme:inherit}
+[class*="bg-zinc-200"],[class*="bg-gray-200"],[class*="bg-slate-200"],[class*="bg-zinc-300"],[class*="bg-gray-300"],[class*="bg-slate-300"] {background-color:light-dark(#e4e4e7,#303c50)!important}
+[class*="bg-amber-100"],[class*="bg-amber-200"],[class*="bg-yellow-100"],[class*="bg-yellow-200"],[class*="bg-orange-100"] {background-color:var(--o-warm)!important}
+[class*="from-zinc-"],[class*="from-gray-"],[class*="from-slate-"] {--tw-gradient-from:light-dark(#e4e4e7,#303c50)!important;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)!important}
+[class*="to-zinc-"],[class*="to-gray-"],[class*="to-slate-"] {--tw-gradient-to:light-dark(#d4d4d8,#253044)!important}
+[class*="from-amber-50"],[class*="from-amber-100"],[class*="from-yellow-50"],[class*="from-yellow-100"] {--tw-gradient-from:var(--o-warm)!important;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)!important}
+[class*="to-amber-50"],[class*="to-amber-100"],[class*="to-yellow-50"],[class*="to-yellow-100"] {--tw-gradient-to:var(--o-warm)!important}
+.qr img {background:#fff!important}
+@media(prefers-reduced-motion:reduce){.theme,.theme svg {transition:none}}
+</style>
+<style>
+html.olymp-task body{padding:0!important}
+*{box-sizing:border-box}body{margin:0;background:var(--o-bg);color:var(--o-ink);font:clamp(16px,1.35vw,23px)/1.45 system-ui,sans-serif}
+main{width:min(1180px,100%);min-height:100dvh;margin:auto;padding:32px 24px;display:grid;grid-template-columns:1fr 1.15fr;align-content:start;gap:16px}
+header,.rule,.toolbar,.model{grid-column:1/-1}header{padding-right:40px}h1{font-size:clamp(30px,3.4vw,48px);letter-spacing:-.045em;line-height:1.1;margin:0}p{margin:0}.eyebrow{font-size:.65em;font-weight:600;letter-spacing:.06em;color:var(--o-muted);margin-bottom:8px}
+.rule,.card{background:var(--o-paper);border:1px solid var(--o-border);border-radius:16px;padding:20px}.rule{font-size:1.02em}.rule strong{font-weight:650;color:var(--o-accent)}
+.toolbar{display:flex;align-items:center;gap:12px}.toolbar label{display:flex;align-items:center;gap:12px;font-size:.8em}.toolbar select{font-size:1em}
+.params{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;height:100%;align-content:center;align-items:end}label{display:block;font-size:.77em;color:var(--o-muted)}input{display:block;width:100%;min-width:0;min-height:46px;margin-top:7px;padding:9px 12px;border:1px solid var(--o-border);border-radius:9px;background:var(--o-bg);color:var(--o-ink);font:600 1.35em/1.2 system-ui,sans-serif;font-variant-numeric:tabular-nums;transition:border-color .18s,box-shadow .18s}input::placeholder{font-weight:400;font-size:.85em;color:var(--o-muted);opacity:.7}input[aria-invalid="true"]{border-color:light-dark(#b45309,#fbbf24)}
+button,select{font:inherit;color:var(--o-ink);background:var(--o-paper);border:1px solid var(--o-border);border-radius:9px;padding:9px 14px;min-height:44px;cursor:pointer;transition:background .18s,transform .18s,border-color .18s}button:hover:not(:disabled){background:var(--o-cool);border-color:var(--o-accent)}button:active:not(:disabled){transform:translateY(1px)}button.primary{background:var(--o-accent);color:light-dark(#fff,#1e1b4b);font-weight:600;border-color:transparent}button.primary:hover{background:light-dark(#5b21b6,#ddd6fe)}button:disabled{opacity:.38;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--o-accent);outline-offset:3px}
+.answer-row{display:grid;grid-template-columns:1fr auto;gap:12px}.answer-row label{grid-column:1/-1}.answer-row button{font-size:.84em}#feedback{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;margin-top:14px;padding:12px;border-radius:10px;background:var(--o-bg);color:var(--o-muted);font-size:.76em;line-height:1.35}#feedback::before{content:'·';display:grid;place-items:center;width:24px;height:24px;border:1px solid currentColor;border-radius:50%;font-size:17px;font-weight:600}#feedback strong{display:block;font-weight:650;color:inherit}#feedback span{display:block;margin-top:3px}#feedback[data-state="success"]{color:light-dark(#166534,#a7f3d0);background:light-dark(#edf8f0,#19382c)}#feedback[data-state="success"]::before{content:'✓'}#feedback[data-state="error"],#feedback[data-state="invalid"]{color:light-dark(#92400e,#fde68a);background:light-dark(#fff7e8,#382e1c)}#feedback[data-state="error"]::before{content:'↻'}#feedback[data-state="invalid"]::before{content:'!'}
+.model[hidden]{display:none}.model-top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.model h2{font-size:1em;letter-spacing:-.02em;margin:0}.model-top>div{display:flex;gap:8px}.model-top button{font-size:.72em}.track{display:flex;align-items:stretch;gap:7px;margin:16px 0;min-height:70px}.piece{border-radius:9px;flex:1;min-width:0;padding:14px 4px;text-align:center;border:1px solid var(--o-border);background:var(--o-cool);font-weight:650;font-size:.9em}.piece.ad{background:var(--o-warm);border-style:dashed}.piece small{display:block;font-size:.72em;font-weight:400}.piece.gap{flex:.4;background:none;border:0;align-self:center}.caption,.legend{color:var(--o-muted);font-size:.7em;line-height:1.35}.legend{margin-top:8px;padding-top:8px;border-top:1px solid var(--o-border)}.totals{font-size:1em;font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:7px}.empty{padding:20px;text-align:center;color:var(--o-muted);font-size:.85em;border:1px dashed var(--o-border);border-radius:9px;margin:16px 0;width:100%}
+@media(max-height:800px) and (min-width:701px){main{padding:18px 24px;gap:12px}h1{font-size:34px}.rule,.card{padding:14px}.track{margin:12px 0;min-height:55px}.piece{padding:9px 3px}#feedback{margin-top:10px;padding:10px}.model{padding:10px 14px}.model .track{margin:8px 0}.model .piece{padding:7px 3px}.model .legend{margin-top:6px;padding-top:6px}}
+@media(max-width:700px){body{font-size:16px}main{display:flex;flex-direction:column;padding:18px 14px;gap:10px}.eyebrow{font-size:9px;letter-spacing:.035em;margin-bottom:6px}h1{font-size:32px}.rule,.card{padding:14px;border-radius:12px}.rule{font-size:15px}.toolbar label{font-size:13px}.params{gap:10px}.params label{font-size:12px}input{margin-top:5px;padding:8px 10px;font-size:19px}.answer-row{gap:9px}.answer-row label{font-size:13px}.answer-row button{font-size:13px}#feedback{margin-top:10px;padding:10px;font-size:12px;grid-template-columns:20px 1fr;gap:8px}#feedback::before{width:20px;height:20px;font-size:14px}.model-top{gap:8px}.model h2{font-size:16px}.model-top>div{gap:6px;flex-wrap:wrap}.model-top button{padding:7px 9px;font-size:12px}.track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:12px 0;min-height:0}.piece{font-size:14px;padding:6px 3px}.piece small{display:inline;margin-left:4px}.empty{grid-column:1/-1;margin:0;padding:12px;font-size:13px}.totals{font-size:14px}.caption,.legend{font-size:11px}.piece.gap{align-self:stretch}main.revealed .rule,main.revealed .toolbar,main.revealed #answer-form{display:none}}
+@media(max-width:700px) and (max-height:700px){main{padding:12px;gap:8px}.rule,.card{padding:12px}h1{font-size:29px}.eyebrow{font-size:8px}.rule{font-size:14px}input{min-height:44px}#feedback span{margin-top:2px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+</style>
+<script>(() => {
+try { const saved=localStorage.getItem('olymp-theme'); if(saved==='light'||saved==='dark')document.documentElement.dataset.theme=saved; } catch {}
+if(location.pathname.includes('/tasks/'))document.documentElement.classList.add('olymp-task');
+document.addEventListener('DOMContentLoaded',()=>{
+document.body.insertAdjacentHTML('afterbegin','<button type="button" class="theme" aria-label="Сменить тему"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z"/></svg></button>');
+const root = document.documentElement;
+  const themeButton = document.querySelector(".theme");
+  const systemDark = matchMedia("(prefers-color-scheme: dark)");
+  const touchOnly = matchMedia("(hover: none)");
+  const quiet = matchMedia("(prefers-reduced-motion: reduce)");
+  const currentTheme = () => root.dataset.theme || (systemDark.matches ? "dark" : "light");
+  const showTheme = () => themeButton.classList.toggle("dark", currentTheme() === "dark");
+  showTheme();
+  systemDark.addEventListener("change", showTheme);
+  let sleep;
+  const wake = () => {
+    themeButton.classList.add("awake");
+    clearTimeout(sleep);
+    sleep = setTimeout(() => themeButton.classList.remove("awake"), 3000);
+  };
+  themeButton.addEventListener("click", () => {
+    if (touchOnly.matches && !themeButton.classList.contains("awake")) {
+      wake();
+      return;
+    }
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    const apply = () => {
+      root.dataset.theme = next;
+      showTheme();
+      try { localStorage.setItem("olymp-theme", next); } catch {}
+    };
+    if (touchOnly.matches) wake();
+    if (!document.startViewTransition || quiet.matches) {
+      apply();
+      return;
+    }
+    const box = themeButton.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    document.startViewTransition(apply).ready.then(() => {
+      root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 700, easing: "cubic-bezier(.4, 0, .2, 1)", pseudoElement: "::view-transition-new(root)" }
+      );
+    });
+  });
+
+});
+})();
+</script>
+</head>
+<body><main>
+<header><p class="eyebrow">ОЛИМПИАДНАЯ РАЗМИНКА · СТАРШИЕ · НЕДЕЛЯ 5 · № 3</p><h1>Рекламная пауза</h1></header>
+<p class="rule">После каждых <strong>a минут самого фильма</strong> идёт реклама по <strong>b минут</strong>. Фильм длится <strong>n минут</strong>. Если фильм закончился, рекламу уже не показывают. Сколько минут займёт просмотр фильма вместе с рекламой?</p>
+<div class="toolbar"><label for="preset">Случай <select id="preset"><option value="20,3,100">Фильм 100 минут</option><option value="20,3,20">Ровно один блок</option><option value="20,3,21">На минуту длиннее</option><option value="30,3,100">Блоки по 30 минут</option><option value="custom">Свои числа</option></select></label></div>
+<section class="card" aria-label="Данные задачи"><div class="params">
+<label>a · между рекламами<input id="a" inputmode="numeric" value="20" autocomplete="off" maxlength="10"></label>
+<label>b · реклама<input id="b" inputmode="numeric" value="3" autocomplete="off" maxlength="10"></label>
+<label>n · сам фильм<input id="n" inputmode="numeric" value="100" autocomplete="off" maxlength="10"></label>
+</div></section>
+<form class="card" id="answer-form" novalidate><div class="answer-row">
+<label for="answer">Общее время с рекламой, в минутах<input id="answer" inputmode="numeric" autocomplete="off" placeholder="Введи число минут" maxlength="20"></label>
+<button class="primary" type="submit">Проверить</button><button id="reveal" type="button" disabled>Показать шкалу</button>
+</div><div id="feedback" role="status" aria-live="polite" aria-atomic="true" data-state="hint"><div><strong>Сначала свой расчёт.</strong><span>Можно нарисовать блоки фильма на бумаге.</span></div></div></form>
+<section class="card model" id="model" hidden aria-label="Проверка на шкале времени">
+<div class="model-top"><h2>Шкала просмотра</h2><div><button id="back" type="button">К условию</button><button id="step" type="button">Следующий блок</button><button id="all" type="button">Весь просмотр</button></div></div>
+<div id="track" class="track" aria-label="Блоки просмотра"></div>
+<p id="totals" class="totals" role="status" aria-live="polite"></p><p id="caption" class="caption"></p>
+<p class="legend">Сплошной блок — фильм, пунктирный — реклама. Длительность указана числом, ширина блоков условная.</p>
+</section>
+
+</main>
+<script id="logic">
+'use strict';
+globalThis.AdBreak = (() => {
+  const MAX = 1000000000n;
+  function positive(raw, limit = MAX) {
+    if (!/^[0-9]+$/.test(raw.trim())) throw Error('Введи целое положительное число без знаков и дробей.');
+    const v = BigInt(raw.trim());
+    if (v < 1n || v > limit) throw Error('Для a, b, n нужны числа от 1 до 1 000 000 000.');
+    return v;
+  }
+  function calculate(a, b, n) {
+    if ([a,b,n].some(v => typeof v !== 'bigint' || v < 1n || v > MAX)) throw Error('Недопустимые данные');
+    const ads = (n - 1n) / a;
+    return {a, b, n, ads, total: n + ads*b, blocks: ads*2n + 1n};
+  }
+  function piece(m, i) {
+    if (i < 0n || i >= m.blocks) throw Error('Нет такого блока');
+    if (i % 2n) return {kind:'ad', duration:m.b, filmAt:((i+1n)/2n)*m.a};
+    const start = (i/2n)*m.a;
+    return {kind:'film', duration:m.n-start < m.a ? m.n-start : m.a, filmAt:start};
+  }
+  function progress(m, visible) {
+    const k = visible < 0n ? 0n : visible > m.blocks ? m.blocks : visible;
+    const films = (k+1n)/2n, ads=k/2n;
+    const film = films*m.a > m.n ? m.n : films*m.a;
+    return {visible:k, film, ads, time:film+ads*m.b};
+  }
+  function indices(count) {
+    if (count <= 11n) return Array.from({length:Number(count)}, (_,i)=>BigInt(i));
+    return [0n,1n,2n,null,count-3n,count-2n,count-1n];
+  }
+  return {positive,calculate,piece,progress,indices};
+})();
+</script>
+<script id="ui">
+(() => {
+  const $=id=>document.getElementById(id), fields=['a','b','n'].map($);
+  let model=null, visible=0n;
+  const fmt=n=>n.toLocaleString('ru-RU');
+  function feedback(state,title,detail){const box=$('feedback');box.dataset.state=state;box.querySelector('strong').textContent=title;box.querySelector('span').textContent=detail;$('answer').setAttribute('aria-invalid',String(state==='error'||state==='invalid'));}
+  function reset(){model=null;visible=0n;$('model').hidden=true;document.querySelector('main').classList.remove('revealed');$('track').replaceChildren();$('answer').value='';$('reveal').disabled=true;feedback('hint','Новый случай.','Посчитай общее время и введи ответ.');}
+  fields.forEach(el=>el.addEventListener('input',()=>{reset();$('preset').value='custom';}));
+  $('preset').addEventListener('change',()=>{if($('preset').value==='custom')return;const vals=$('preset').value.split(',');fields.forEach((el,i)=>el.value=vals[i]);reset();});
+  $('answer').addEventListener('input',()=>{model=null;$('model').hidden=true;document.querySelector('main').classList.remove('revealed');$('reveal').disabled=true;feedback('hint','Проверим расчёт?','Нажми «Проверить» или Enter.');});
+  $('answer-form').addEventListener('submit',e=>{
+    e.preventDefault();
+    try {
+      const m=AdBreak.calculate(...fields.map(el=>AdBreak.positive(el.value)));
+      if(!/^[0-9]+$/.test($('answer').value.trim()))throw Error('Напиши свой ответ целым числом минут.');
+      const answer=BigInt($('answer').value.trim());
+      model=m;$('reveal').disabled=false;
+      if(answer===m.total){feedback('success','Верно.','Ты учёл время фильма и рекламы. Проверь себя на шкале.');}else{feedback('error','Пока не сходится.','Проверь рекламные паузы: после конца фильма рекламы нет.');}
+    } catch(err) { feedback('invalid','Проверь ввод.',err.message);model=null;$('reveal').disabled=true; }
+  });
+  function render(){
+    const p=AdBreak.progress(model,visible);$('track').replaceChildren();
+    if(!visible){const el=document.createElement('div');el.className='empty';el.textContent='Просмотр ещё не начался. Добавь первый блок.';$('track').append(el);}
+    for(const i of AdBreak.indices(p.visible)){
+      const el=document.createElement('div');
+      if(i===null){el.className='piece gap';el.textContent='…';el.setAttribute('aria-label','Промежуточные блоки скрыты');}
+      else {const b=AdBreak.piece(model,i);el.className='piece '+b.kind;
+        el.append(document.createTextNode(fmt(b.duration)+' мин'));
+        const title=document.createElement('small');title.textContent=b.kind==='ad'?'реклама':'фильм';el.append(title);
+        el.setAttribute('aria-label',b.kind==='ad'?'Реклама после '+fmt(b.filmAt)+' минут фильма, '+fmt(b.duration)+' минут':'Фильм с '+fmt(b.filmAt)+' до '+fmt(b.filmAt+b.duration)+' минуты');}
+      $('track').append(el);
+    }
+    $('totals').textContent='Фильм: '+fmt(p.film)+' мин · Реклам: '+fmt(p.ads)+' · Прошло: '+fmt(p.time)+' мин';
+    const done=p.visible===model.blocks;
+    $('caption').textContent=(done?'Фильм закончился. Следующей рекламы нет. ':'Считаем время фильма отдельно от времени зрителя. ')+(p.visible>11n?'Показаны начало и конец, середина свёрнута. ':'');
+    $('step').disabled=done;$('all').disabled=done;
+  }
+  $('reveal').addEventListener('click',()=>{if(!model)return;$('model').hidden=false;document.querySelector('main').classList.add('revealed');visible=0n;render();});
+  $('back').addEventListener('click',()=>{$('model').hidden=true;document.querySelector('main').classList.remove('revealed');$('reveal').focus();});
+  $('step').addEventListener('click',()=>{if(model&&visible<model.blocks){visible++;render();}});
+  $('all').addEventListener('click',()=>{if(model){visible=model.blocks;render();}});
+})();
+</script>
+</body></html>

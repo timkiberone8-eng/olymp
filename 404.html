@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Страница не найдена — Олимпиада</title>
+<script>
+(() => {
+  const address = new URL(location.href);
+  const path = address.pathname.replace(/%2e$/i, '.');
+  if (path === '/olymp/tasks/ad-break.html.') {
+    address.pathname = '/olymp/tasks/ad-break.html';
+    location.replace(address.href);
+  }
+})();
+</script>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif;background:#f5f6ff;color:#182047}body{margin:0;padding:24px;min-height:80vh;display:grid;place-items:center}main{box-sizing:border-box;width:min(100%,560px);padding:clamp(24px,5vw,40px);border:1px solid #d8dcf5;border-radius:20px;background:#fff}h1{font-size:clamp(26px,5vw,34px);margin:0 0 16px}p{line-height:1.6}nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:12px;background:#4f46e5;color:#fff;text-decoration:none}a:focus-visible{outline:3px solid #182047;outline-offset:4px}@media(prefers-color-scheme:dark){:root{background:#111424;color:#e7e9ff}main{background:#1b2035;border-color:#404766}a:focus-visible{outline-color:#c7d2fe}}
+</style>
+</head>
+<body>
+<main>
+<h1>Страница не найдена</h1>
+<p>Проверь адрес: в конце ссылки могла оказаться лишняя точка.</p>
+<nav aria-label="Куда перейти">
+<a href="/olymp/tasks/ad-break.html">Рекламная пауза</a>
+<a href="/olymp/">Все задачи</a>
+</nav>
+</main>
+</body>
+</html>

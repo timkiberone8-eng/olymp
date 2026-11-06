@@ -1260,6 +1260,86 @@
       .btn-sim { min-height: 40px; }
       .schedule-item { flex-wrap: wrap; }
     }
+
+    /* Scene-first classroom layout */
+    body { background-image: none; background-color: light-dark(#f3f1eb, #101719); }
+    main { width: min(1280px,100%); padding: 48px 36px 70px; display: block; }
+    .card { border: 0; box-shadow: none; border-radius: 0; padding: 0; background: transparent; }
+    .task-panel { gap: 0; position: relative; padding-bottom: 26px; }
+    .kicker { font-size: 11px; letter-spacing: .14em; color: var(--o-muted); display:flex; justify-content:space-between; }
+    .kicker span { font: 600 16px var(--font-mono); }
+    h1 { font-size: clamp(32px,4.5vw,58px); letter-spacing: -.045em; margin: 20px 0 18px; font-weight: 750; }
+    .condition { background:none; border:0; border-radius:0; padding:0; margin:0 0 8px; font-size:17px; max-width:850px; }
+    .question { margin:0; font-size:17px; color:var(--o-muted); }
+    .question br { display:none; }
+    .question strong { color:var(--o-ink); }
+    .simulation-panel { gap: 16px; }
+    .railway-stage { height:340px; border:1px solid light-dark(#c7d5d1,#344541); border-radius:18px; box-shadow:none; background:light-dark(#e2eae5,#192622); }
+    .scenery-sky { height:100%; background:linear-gradient(180deg,light-dark(#e5eee9,#1d3029),light-dark(#f0f2e9,#17231f)); }
+    .mountain-svg { top:28px; height:110px; color:light-dark(#cfddd2,#294336); opacity:.55; }
+    .station-node { top:24px; }
+    .station-node.vladivostok { left:28px; } .station-node.moscow { right:28px; }
+    .station-badge { background:none; border:0; box-shadow:none; font-size:17px; padding:0; }
+    .station-sub { font-size:11px; margin-top:5px; }
+    .geo-landmarks { display:none; }
+    .tracks-container { left:65px; right:65px; top:123px; bottom:65px; }
+    .track-lane.bottom { top:88px; }
+    .track-lane-label { font-size:10px; letter-spacing:.1em; }
+    .track-bed { opacity:.35; background-image:repeating-linear-gradient(90deg,transparent 0 12px,var(--color-rail) 12px 15px); background-color:transparent; height:22px; }
+    .track-rail { box-shadow:none; opacity:.65; }
+    .train-body-our { height:38px; border-radius:5px 17px 5px 5px; box-shadow:none; gap:12px; padding:0 12px; background:#238c70; }
+    .train-body-oncoming { width:49px; height:29px; border-radius:12px 4px 4px 4px; box-shadow:none; padding:0; }
+    .windows { font-size:12px; letter-spacing:2px; color:#e1f2ee; }
+    .train-body-oncoming::after,.train-body-our::after { content:""; position:absolute; height:6px; bottom:-5px; left:8px; right:8px; border-left:7px solid #0e1819; border-right:7px solid #0e1819; }
+    .train-oncoming.met .train-body-oncoming { opacity:.8; filter:none; }
+    .smoke-puff,.headlight-cone { display:none; }
+    .timeline-ruler { left:65px; right:65px; bottom:24px; }
+    .prediction-box { padding:18px 0; border:0; border-bottom:1px solid var(--o-border); border-radius:0; background:none; display:grid; grid-template-columns: 180px 1fr; gap:20px; align-items:center; }
+    .prediction-box.locked { background:none; border:0; padding:0; display:block; }
+    .prediction-box.locked .prediction-header { display:none; }
+    .prediction-header { margin:0; } .prediction-title { font-size:16px; }
+    .prediction-title>span:first-child,#pred-badge,.prediction-desc { display:none; }
+    .prediction-controls { margin:0; max-width:520px; }
+    .prediction-input { background:var(--o-paper); }
+    .prediction-result-line { padding:0; border:0; background:none; font-size:14px; }
+    .btn-submit-prediction,.btn-sim.primary { background:light-dark(#245a48,#a6dec2); color:light-dark(#fff,#132b20); box-shadow:none; }
+    .sim-toolbar,.scrubber-wrap { display:none; }
+    .ready .sim-toolbar { display:flex; } .ready .scrubber-wrap { display:block; }
+    .sim-toolbar { margin:0; }
+    .scrubber-wrap { border:0; padding:0; background:none; }
+    .simulation-panel .stats-card { grid-template-columns:1fr 2fr; border-bottom:1px solid var(--o-border); padding:0 0 14px; }
+    .total-counter-box,.substat { border:0; border-radius:0; background:none !important; box-shadow:none; }
+    .total-counter-box { padding:0; justify-content:flex-start; gap:24px; }
+    .total-counter-value { font-size:42px; color:var(--color-our); }
+    .substat-count { font-size:26px; }
+    .substat-desc { font-size:12px; }
+    .encounter-ticker { border:0; background:none; padding:4px 0; font-size:14px; }
+    body:not(.ready) #encounter-ticker { display:none; }
+    .model-note { font-size:12px; max-width:740px; opacity:.8; margin:6px 0 0; }
+    .legend-bar { font-size:12px; }
+    .paradox-card { background:light-dark(#e2ebe4,#1b3026); border:0; padding:24px; }
+    .schedule-details { border-radius:8px !important; box-shadow:none; }
+    @media(max-width:700px) {
+      main { padding:26px 18px 60px; }
+      .condition,.question { font-size:15px; }
+      .question br { display:block; }
+      .prediction-box { grid-template-columns:1fr; gap:10px; }
+      .prediction-controls { flex-wrap:wrap; }
+      .railway-stage { height:280px; }
+      .station-badge { font-size:13px; }
+      .station-node.vladivostok { left:14px; } .station-node.moscow { right:14px; }
+      .tracks-container { left:30px; right:30px; top:105px; }
+      .track-lane-label { display:none; }
+      .timeline-ruler { left:30px; right:30px; bottom:16px; }
+      .train-body-oncoming { width:19px; height:22px; }
+      .train-body-oncoming .windows { font-size:6px; letter-spacing:0; }
+      .train-body-our { padding:0 6px; height:30px; }
+      .train-body-our .windows { display:none; }
+      .train-body-our span.long-title { display:inline; }
+      .simulation-panel .stats-card { grid-template-columns:1fr; }
+      .substats-grid { grid-template-columns:1fr 1fr; }
+      .model-note { line-height:1.5; }
+    }
   </style>
 </head>
 <body>
@@ -1267,97 +1347,16 @@
 <main>
   <!-- Левая колонка: Условие, Прогноз, Счетчики, Разбор -->
   <section class="task-panel card" aria-label="Панель задачи">
-    <div class="kicker">Олимпиада KIBERone · Неделя 7 · Средняя группа</div>
+    <div class="kicker">KIBERone / Математика в движении <span>07</span></div>
     <h1>Нас ссорили поезда</h1>
 
-    <p class="condition">
-      «Из Москвы во Владивосток каждый день выходит поезд. Также каждый день из Владивостока в Москву выходит поезд. Переезд длится <strong>10 дней</strong>. Если вы выехали из Владивостока в Москву, то <strong>сколько поездов</strong>, идущих в обратном направлении, встретится вам во время поездки?»
-    </p>
-
-    <p class="model-note">В симуляции поезда идут с одинаковой скоростью. Из Москвы они отправляются каждый день на 12 часов позже, чем из Владивостока.</p>
-
-    <!-- Форма первоначального прогноза -->
-    <div class="prediction-box" id="prediction-box">
-      <div class="prediction-header">
-        <span class="prediction-title">
-          <span>🎯</span>
-          <span>Шаг 1: Твой прогноз</span>
-        </span>
-        <span class="badge-pill" id="pred-badge">До запуска</span>
-      </div>
-
-      <div class="prediction-form-body">
-        <p class="prediction-desc">
-          Как думаешь, сколько встречных поездов встретится по пути? Введи число и проверь свой прогноз в поездке.
-        </p>
-
-        <form id="prediction-form" class="prediction-controls" onsubmit="event.preventDefault(); submitPrediction();">
-          <div class="prediction-input-wrap">
-            <input type="number" id="prediction-input" class="prediction-input" aria-label="Количество встречных поездов" placeholder="Твой ответ..." min="0" max="100" autocomplete="off" required>
-          </div>
-          <button type="submit" class="btn-submit-prediction" id="btn-predict-submit">
-            <span>Проверить в пути</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </form>
-      </div>
-
-      <div class="prediction-result-line" id="prediction-result-line">
-        <div>
-          Твой прогноз: <strong id="prediction-display-val"></strong>
-          <button type="button" class="btn-change-prediction" onclick="unlockPrediction()">Изменить</button>
-        </div>
-      </div>
-    </div>
-
+    <p class="condition">Каждый день из Москвы и Владивостока отправляется по поезду навстречу друг другу. Дорога занимает <strong>10 дней</strong>.</p>
+    <p class="question">Ты едешь <strong>из Владивостока в Москву.</strong><br>Сколько встречных поездов увидишь за всю поездку?</p>
   </section>
 
   <!-- Правая колонка: Интерактивная симуляция встречного движения -->
   <section class="simulation-panel card" aria-label="Симуляция движения поездов">
     <!-- Верхняя панель управления -->
-    <div class="sim-toolbar" inert>
-      <div class="sim-controls-group">
-        <button type="button" class="btn-sim primary" id="btn-play" onclick="togglePlay()">
-          <span id="btn-play-icon">
-            <svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></svg>
-          </span>
-          <span id="btn-play-text">В путь</span>
-        </button>
-
-        <button type="button" class="btn-sim" id="btn-step-meet" onclick="stepNextMeeting()" title="Перейти к моменту следующей встречи">
-          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
-          <span>Следующая встреча</span>
-        </button>
-
-        <button type="button" class="btn-sim" id="btn-step-day" onclick="stepDay(1)" title="Сделать шаг на 1 день вперёд">
-          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>+1 день</span>
-        </button>
-
-        <button type="button" class="btn-sim" id="btn-reset" onclick="resetSimulation()" title="Сбросить симуляцию в начало">
-          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          <span>В начало</span>
-        </button>
-      </div>
-
-      <div class="sim-controls-group">
-        <button type="button" class="btn-sim" id="btn-speed" onclick="toggleSpeed()" title="Скорость воспроизведения">
-          <span>1×</span>
-        </button>
-
-        <button type="button" class="btn-sim" id="btn-sound" onclick="toggleSound()" aria-label="Звук встречи" aria-pressed="false" title="Звук выключен">
-          <span id="sound-icon">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </span>
-        </button>
-
-        <div class="sim-status-badge">
-          <span class="clock-icon" id="clock-indicator">🕒</span>
-          <span id="time-badge-text">День 0 · 00:00</span>
-        </div>
-      </div>
-    </div>
-
     <!-- Интерактивная сцена железной дороги -->
     <div class="railway-stage" id="railway-stage">
       <!-- Слой пейзажа -->
@@ -1423,8 +1422,7 @@
           <div class="train-entity train-our" id="our-train" style="left: 0%;">
             <div class="smoke-puff"></div>
             <div class="train-body-our">
-              <span>🚂</span>
-              <span class="long-title">Наш поезд</span>
+              <span class="windows" aria-hidden="true">▰ ▰ ▰</span><span class="long-title">Ты →</span>
               <div class="headlight-cone"></div>
             </div>
           </div>
@@ -1455,17 +1453,38 @@
         <div id="encounter-pins-root"></div>
       </div>
 
-      <!-- Оверлей перед вводом прогноза -->
-      <div class="gate-overlay" id="gate-overlay">
-        <div class="gate-card">
-          <div class="gate-icon">🚂</div>
-          <h2 class="gate-title">Сначала сделай прогноз!</h2>
-          <p class="gate-desc">
-            Перед тем как отправиться в путь из Владивостока в Москву, введи свою догадку: сколько встречных поездов мы встретим?
-          </p>
-          <button type="button" class="btn-submit-prediction" onclick="focusPredictionInput()">
-            Ввести прогноз
+        <div id="gate-overlay" hidden></div>
+    </div>
+    <!-- Форма первоначального прогноза -->
+    <div class="prediction-box" id="prediction-box">
+      <div class="prediction-header">
+        <span class="prediction-title">
+          <span>🎯</span>
+          <span>Твой прогноз</span>
+        </span>
+        <span class="badge-pill" id="pred-badge">До запуска</span>
+      </div>
+
+      <div class="prediction-form-body">
+        <p class="prediction-desc">
+          Как думаешь, сколько встречных поездов встретится по пути? Введи число и проверь свой прогноз в поездке.
+        </p>
+
+        <form id="prediction-form" class="prediction-controls" onsubmit="event.preventDefault(); submitPrediction();">
+          <div class="prediction-input-wrap">
+            <input type="number" id="prediction-input" class="prediction-input" aria-label="Количество встречных поездов" placeholder="Число поездов" min="0" max="100" autocomplete="off" required>
+          </div>
+          <button type="submit" class="btn-submit-prediction" id="btn-predict-submit">
+            <span>Зафиксировать прогноз</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
+        </form>
+      </div>
+
+      <div class="prediction-result-line" id="prediction-result-line">
+        <div>
+          Твой прогноз: <strong id="prediction-display-val"></strong>
+          <button type="button" class="btn-change-prediction" onclick="unlockPrediction()">Изменить</button>
         </div>
       </div>
     </div>
@@ -1497,6 +1516,49 @@
           </div>
           <div class="substat-count" id="counter-grp2">0</div>
           <div class="substat-desc">выехали после нашего старта</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-toolbar" inert>
+      <div class="sim-controls-group">
+        <button type="button" class="btn-sim primary" id="btn-play" onclick="togglePlay()">
+          <span id="btn-play-icon">
+            <svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></svg>
+          </span>
+          <span id="btn-play-text">В путь</span>
+        </button>
+
+        <button type="button" class="btn-sim" id="btn-step-meet" onclick="stepNextMeeting()" title="Перейти к моменту следующей встречи">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
+          <span>Следующая встреча</span>
+        </button>
+
+        <button type="button" class="btn-sim" id="btn-step-day" onclick="stepDay(1)" title="Сделать шаг на 1 день вперёд">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>+1 день</span>
+        </button>
+
+        <button type="button" class="btn-sim" id="btn-reset" onclick="resetSimulation()" title="Сбросить симуляцию в начало">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>В начало</span>
+        </button>
+      </div>
+
+      <div class="sim-controls-group">
+        <button type="button" class="btn-sim" id="btn-speed" onclick="toggleSpeed()" title="Скорость воспроизведения">
+          <span>1×</span>
+        </button>
+
+        <button type="button" class="btn-sim" id="btn-sound" onclick="toggleSound()" aria-label="Звук встречи" aria-pressed="false" title="Звук выключен">
+          <span id="sound-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </span>
+        </button>
+
+        <div class="sim-status-badge">
+          <span class="clock-icon" id="clock-indicator">🕒</span>
+          <span id="time-badge-text">День 0 · 00:00</span>
         </div>
       </div>
     </div>
@@ -1562,6 +1624,7 @@
       </div>
     </div>
     <!-- Легенда цветов -->
+    <p class="model-note">Как устроена модель: скорость поездов одинакова. Московский поезд отправляется на полсуток позже нашего — поэтому встреч на самих вокзалах здесь нет.</p>
     <div class="legend-bar" hidden>
       <div class="legend-item">
         <span class="legend-swatch our"></span>
@@ -1689,7 +1752,7 @@
     el.title = t.groupName;
     el.innerHTML = `
       <div class="train-body-oncoming">
-        <span aria-hidden="true">◀</span>
+        <span aria-hidden="true" class="windows">▰ ▰</span>
       </div>
     `;
     oncomingTrainsRoot.appendChild(el);
@@ -1799,6 +1862,7 @@
     predBadge.style.background = 'var(--color-our-bg)';
     predBadge.style.color = 'var(--color-our)';
 
+    document.body.classList.add('ready');
     predictionControls.forEach(panel => { panel.inert = false; });
     progressPanels.forEach(panel => { panel.hidden = false; });
     btnPlay.focus();
@@ -1807,6 +1871,7 @@
   window.unlockPrediction = function() {
     resetSimulation();
     state.isUnlocked = false;
+    document.body.classList.remove('ready');
     predictionControls.forEach(panel => { panel.inert = true; });
     progressPanels.forEach(panel => { panel.hidden = true; });
     tripResult.hidden = true;

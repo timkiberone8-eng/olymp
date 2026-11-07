@@ -1011,8 +1011,24 @@
     }
 
     [hidden] { display: none !important; }
-    .travel-guide { margin-bottom: 12px; font-size: 16px; color: var(--color-muted); }
-    .travel-guide a { color: var(--color-our); }
+    .forecast-start { margin-top: 16px; }
+    .forecast-start .flow-input-num { width: 110px; }
+    .forecast-start .btn-action { flex: none; }
+    .trip-controls { display: grid; gap: 8px; }
+    .trip-controls a { color: var(--color-our); }
+    @media (max-width: 600px) {
+      main { gap: 16px; }
+      .header-layout { gap: 10px; }
+      h1 { font-size: clamp(27px, 7vw, 32px); }
+      .kicker-nav .task-num { display: none; }
+      .task-brief { padding: 16px; }
+      .forecast-start .flow-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .forecast-start .flow-input-num { width: 100%; }
+      .forecast-start .btn-action { padding: 7px 10px; line-height: 1.2; }
+      .railway-scene { height: 192px; }
+      .controls-toolbar { padding: 8px; gap: 8px; }
+      .controls-toolbar .btn-action { padding: 0 10px; }
+    }
     .preview-dialog {
       margin: auto;
       max-width: min(480px, calc(100% - 32px));
@@ -1047,12 +1063,12 @@
 
 <main>
   <nav class="kicker-nav" aria-label="Навигация задачи">
-    <span>KIBERone / Математика в движении</span>
+    <span>KIBERone / Ночная диспетчерская</span>
     <span class="task-num">Задача 07</span>
   </nav>
 
   <header class="header-layout">
-    <h1>Ночная диспетчерская: Нас ссорили поезда</h1>
+    <h1>Нас ссорили поезда</h1>
     <div class="mastery-stars-badge" id="mastery-badge" role="group" aria-label="Освоение темы: 0 из 3 звёзд">
       <span class="mastery-stars-label">Освоение</span>
       <div class="mastery-stars-list">
@@ -1071,11 +1087,19 @@
 
   <section class="task-brief" aria-label="Условие задачи">
     <p class="task-condition">
-      Каждый день из Москвы и Владивостока отправляется ровно по одному поезду навстречу друг другу. Вся дорога в одну сторону занимает <strong>10 дней</strong>.
+      Из обоих городов поезда отправляются раз в сутки. Из Москвы — на 12 часов позже. Скорость одинакова, путь занимает <strong>10 суток</strong>.
     </p>
     <p class="task-question">
-      Ты садишься в поезд и едешь <strong>из Владивостока в Москву</strong>. Сколько встречных поездов ты увидишь за всё время поездки?
+      Сколько поездов встретишь <strong>из Владивостока в Москву</strong>? Считай встречи в пути.
     </p>
+    <div class="forecast-start" id="flow-card-hypothesis">
+      <form class="flow-form-row" id="form-hypothesis" onsubmit="event.preventDefault(); submitHypothesis();">
+        <label for="input-hypothesis">Твой прогноз</label>
+        <input type="number" class="flow-input-num" id="input-hypothesis" min="0" max="100" placeholder="Число" required>
+        <button type="submit" class="btn-action btn-primary">Записать и запустить</button>
+        <button type="button" class="btn-action" id="btn-preview" aria-haspopup="dialog">В путь с подсказкой</button>
+      </form>
+    </div>
   </section>
 
   <section class="dispatch-board" aria-label="Пульт наблюдения за поездами">
@@ -1144,6 +1168,42 @@
       </div>
     </div>
 
+    <div class="trip-controls" id="trip-controls" hidden>
+      <div class="controls-toolbar" id="controls-toolbar">
+        <div class="controls-group-actions">
+          <button type="button" class="btn-action btn-primary" id="btn-play">
+            <svg id="play-icon-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span id="play-btn-text">В путь</span>
+          </button>
+
+          <button type="button" class="btn-action" id="btn-next-meet" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Следующая встреча</span>
+          </button>
+
+          <button type="button" class="btn-action" id="btn-step-day" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>+1 день</span>
+          </button>
+
+          <button type="button" class="btn-action" id="btn-reset" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>В начало</span>
+          </button>
+        </div>
+
+        <div class="controls-group-actions">
+          <button type="button" class="btn-action" id="btn-speed-toggle">1×</button>
+        </div>
+      </div>
+
+      <div class="scrubber-panel">
+        <span class="scrubber-label">Перемотка:</span>
+        <input type="range" class="time-slider-track" id="time-slider" aria-label="Время поездки" disabled min="0" max="10" step="0.02" value="0">
+      </div>
+      <a id="observation-link" href="#input-observation" hidden>К ответу по итогам поездки</a>
+    </div>
+
     <div class="dotmatrix-timeline-panel">
       <div class="dotmatrix-header">
         <div class="dotmatrix-title">
@@ -1192,7 +1252,6 @@
       </div>
     </div>
 
-    <p class="travel-guide" id="travel-guide">Можно <a href="#input-hypothesis">записать прогноз</a> или сразу посмотреть поездку как подсказку.</p>
     <dialog class="preview-dialog" id="preview-dialog" aria-labelledby="preview-title" aria-describedby="preview-description">
       <h2 id="preview-title">Посмотреть поездку как подсказку?</h2>
       <p id="preview-description">Поездка покажет встречи до твоего прогноза. За объяснение этого маршрута звезда пока не начислится. Все три звезды можно получить, решив новый маршрут самостоятельно.</p>
@@ -1201,58 +1260,9 @@
         <button type="submit" class="btn-action btn-primary" value="preview">В путь с подсказкой</button>
       </form>
     </dialog>
-    <div class="controls-toolbar" id="controls-toolbar">
-      <div class="controls-group-actions">
-        <button type="button" class="btn-action btn-primary" id="btn-play" aria-describedby="travel-guide">
-          <svg id="play-icon-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-          <span id="play-btn-text">В путь</span>
-        </button>
-
-        <button type="button" class="btn-action" id="btn-next-meet" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <span>Следующая встреча</span>
-        </button>
-
-        <button type="button" class="btn-action" id="btn-step-day" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>+1 день</span>
-        </button>
-
-        <button type="button" class="btn-action" id="btn-reset" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          <span>В начало</span>
-        </button>
-      </div>
-
-      <div class="controls-group-actions">
-        <button type="button" class="btn-action" id="btn-speed-toggle">1×</button>
-      </div>
-    </div>
-
-    <div class="scrubber-panel">
-      <span class="scrubber-label">Перемотка:</span>
-      <input type="range" class="time-slider-track" id="time-slider" aria-label="Время поездки" disabled min="0" max="10" step="0.02" value="0">
-    </div>
   </section>
 
   <section class="learning-flow-container" id="learning-flow-container">
-    <div class="flow-card" id="flow-card-hypothesis">
-      <div class="flow-card-header">
-        <span class="flow-step-tag">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          <span>Шаг 1 · Гипотеза</span>
-        </span>
-      </div>
-      <h2 class="flow-card-title">Сколько встречных поездов ты ожидаешь увидеть?</h2>
-      <div class="flow-card-body">
-        <p>Поезда движутся с одинаковой скоростью. Первый московский поезд после нашего старта отправляется через 12 часов, следующие — раз в сутки. Считаем встречи строго в пути. Зафиксируй прогноз перед запуском.</p>
-        <form class="flow-form-row" id="form-hypothesis" onsubmit="event.preventDefault(); submitHypothesis();">
-          <input type="number" class="flow-input-num" id="input-hypothesis" aria-label="Прогноз числа встреч" min="0" max="100" placeholder="Число" required>
-          <button type="submit" class="btn-action btn-primary">Зафиксировать прогноз и запустить поезд</button>
-        </form>
-      </div>
-    </div>
-
     <div class="flow-card" id="flow-card-observation" hidden>
       <div class="flow-card-header">
         <span class="flow-step-tag">
@@ -1519,7 +1529,8 @@
   const substatGrp1Val = document.getElementById('substat-grp1-val');
   const substatGrp2Val = document.getElementById('substat-grp2-val');
   const previewDialog = document.getElementById('preview-dialog');
-  const travelGuide = document.getElementById('travel-guide');
+  const tripControls = document.getElementById('trip-controls');
+  const observationLink = document.getElementById('observation-link');
   const btnPlay = document.getElementById('btn-play');
   const playBtnText = document.getElementById('play-btn-text');
   const playIconSvg = document.getElementById('play-icon-svg');
@@ -1708,7 +1719,7 @@
       glyph.classList.toggle('active', index < stars);
     });
     document.getElementById('mastery-badge').setAttribute('aria-label', `Освоение темы: ${stars} из 3 звёзд`);
-    cardHypothesis.classList.toggle('locked-complete', step > 0 || state.userHypothesis !== null);
+
     cardObservation.hidden = !state.finished && step === 0;
     cardExplanation.hidden = step < 1;
     cardTransfer.hidden = step < 2;
@@ -1718,16 +1729,17 @@
       ? '10 уже были в пути + 10 выехали позже = 20. Новый маршрут проверит самостоятельное объяснение.'
       : '10 уже были в пути + 10 выехали позже = 20.';
     document.getElementById('transfer-days').textContent = days + ' суток';
-    for (const [index, form] of [cardHypothesis, cardObservation, cardExplanation, cardTransfer].entries()) {
-      const complete = index === 0 ? canTravel() : step >= index;
+    for (const [index, form] of [cardObservation, cardExplanation, cardTransfer].entries()) {
+      const complete = step > index;
       form.querySelectorAll('input, button').forEach(control => { control.disabled = complete; });
     }
     [cardObservation, cardExplanation, cardTransfer].forEach((card, index) => {
       card.classList.toggle('locked-complete', step > index);
     });
     const ready = canTravel();
-    travelGuide.hidden = ready;
-    if (ready) btnPlay.removeAttribute('aria-describedby');
+    cardHypothesis.hidden = ready;
+    tripControls.hidden = !ready;
+    observationLink.hidden = !state.finished || step > 0;
     for (const control of [btnNextMeet, btnStepDay, btnReset, timeSlider]) {
       control.disabled = !ready;
     }
@@ -1910,7 +1922,7 @@
     updateMasteryUI();
   }
 
-  for (const id of ['form-hypothesis', 'form-observation', 'form-explanation', 'form-transfer']) {
+  for (const id of ['form-observation', 'form-explanation', 'form-transfer']) {
     const status = document.createElement('p');
     status.className = 'flow-feedback';
     status.setAttribute('role', 'status');
@@ -2004,6 +2016,7 @@
     document.getElementById('railway-scene').scrollIntoView({ block: 'start' });
   });
 
+  document.getElementById('btn-preview').addEventListener('click', togglePlay);
   btnPlay.addEventListener('click', togglePlay);
 
   btnNextMeet.addEventListener('click', () => {

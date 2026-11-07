@@ -1065,6 +1065,53 @@
       .track-canvas-layer { left: 44px; right: 44px; }
     }
     body .olymp-nav a { background: var(--bg-panel); color: var(--color-text); border: 1px solid var(--color-border); }
+
+    @media (max-width: 600px) {
+      .dispatch-board { gap: 6px; padding: 8px; }
+      .stage-topbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0; }
+      body .olymp-nav { position: static; padding: 0 12px 12px; }
+      .station-flag { font-size: 14px; gap: 4px; }
+      .station-flag:last-child { grid-area: 1 / 2; justify-self: end; }
+      .station-flag .station-sub { display: none; }
+      .stage-topbar-controls { grid-column: 1 / -1; justify-content: center; }
+      .railway-scene { height: 100px; }
+      .trip-controls { display: contents; }
+      #observation-link { order: 1; }
+      .track-canvas-layer { height: 112px; left: auto; right: auto; margin-inline: 20px; }
+      .train-entity.our-train { top: 24px; }
+      .train-entity.oncoming-train { bottom: 24px; }
+      .train-svg-wrap svg { width: 30px; height: auto; display: block; }
+      .train-svg-wrap { filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4)); }
+      .controls-toolbar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px; }
+      .controls-group-actions { display: contents; }
+      .controls-toolbar .btn-action { min-width: 0; min-height: 44px; padding: 3px; font-size: 14px; line-height: 1.15; }
+      .controls-toolbar .btn-action svg { display: none; }
+      .scrubber-panel { padding: 8px 10px; }
+      .dotmatrix-timeline-panel { padding: 8px; gap: 6px; }
+      .dotmatrix-badge { white-space: nowrap; padding: 4px 7px; }
+      .dotmatrix-header { gap: 4px; }
+      .dotmatrix-title { font-size: 14px; letter-spacing: normal; white-space: nowrap; }
+      .dotmatrix-title svg, .matrix-title-detail { display: none; }
+      .matrix-canvas-wrapper { padding: 3px 5px; }
+      canvas.matrix-canvas { height: 26px; }
+      .timeline-day-ticks { line-height: 1.2; }
+      .stats-counters-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+      .counter-block-total, .substat-card {
+        min-width: 0;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+        padding: 7px 3px;
+        text-align: center;
+      }
+      .substat-card { flex-direction: column; }
+      .counter-total-desc span.label, .substat-header { font-size: 14px; line-height: 1.15; }
+      .substat-header { letter-spacing: normal; text-transform: none; }
+      .substat-dot, .counter-total-desc span.sub, .substat-info { display: none; }
+      .counter-total-val, .substat-val { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
@@ -1216,7 +1263,7 @@
       <div class="dotmatrix-header">
         <div class="dotmatrix-title">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="2" y="4" width="4" height="4"/><rect x="8" y="4" width="4" height="4"/><rect x="14" y="4" width="4" height="4"/><rect x="20" y="4" width="4" height="4"/><rect x="2" y="10" width="4" height="4"/><rect x="8" y="10" width="4" height="4"/><rect x="14" y="10" width="4" height="4"/><rect x="20" y="10" width="4" height="4"/><rect x="2" y="16" width="4" height="4"/><rect x="8" y="16" width="4" height="4"/><rect x="14" y="16" width="4" height="4"/><rect x="20" y="16" width="4" height="4"/></svg>
-          <span>Память поездки · Матрица времени</span>
+          <span>Память поездки<span class="matrix-title-detail"> · Матрица времени</span></span>
         </div>
         <div class="dotmatrix-badge" id="dotmatrix-status-badge">Встречи 0</div>
       </div>

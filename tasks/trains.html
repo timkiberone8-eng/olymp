@@ -401,10 +401,12 @@
       bottom: 14px;
       z-index: 4;
       display: none;
+      opacity: var(--edge-opacity, 1);
+      will-change: left, translate, opacity;
     }
 
     .train-entity.oncoming-train.met {
-      opacity: 0.6;
+      opacity: calc(0.6 * var(--edge-opacity, 1));
     }
 
     .train-svg-wrap {
@@ -1723,11 +1725,17 @@
     });
   }
 
+  let trainEdgeTravel = 100;
+
   function resizeCanvas() {
+    const sceneBounds = document.getElementById('railway-scene').getBoundingClientRect();
+    const trackBounds = document.getElementById('track-canvas-layer').getBoundingClientRect();
+    trainEdgeTravel = Math.max(trackBounds.left - sceneBounds.left, sceneBounds.right - trackBounds.right, 0) + 54;
     const dpr = window.devicePixelRatio || 1;
     const rect = matrixCanvas.getBoundingClientRect();
     matrixCanvas.width = Math.round(rect.width * dpr);
     matrixCanvas.height = Math.round(rect.height * dpr);
+    renderTrains(state.currentTime);
     drawMatrix(state.currentTime);
   }
 
@@ -1860,15 +1868,13 @@
     return `День ${d} · ${hh}:${mm}`;
   }
 
-  function renderTime(t, prevT) {
-    cancelAnimationFrame(finishFrame);
-    finishWave = prevT !== undefined && t >= simConfig.tripDays && !reducedMotion.matches ? 0 : 1;
-    state.currentTime = t;
+  function easeTrainEdge(progress) {
+    const clamped = Math.max(0, Math.min(1, progress));
+    return clamped * clamped * (3 - 2 * clamped);
+  }
+
+  function renderTrains(t) {
     const D = simConfig.tripDays;
-
-    clockText.textContent = formatTime(t);
-    timeSlider.value = t;
-
     const ourPos = (t / D) * 100;
     ourTrainEntity.style.left = `${ourPos}%`;
 
@@ -1884,11 +1890,27 @@
         const dist = t - train.t_dep;
         const pos = 100 - (dist / D) * 100;
         el.style.left = `${pos}%`;
+        const edgeDuration = D * 0.02;
+        const entry = reducedMotion.matches ? 1 : easeTrainEdge(dist / edgeDuration);
+        const exit = reducedMotion.matches ? 1 : easeTrainEdge((D - dist) / edgeDuration);
+        el.style.translate = `${(exit - entry) * trainEdgeTravel}px 0`;
+        el.style.setProperty('--edge-opacity', Math.min(entry, exit));
       } else {
         el.style.display = 'none';
       }
       el.classList.toggle('met', met);
     });
+  }
+
+  function renderTime(t, prevT) {
+    cancelAnimationFrame(finishFrame);
+    finishWave = prevT !== undefined && t >= simConfig.tripDays && !reducedMotion.matches ? 0 : 1;
+    state.currentTime = t;
+    const D = simConfig.tripDays;
+
+    clockText.textContent = formatTime(t);
+    timeSlider.value = t;
+    renderTrains(t);
 
     const metTrains = trainModel.filter(tr => t >= tr.t_meet);
     const totalMet = metTrains.length;

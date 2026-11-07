@@ -230,6 +230,7 @@
     }
 
     .dispatch-board {
+      scroll-margin-top: 8px;
       background: var(--bg-panel);
       border: 1px solid var(--color-border);
       border-radius: 24px;
@@ -984,6 +985,11 @@
       color: var(--color-warning);
     }
 
+    @media (min-width: 821px) and (max-height: 850px) {
+      .dispatch-board { gap: 12px; padding-block: 16px; }
+      .railway-scene { height: clamp(170px, calc(100vh - 540px), 280px); }
+    }
+
     @media (max-width: 820px) {
       .stats-counters-bar {
         grid-template-columns: 1fr;
@@ -1104,7 +1110,7 @@
     </div>
   </section>
 
-  <section class="dispatch-board" aria-label="Пульт наблюдения за поездами">
+  <section class="dispatch-board" id="dispatch-board" aria-label="Пульт наблюдения за поездами">
     <div class="stage-topbar">
       <div class="station-flag">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
@@ -1869,6 +1875,7 @@
     state.isPlaying = true;
     playBtnText.textContent = 'Пауза';
     playIconSvg.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    document.getElementById('dispatch-board').scrollIntoView({ block: 'start', behavior: 'instant' });
     state.lastFrameTime = performance.now();
     state.rafId = requestAnimationFrame(simLoop);
   }
@@ -1944,7 +1951,6 @@
     state.userHypothesis = inputHypothesis.valueAsNumber;
     updateMasteryUI();
     play();
-    document.getElementById('railway-scene').scrollIntoView({ block: 'start' });
     btnPlay.focus({ preventScroll: true });
   };
 
@@ -2023,7 +2029,7 @@
     saveMasteryState();
     updateMasteryUI();
     play();
-    document.getElementById('railway-scene').scrollIntoView({ block: 'start' });
+    btnPlay.focus({ preventScroll: true });
   });
 
   document.getElementById('btn-preview').addEventListener('click', togglePlay);
@@ -2141,7 +2147,6 @@
     setupOncomingElements();
     jumpToTime(0);
     play();
-    document.querySelector('.dispatch-board').scrollIntoView({ block: 'start' });
   });
 
   window.addEventListener('resize', resizeCanvas);

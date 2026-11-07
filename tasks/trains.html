@@ -357,7 +357,7 @@
     .track-canvas-layer {
       position: relative;
       height: 160px;
-      margin: 0 clamp(40px, 6vw, 80px);
+      margin: 0;
     }
 
     .track-line {
@@ -395,18 +395,18 @@
     .train-entity.our-train {
       top: 14px;
       z-index: 5;
+      transform: translateX(-100%);
     }
 
     .train-entity.oncoming-train {
       bottom: 14px;
       z-index: 4;
       display: none;
-      opacity: var(--edge-opacity, 1);
-      will-change: left, translate, opacity;
+      transform: none;
     }
 
     .train-entity.oncoming-train.met {
-      opacity: calc(0.6 * var(--edge-opacity, 1));
+      opacity: 0.6;
     }
 
     .train-svg-wrap {
@@ -1022,7 +1022,7 @@
         justify-content: center;
       }
       .track-canvas-layer {
-        margin: 0 16px;
+        margin: 0;
       }
     }
 
@@ -1077,14 +1077,14 @@
     }
     .flow-explain-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
     .console-header, .console-live-results > div, .param-pill-options { flex-wrap: wrap; }
-    .track-canvas-layer { left: 44px; right: 44px; }
+    .track-canvas-layer { left: 0; right: 0; }
     .flow-card-body { font-size: 20px; }
     .flow-card-body input { max-width: 100%; }
     .mastery-stars-label, .dotmatrix-badge, .scrubber-label { font-size: 14px; }
     .flow-feedback { min-height: 1.4em; }
     @media (max-width: 600px) {
       .flow-card-body { font-size: 18px; }
-      .track-canvas-layer { left: 44px; right: 44px; }
+      .track-canvas-layer { left: 0; right: 0; }
     }
     body .olymp-nav a { background: var(--bg-panel); color: var(--color-text); border: 1px solid var(--color-border); }
 
@@ -1100,7 +1100,7 @@
       .railway-scene { height: 100px; }
       .trip-controls { display: contents; }
       #observation-link { order: 1; }
-      .track-canvas-layer { height: 112px; left: auto; right: auto; margin-inline: 20px; }
+      .track-canvas-layer { height: 112px; left: auto; right: auto; margin-inline: 0; }
       .train-entity.our-train { top: 24px; }
       .train-entity.oncoming-train { bottom: 24px; }
       .train-svg-wrap svg { width: 30px; height: auto; display: block; }
@@ -1725,12 +1725,7 @@
     });
   }
 
-  let trainEdgeTravel = 100;
-
   function resizeCanvas() {
-    const sceneBounds = document.getElementById('railway-scene').getBoundingClientRect();
-    const trackBounds = document.getElementById('track-canvas-layer').getBoundingClientRect();
-    trainEdgeTravel = Math.max(trackBounds.left - sceneBounds.left, sceneBounds.right - trackBounds.right, 0) + 54;
     const dpr = window.devicePixelRatio || 1;
     const rect = matrixCanvas.getBoundingClientRect();
     matrixCanvas.width = Math.round(rect.width * dpr);
@@ -1868,11 +1863,6 @@
     return `День ${d} · ${hh}:${mm}`;
   }
 
-  function easeTrainEdge(progress) {
-    const clamped = Math.max(0, Math.min(1, progress));
-    return clamped * clamped * (3 - 2 * clamped);
-  }
-
   function renderTrains(t) {
     const D = simConfig.tripDays;
     const ourPos = (t / D) * 100;
@@ -1882,19 +1872,13 @@
       const el = oncomingEls[idx];
       if (!el) return;
       const departed = t >= train.t_dep;
-      const arrived = t >= train.t_dep + D;
       const met = t >= train.t_meet;
 
-      if (canTravel() && departed && !arrived) {
+      if (canTravel() && departed) {
         el.style.display = 'flex';
         const dist = t - train.t_dep;
         const pos = 100 - (dist / D) * 100;
         el.style.left = `${pos}%`;
-        const edgeDuration = D * 0.02;
-        const entry = reducedMotion.matches ? 1 : easeTrainEdge(dist / edgeDuration);
-        const exit = reducedMotion.matches ? 1 : easeTrainEdge((D - dist) / edgeDuration);
-        el.style.translate = `${(exit - entry) * trainEdgeTravel}px 0`;
-        el.style.setProperty('--edge-opacity', Math.min(entry, exit));
       } else {
         el.style.display = 'none';
       }

@@ -75,6 +75,8 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scrollbar-gutter: stable; scroll-behavior: smooth; }
+
     body {
       background-color: var(--bg-desk);
       color: var(--color-text);
@@ -294,6 +296,8 @@
       color: var(--color-text);
     }
 
+    #clock-text { inline-size: 15ch; white-space: nowrap; text-align: center; }
+
     .clock-display svg {
       width: 16px;
       height: 16px;
@@ -479,6 +483,10 @@
 
     .dotmatrix-badge {
       display: inline-flex;
+      justify-content: center;
+      min-inline-size: 12ch;
+      white-space: nowrap;
+      border: 1px solid transparent;
       align-items: center;
       gap: 6px;
       padding: 6px 14px;
@@ -489,7 +497,7 @@
       font-variant-numeric: tabular-nums;
       background: var(--color-border);
       color: var(--color-our);
-      transition: all 0.3s;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
 
     .dotmatrix-badge.complete {
@@ -542,6 +550,9 @@
     }
 
     .counter-total-val {
+      inline-size: 2ch;
+      flex-shrink: 0;
+      text-align: center;
       font-size: clamp(38px, 4vw, 54px);
       font-weight: 800;
       font-family: var(--font-mono);
@@ -614,6 +625,9 @@
     }
 
     .substat-val {
+      inline-size: 2ch;
+      flex-shrink: 0;
+      text-align: center;
       font-size: clamp(26px, 2.8vw, 36px);
       font-weight: 800;
       font-family: var(--font-mono);
@@ -1011,6 +1025,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       * {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
@@ -1024,6 +1039,11 @@
     .forecast-start .btn-action { flex: none; }
     .trip-controls { display: grid; gap: 8px; }
     .trip-controls a { color: var(--color-our); }
+    #btn-play { min-inline-size: 8em; }
+    #observation-link[hidden] { display: block !important; visibility: hidden; }
+    #observation-link { min-block-size: 1.5em; }
+    #full-explanation .flow-card-body { display: grid; gap: 16px; padding-top: 20px; }
+    #full-explanation h3 { font-size: 1em; color: var(--color-text); }
     @media (max-width: 600px) {
       main { gap: 16px; }
       .header-layout { gap: 10px; }
@@ -1068,6 +1088,7 @@
 
     @media (max-width: 600px) {
       .dispatch-board { gap: 6px; padding: 8px; }
+      #btn-play { min-inline-size: 0; }
       .stage-topbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0; }
       body .olymp-nav { position: static; padding: 0 12px 12px; }
       .station-flag { font-size: 14px; gap: 4px; }
@@ -1420,8 +1441,22 @@
     </div>
     <details class="flow-card" id="full-explanation">
       <summary>Полный разбор и встречи на вокзалах</summary>
-      <p>Два поезда сближаются с удвоенной скоростью, поэтому встречи происходят каждые 12 часов. Мы встречаем 10 составов, отправившихся до нашего старта, и 10 отправившихся после него.</p>
-      <p>Если отправляться одновременно, при том же суточном интервале будет 19 встреч строго в пути. Если добавить обе встречи на вокзалах, получится 21.</p>
+      <div class="flow-card-body">
+        <h3>Почему встреч больше десяти?</h3>
+        <p>Наш поезд едет 10 суток. Но навстречу движутся не только новые поезда из Москвы: в момент старта на дороге уже есть составы, выехавшие раньше.</p>
+        <h3>1. Кто уже был в пути</h3>
+        <p>Возьмём наш старт за ноль. Из Москвы поезда выехали за 9,5; 8,5; …; 1,5 и 0,5 суток до него. Это 10 поездов. Все они ещё на дороге: их поездка тоже длится 10 суток. Составы, выехавшие ещё раньше, уже приехали во Владивосток, и мы их не встретим.</p>
+        <h3>2. Кто выедет после нашего старта</h3>
+        <p>Следующие поезда отправятся из Москвы через 0,5; 1,5; …; 8,5 и 9,5 суток после нашего старта. Их тоже 10. Мы успеем встретить даже последний: когда он отправится, нам останется полсуток до Москвы, а поезда поедут навстречу друг другу.</p>
+        <h3>3. Считаем две группы</h3>
+        <p><strong>10 уже были в пути + 10 выедут позже = 20 встреч.</strong> Поезд, который отправится через 10,5 суток, мы уже не увидим: к этому моменту будем в Москве.</p>
+        <h3>4. Почему встречи идут каждые 12 часов</h3>
+        <p>Расстояние между соседними встречными поездами равно пути одного поезда за сутки. Мы и встречный поезд движемся с одинаковой скоростью навстречу друг другу. Это расстояние сокращается вдвое быстрее, поэтому следующая встреча наступает через полсуток.</p>
+        <p>Первая встреча — через 6 часов после старта, затем через 18, 30 часов и так далее. Последняя — через 9 суток 18 часов. Все 20 встреч происходят строго в пути.</p>
+        <h3>А если поезда отправляются одновременно?</h3>
+        <p>Тогда в момент старта один поезд уже стоит на нашем вокзале, а ещё один встретит нас в Москве в момент прибытия. Между вокзалами будет 19 встреч. Если считать и обе встречи на вокзалах, получится 21.</p>
+        <p>В этой задаче расписания сдвинуты на 12 часов. Поэтому на вокзалах встреч нет, и ответ для указанного условия — <strong>20</strong>. Без уточнения расписания и правил подсчёта ответы 19, 20 и 21 относятся к разным вариантам задачи.</p>
+      </div>
     </details>
     <p id="storage-feedback" role="status"></p>
   </section>
@@ -1922,7 +1957,7 @@
     state.isPlaying = true;
     playBtnText.textContent = 'Пауза';
     playIconSvg.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-    document.getElementById('dispatch-board').scrollIntoView({ block: 'start', behavior: 'instant' });
+    document.getElementById('dispatch-board').scrollIntoView({ block: 'start', behavior: reducedMotion.matches ? 'instant' : 'smooth' });
     state.lastFrameTime = performance.now();
     state.rafId = requestAnimationFrame(simLoop);
   }
@@ -1930,7 +1965,7 @@
   function pause() {
     cancelAnimationFrame(state.rafId);
     state.isPlaying = false;
-    playBtnText.textContent = state.currentTime >= simConfig.tripDays ? 'Проехать снова' : 'В путь';
+    playBtnText.textContent = state.currentTime >= simConfig.tripDays ? 'Ещё раз' : 'В путь';
     playIconSvg.innerHTML = '<polygon points="6 3 20 12 6 21 6 3"/>';
   }
 

@@ -8,33 +8,67 @@
   <script src="../assets/olymp.js"></script>
   <style>
     :root {
+      color-scheme: dark;
       --bg-desk: #0B0914;
       --bg-panel: #151225;
       --bg-stage: #0F0C1B;
       --bg-card: #1D1833;
       --bg-card-subtle: #241E3E;
+      --bg-matrix: #090710;
       --color-border: #2D264F;
       --color-border-glow: #7858CA;
       --color-text: #F8FAFC;
       --color-muted: #94A3B8;
-      --color-dim: #64748B;
+      --color-dim: #94A3B8;
       --color-our: #AD8AFF;
-      --color-our-glow: rgba(173, 138, 255, 0.4);
       --color-grp1: #38BDF8;
-      --color-grp1-bg: rgba(56, 189, 248, 0.15);
       --color-grp2: #F59E0B;
-      --color-grp2-bg: rgba(245, 158, 11, 0.15);
       --color-emerald: #36D9A0;
+      --color-warning: #FBBF24;
+      --color-warning-text: #FEF3C7;
+      --color-inactive-star: #3B335E;
+      --color-star: #FACC15;
+      --color-rail: rgba(255, 255, 255, 0.12);
+      --color-ties: rgba(255, 255, 255, 0.08);
+      --color-hills: #1C1733;
+      --matrix-idle: #241E3E;
+      --matrix-cursor: #FFFFFF;
+      --matrix-trail: #6D4BB8;
+      --color-our-glow: rgba(173, 138, 255, 0.4);
+      --color-grp1-bg: rgba(56, 189, 248, 0.15);
+      --color-grp2-bg: rgba(245, 158, 11, 0.15);
       --color-emerald-bg: rgba(54, 217, 160, 0.15);
       --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
     }
-
-    [data-theme="light"] {
+    :root[data-theme="light"],
+    :root:not([data-theme])[data-system-theme="light"] {
+      color-scheme: light;
       --bg-desk: #F1EFF7;
+      --bg-panel: #FFFFFF;
+      --bg-stage: #ECE8F7;
+      --bg-card: #F5F2FC;
+      --bg-card-subtle: #EAE3F8;
+      --bg-matrix: #EEEAF7;
+      --color-border: #C9BFDF;
+      --color-border-glow: #7351B9;
       --color-text: #1E1B2E;
-      --color-muted: #64748B;
-      --color-dim: #94A3B8;
+      --color-muted: #514863;
+      --color-dim: #5F5470;
+      --color-our: #6537B6;
+      --color-grp1: #03658C;
+      --color-grp2: #8C4C00;
+      --color-emerald: #086548;
+      --color-warning: #774400;
+      --color-warning-text: #563400;
+      --color-inactive-star: #9286AB;
+      --color-star: #945700;
+      --color-rail: #897BA4;
+      --color-ties: #C4B7DB;
+      --color-hills: #BEADD9;
+      --matrix-idle: #CFC6E1;
+      --matrix-cursor: #48207D;
+      --matrix-trail: #956BCB;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -157,12 +191,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #3B335E;
+      color: var(--color-inactive-star);
       transition: color 0.3s, transform 0.3s;
     }
 
     .mastery-star-glyph.active {
-      color: #FACC15;
+      color: var(--color-star);
       filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.5));
       transform: scale(1.1);
     }
@@ -175,16 +209,16 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      color: #F1F5F9;
+      color: var(--color-text);
     }
 
     .task-condition {
-      color: #E2E8F0;
+      color: var(--color-text);
       font-size: clamp(18px, 1.25vw + 12px, 21px);
     }
 
     .task-condition strong {
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .task-question {
@@ -202,7 +236,7 @@
       flex-direction: column;
       gap: 20px;
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-      color: #F8FAFC;
+      color: var(--color-text);
     }
 
     .stage-topbar {
@@ -220,7 +254,7 @@
       gap: 10px;
       font-size: 16px;
       font-weight: 600;
-      color: #F1F5F9;
+      color: var(--color-text);
     }
 
     .station-flag svg {
@@ -254,7 +288,7 @@
       font-size: 15px;
       font-weight: 600;
       font-variant-numeric: tabular-nums;
-      color: #E2E8F0;
+      color: var(--color-text);
     }
 
     .clock-display svg {
@@ -279,7 +313,7 @@
 
     .btn-icon-toggle:hover {
       background: var(--bg-card-subtle);
-      color: #FFFFFF;
+      color: var(--color-text);
       border-color: var(--color-border-glow);
     }
 
@@ -324,7 +358,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: rgba(255, 255, 255, 0.12);
+      background: var(--color-rail);
     }
 
     .track-line.top-lane { top: 38px; }
@@ -335,7 +369,7 @@
       left: 0;
       right: 0;
       height: 10px;
-      background-image: repeating-linear-gradient(90deg, transparent 0 10px, rgba(255, 255, 255, 0.08) 10px 13px);
+      background-image: repeating-linear-gradient(90deg, transparent 0 10px, var(--color-ties) 10px 13px);
     }
 
     .track-ties.top-lane { top: 34px; }
@@ -465,7 +499,7 @@
       position: relative;
       width: 100%;
       border-radius: 10px;
-      background: #090710;
+      background: var(--bg-matrix);
       border: 1px solid rgba(173, 138, 255, 0.15);
       overflow: hidden;
       padding: 6px 10px;
@@ -516,7 +550,7 @@
 
     .counter-total-val.pop {
       transform: scale(1.22);
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .counter-total-desc {
@@ -528,7 +562,7 @@
     .counter-total-desc span.label {
       font-size: 14px;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .counter-total-desc span.sub {
@@ -617,7 +651,7 @@
       border-radius: 12px;
       border: 1px solid var(--color-border);
       background: var(--bg-panel);
-      color: #FFFFFF;
+      color: var(--color-text);
       font-family: var(--font-sans);
       font-size: 16px;
       font-weight: 600;
@@ -639,14 +673,14 @@
     }
 
     .btn-action.btn-primary {
-      background: linear-gradient(135deg, #7858CA, #9D75F0);
+      background: linear-gradient(135deg, #6142AE, #7649BF);
       border-color: transparent;
       color: #FFFFFF;
       box-shadow: 0 4px 18px rgba(120, 88, 202, 0.4);
     }
 
     .btn-action.btn-primary:hover {
-      background: linear-gradient(135deg, #8765DC, #AA84F8);
+      background: linear-gradient(135deg, #6946B9, #794BC6);
       box-shadow: 0 6px 24px rgba(120, 88, 202, 0.6);
     }
 
@@ -709,7 +743,7 @@
       flex-direction: column;
       gap: 18px;
       animation: cardFadeIn 0.35s ease-out;
-      color: #F8FAFC;
+      color: var(--color-text);
     }
 
     @keyframes cardFadeIn {
@@ -744,12 +778,12 @@
     .flow-card-title {
       font-size: clamp(20px, 2.2vw, 28px);
       font-weight: 750;
-      color: #FFFFFF;
+      color: var(--color-text);
       line-height: 1.25;
     }
 
     .flow-card-body {
-      color: #CBD5E1;
+      color: var(--color-text);
       font-size: 18px;
       display: flex;
       flex-direction: column;
@@ -770,7 +804,7 @@
       background: var(--bg-stage);
       border: 2px solid var(--color-border);
       border-radius: 12px;
-      color: #FFFFFF;
+      color: var(--color-text);
       font-family: var(--font-mono);
       font-size: 20px;
       font-weight: 700;
@@ -807,7 +841,7 @@
     .explain-column-title {
       font-size: 16px;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .explain-column-card.c-grp1 .explain-column-title { color: var(--color-grp1); }
@@ -819,7 +853,7 @@
       border-radius: 14px;
       padding: 14px 18px;
       font-size: 17px;
-      color: #E2E8F0;
+      color: var(--color-text);
     }
 
     .explain-math-formula strong {
@@ -832,7 +866,7 @@
       border-radius: 14px;
       padding: 16px 20px;
       font-size: 16px;
-      color: #E2E8F0;
+      color: var(--color-text);
     }
 
     .dispatcher-console-section {
@@ -845,7 +879,7 @@
       flex-direction: column;
       gap: 20px;
       animation: cardFadeIn 0.5s ease-out;
-      color: #F8FAFC;
+      color: var(--color-text);
     }
 
     .console-header {
@@ -865,7 +899,7 @@
     .console-title {
       font-size: clamp(24px, 2.5vw, 32px);
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .console-param-row {
@@ -903,7 +937,7 @@
       border-radius: 999px;
       border: 1px solid var(--color-border);
       background: var(--bg-stage);
-      color: #CBD5E1;
+      color: var(--color-text);
       font-family: var(--font-mono);
       font-size: 14px;
       font-weight: 700;
@@ -913,12 +947,12 @@
 
     .btn-param-pill:hover {
       border-color: var(--color-our);
-      color: #FFFFFF;
+      color: var(--color-text);
     }
 
     .btn-param-pill.active {
       background: var(--color-our);
-      color: #090710;
+      color: var(--bg-panel);
       border-color: var(--color-our);
     }
 
@@ -938,14 +972,14 @@
       border-radius: 12px;
       padding: 12px 18px;
       font-size: 16px;
-      color: #FEF3C7;
+      color: var(--color-warning-text);
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
     .console-discovery-alert strong {
-      color: #FBBF24;
+      color: var(--color-warning);
     }
 
     @media (max-width: 820px) {
@@ -983,13 +1017,12 @@
     .flow-card-body { font-size: 20px; }
     .flow-card-body input { max-width: 100%; }
     .mastery-stars-label, .dotmatrix-badge, .scrubber-label { font-size: 14px; }
-    .railway-scene, .dispatch-board { color: #f1f5f9; }
-    .dispatch-board { --color-muted: #cbd5e1; }
     .flow-feedback { min-height: 1.4em; }
     @media (max-width: 600px) {
       .flow-card-body { font-size: 18px; }
       .track-canvas-layer { left: 44px; right: 44px; }
     }
+    body .olymp-nav a { background: var(--bg-panel); color: var(--color-text); border: 1px solid var(--color-border); }
   </style>
 </head>
 <body>
@@ -1059,7 +1092,7 @@
 
     <div class="railway-scene" id="railway-scene">
       <div class="sky-silhouettes">
-        <svg viewBox="0 0 1000 120" preserveAspectRatio="none" fill="#1C1733">
+        <svg viewBox="0 0 1000 120" preserveAspectRatio="none" fill="var(--color-hills)">
           <path d="M0,80 Q140,25 280,70 T560,40 T840,65 L1000,45 L1000,120 L0,120 Z"/>
         </svg>
       </div>
@@ -1309,7 +1342,7 @@
       </div>
     </div>
 
-    <p style="color: #CBD5E1;">Ты заработал все 3 звезды! Теперь ты можешь исследовать произвольные графики движения поездов и менять параметры.</p>
+    <p style="color: var(--color-muted);">Ты заработал все 3 звезды! Теперь ты можешь исследовать произвольные графики движения поездов и менять параметры.</p>
 
     <div class="console-param-row">
       <div class="param-group">
@@ -1336,7 +1369,7 @@
       <button type="submit" class="btn-action" id="btn-apply-console-sim">Запустить и проверить</button>
     </form>
     <div class="console-live-results" id="console-live-results" role="status" hidden>
-      <div style="font-size: 19px; font-weight: 700; color: #FFFFFF;" id="console-formula-text">
+      <div style="font-size: 19px; font-weight: 700; color: var(--color-text);" id="console-formula-text">
         Расчёт для: 10 дней, интервал 24 ч
       </div>
       <div style="display: flex; gap: 20px; font-family: var(--font-mono); font-size: 16px;">
@@ -1345,7 +1378,7 @@
         <span style="color: var(--color-emerald); font-weight: 800;" id="console-total-calc">Всего: 20</span>
       </div>
       <div class="console-discovery-alert" id="console-discovery-alert" hidden>
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="#FBBF24" style="flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="var(--color-warning)" style="flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <div><strong>Граница правила «удваивай дни»:</strong> при длительности 5 суток и отправлении раз в 48 часов получается <strong>2 уже в пути + 3 выехало навстречу = 5 поездов</strong>, а не 10!</div>
       </div>
     </div>
@@ -1566,6 +1599,22 @@
     drawMatrix(state.currentTime);
   }
 
+  let matrixColors;
+
+  function updateMatrixPalette() {
+    const style = getComputedStyle(document.documentElement);
+    matrixColors = {
+      group1: style.getPropertyValue('--color-grp1').trim(),
+      group2: style.getPropertyValue('--color-grp2').trim(),
+      done: style.getPropertyValue('--color-emerald').trim(),
+      cursor: style.getPropertyValue('--matrix-cursor').trim(),
+      glow: style.getPropertyValue('--color-our').trim(),
+      trail: style.getPropertyValue('--matrix-trail').trim(),
+      idle: style.getPropertyValue('--matrix-idle').trim()
+    };
+    drawMatrix(state.currentTime);
+  }
+
   function drawMatrix(t) {
     if (!matrixCanvas.width || !matrixCanvas.height) return;
     const ctx = matrixCtx;
@@ -1601,20 +1650,20 @@
         ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
 
         if (meet && meet.isMet && r >= 1 && r <= 3) {
-          ctx.fillStyle = meet.group === 1 ? '#38BDF8' : '#F59E0B';
+          ctx.fillStyle = meet.group === 1 ? matrixColors.group1 : matrixColors.group2;
         } else if (isCompleted && c < finishWave * MATRIX_COLS) {
-          ctx.fillStyle = '#36D9A0';
+          ctx.fillStyle = matrixColors.done;
         } else if (c <= activeColFloat) {
           const distToCursor = activeColFloat - c;
           if (distToCursor < 1.5) {
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = matrixColors.cursor;
           } else if (distToCursor < 5.0) {
-            ctx.fillStyle = '#AD8AFF';
+            ctx.fillStyle = matrixColors.glow;
           } else {
-            ctx.fillStyle = '#6D4BB8';
+            ctx.fillStyle = matrixColors.trail;
           }
         } else {
-          ctx.fillStyle = '#241E3E';
+          ctx.fillStyle = matrixColors.idle;
         }
         ctx.fill();
       }
@@ -2022,6 +2071,17 @@
   });
 
   window.addEventListener('resize', resizeCanvas);
+  new MutationObserver(updateMatrixPalette).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+  const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+  function syncSystemTheme() {
+    document.documentElement.dataset.systemTheme = systemTheme.matches ? 'dark' : 'light';
+    updateMatrixPalette();
+  }
+  systemTheme.addEventListener('change', syncSystemTheme);
+  syncSystemTheme();
 
   loadMasteryState();
   updateMasteryUI();

@@ -34,6 +34,7 @@
       --matrix-idle: #241E3E;
       --matrix-cursor: #FFFFFF;
       --matrix-trail: #6D4BB8;
+      --matrix-done: #36D9A0;
       --color-our-glow: rgba(173, 138, 255, 0.4);
       --color-grp1-bg: rgba(56, 189, 248, 0.15);
       --color-grp2-bg: rgba(245, 158, 11, 0.15);
@@ -44,31 +45,32 @@
     :root[data-theme="light"],
     :root:not([data-theme])[data-system-theme="light"] {
       color-scheme: light;
-      --bg-desk: #F1EFF7;
+      --bg-desk: #F2F3F7;
       --bg-panel: #FFFFFF;
-      --bg-stage: #ECE8F7;
-      --bg-card: #F5F2FC;
-      --bg-card-subtle: #EAE3F8;
-      --bg-matrix: #EEEAF7;
-      --color-border: #C9BFDF;
+      --bg-stage: #F0F1FA;
+      --bg-card: #F6F6FA;
+      --bg-card-subtle: #EBE9F5;
+      --bg-matrix: #FAFAFD;
+      --color-border: #D1CDDF;
       --color-border-glow: #7351B9;
       --color-text: #1E1B2E;
-      --color-muted: #514863;
-      --color-dim: #5F5470;
-      --color-our: #6537B6;
-      --color-grp1: #03658C;
-      --color-grp2: #8C4C00;
+      --color-muted: #484456;
+      --color-dim: #514B61;
+      --color-our: #5933A0;
+      --color-grp1: #005879;
+      --color-grp2: #823C00;
       --color-emerald: #086548;
       --color-warning: #774400;
       --color-warning-text: #563400;
       --color-inactive-star: #9286AB;
       --color-star: #945700;
-      --color-rail: #897BA4;
-      --color-ties: #C4B7DB;
-      --color-hills: #BEADD9;
-      --matrix-idle: #CFC6E1;
-      --matrix-cursor: #48207D;
-      --matrix-trail: #956BCB;
+      --color-rail: #817695;
+      --color-ties: #A69BB9;
+      --color-hills: #B5B8D8;
+      --matrix-idle: #E0DCE9;
+      --matrix-cursor: #432375;
+      --matrix-trail: #A68CC8;
+      --matrix-done: #71AC97;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1648,7 +1650,7 @@
     matrixColors = {
       group1: style.getPropertyValue('--color-grp1').trim(),
       group2: style.getPropertyValue('--color-grp2').trim(),
-      done: style.getPropertyValue('--color-emerald').trim(),
+      done: style.getPropertyValue('--matrix-done').trim(),
       cursor: style.getPropertyValue('--matrix-cursor').trim(),
       glow: style.getPropertyValue('--color-our').trim(),
       trail: style.getPropertyValue('--matrix-trail').trim(),
@@ -1685,15 +1687,23 @@
     for (let c = 0; c < MATRIX_COLS; c++) {
       const cx = (c + 0.5) * cellW;
       const meet = meetColumns.get(c);
+      if (meet?.isMet) {
+        ctx.beginPath();
+        ctx.strokeStyle = meet.group === 1 ? matrixColors.group1 : matrixColors.group2;
+        ctx.lineWidth = dotRadius * 2.15;
+        ctx.lineCap = 'round';
+        ctx.moveTo(cx, cellH * 0.65);
+        ctx.lineTo(cx, h - cellH * 0.65);
+        ctx.stroke();
+        continue;
+      }
 
       for (let r = 0; r < MATRIX_ROWS; r++) {
         const cy = (r + 0.5) * cellH;
         ctx.beginPath();
         ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
 
-        if (meet && meet.isMet && r >= 1 && r <= 3) {
-          ctx.fillStyle = meet.group === 1 ? matrixColors.group1 : matrixColors.group2;
-        } else if (isCompleted && c < finishWave * MATRIX_COLS) {
+        if (isCompleted && c < finishWave * MATRIX_COLS) {
           ctx.fillStyle = matrixColors.done;
         } else if (c <= activeColFloat) {
           const distToCursor = activeColFloat - c;

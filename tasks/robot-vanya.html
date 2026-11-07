@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Робот-Ваня</title>
+  <script src="../assets/tailwind.js"></script>
+  <script src="../assets/olymp.js"></script>
+  <link rel="stylesheet" href="../assets/theme.css">
+  <script src="../assets/theme.js"></script>
+  <style>
+    body {
+      background-color: light-dark(#fafaf9, #24241e);
+      background-image: 
+        linear-gradient(light-dark(#f0eee6, #3d3824) 1px, transparent 1px),
+        linear-gradient(90deg, light-dark(#f0eee6, #3d3824) 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .code-line {
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .code-line.active {
+      background-color: light-dark(#fef08a, #4b4516) !important;
+      border-left-color: light-dark(#d97706, #cb914d) !important;
+      color: light-dark(#18181b, #fef08a) !important;
+    }
+    .cell-rect {
+      cursor: pointer;
+      transition: fill 0.15s ease, opacity 0.15s ease;
+    }
+    .cell-rect:hover {
+      fill: light-dark(rgba(99, 102, 241, 0.15), rgba(129, 140, 248, 0.25));
+    }
+    .cell-rect.selected-start {
+      fill: light-dark(rgba(59, 130, 246, 0.22), rgba(59, 130, 246, 0.35));
+    }
+    @keyframes robotPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes robotShake {
+      0%, 100% { transform: translate(0, 0); }
+      20%, 60% { transform: translate(-6px, 0); }
+      40%, 80% { transform: translate(6px, 0); }
+    }
+    @keyframes batteryGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px #10b981); }
+      50% { filter: drop-shadow(0 0 10px #10b981) drop-shadow(0 0 16px #34d399); }
+    }
+    .battery-pulse {
+      animation: batteryGlow 1.8s infinite ease-in-out;
+    }
+    .robot-shake {
+      animation: robotShake 0.45s ease-in-out;
+    }
+    .robot-success {
+      animation: robotPulse 0.6s ease-in-out infinite;
+    }
+    .trail-line {
+      stroke-dasharray: 6 4;
+      animation: dash 1s linear infinite;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -20; }
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] w-full text-zinc-800 p-2 sm:p-4 md:p-6 flex flex-col justify-between box-border">
+
+  <div class="w-full max-w-[1680px] mx-auto flex-1 bg-white border-2 border-indigo-100 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl flex flex-col justify-between my-auto">
+    
+    <!-- Заголовок страницы -->
+    <div class="flex items-center justify-between border-b-2 border-zinc-100 pb-3 mb-3 sm:mb-4">
+      <div>
+        <div class="text-xs sm:text-sm uppercase tracking-wider text-indigo-600 font-bold">Олимпиада KIBERone · 7 неделя · Старшая группа · № 1</div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 mt-0.5 tracking-tight flex items-center gap-2">
+          <span>🤖 Робот-Ваня</span>
+        </h1>
+      </div>
+      <div class="text-right flex items-center gap-2">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          Исполнитель «Робот»
+        </span>
+      </div>
+    </div>
+
+    <!-- Условие задачи (раскрывающееся) -->
+    <details class="text-xs sm:text-sm md:text-base text-zinc-700 bg-indigo-50/60 border border-indigo-200/80 rounded-2xl px-4 py-2.5 mb-3 sm:mb-4">
+      <summary class="cursor-pointer font-bold text-zinc-900 flex items-center justify-between">
+        <span>📋 Условие задачи (нажми, чтобы развернуть)</span>
+        <span class="text-xs text-indigo-600 font-semibold">Лабиринт 6×6 · Батарейка в F6</span>
+      </summary>
+      <div class="mt-2 text-zinc-600 leading-relaxed space-y-1.5 border-t border-indigo-100/80 pt-2">
+        <p>Робот-Ваня опаздывает на праздник к детям! Он заблудился в прямоугольном лабиринте, и заряда ему хватит только чтобы выполнить этот алгоритм:</p>
+        <div class="font-mono text-xs sm:text-sm bg-white/80 p-2.5 rounded-xl border border-indigo-100 font-bold text-zinc-800 space-y-0.5">
+          <div>НАЧАЛО</div>
+          <div class="pl-4 text-indigo-600">ПОКА снизу свободно ИЛИ справа свободно</div>
+          <div class="pl-8 text-purple-600">ПОКА справа свободно</div>
+          <div class="pl-12 text-emerald-600 font-black">вправо</div>
+          <div class="pl-8 text-purple-600">КОНЕЦ ПОКА</div>
+          <div class="pl-8 text-amber-600 font-black">вниз</div>
+          <div class="pl-4 text-indigo-600">КОНЕЦ ПОКА</div>
+          <div>КОНЕЦ</div>
+        </div>
+        <p class="font-semibold text-zinc-800 pt-1">
+          <b>Вопрос:</b> С каких клеток лабиринта можно начать движение Роботу-Ване, чтобы достичь батарейки?
+        </p>
+        <p class="text-xs text-zinc-500">
+          💡 На поле отмечены 4 исходные позиции роботов из задачи: <b>B1</b>, <b>D2</b>, <b>A3</b> и <b>C5</b>. Ты можешь кликнуть на любую клетку, чтобы проверить путь Вани в интерактивном симуляторе!
+        </p>
+      </div>
+    </details>
+
+    <!-- Основная рабочая сетка: Поле лабиринта слева, Код и симулятор справа -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start my-auto">
+      
+      <!-- Левая колонка: Интерактивный лабиринт -->
+      <div class="lg:col-span-6 flex flex-col gap-3">
+        
+        <!-- Панель быстрых кандидатов -->
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-zinc-50 p-2.5 rounded-2xl border border-zinc-200">
+          <div class="text-xs font-bold text-zinc-600 flex items-center gap-1.5">
+            <span>📍 Выбор старта:</span>
+            <span class="text-zinc-400 font-normal hidden sm:inline">(клик по полю или кнопке)</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="candidate-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-indigo-200 bg-white hover:bg-indigo-50 text-indigo-700 transition" data-cell="B1">
+              🤖 B1
+            </button>
+            <button class="candidate-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-indigo-200 bg-white hover:bg-indigo-50 text-indigo-700 transition" data-cell="D2">
+              🤖 D2
+            </button>
+            <button class="candidate-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-indigo-200 bg-white hover:bg-indigo-50 text-indigo-700 transition" data-cell="A3">
+              🤖 A3
+            </button>
+            <button class="candidate-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-indigo-200 bg-white hover:bg-indigo-50 text-indigo-700 transition" data-cell="C5">
+              🤖 C5
+            </button>
+          </div>
+        </div>
+
+        <!-- Окно SVG-лабиринта -->
+        <div class="bg-zinc-50 border-2 border-zinc-200 rounded-3xl p-2 sm:p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
+          <svg id="maze-svg" viewBox="0 0 490 490" class="w-full max-w-[440px] sm:max-w-[480px] h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Градиент батарейки -->
+              <linearGradient id="batteryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34d399" />
+                <stop offset="100%" stop-color="#059669" />
+              </linearGradient>
+              <!-- Маркер стрелки для следа -->
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#6366f1" />
+              </marker>
+            </defs>
+
+            <!-- Фоновая сетка клеток -->
+            <g id="cells-layer"></g>
+
+            <!-- След траектории робота -->
+            <path id="robot-trail" d="" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="trail-line" opacity="0.8" />
+            <g id="trail-dots"></g>
+
+            <!-- Клетка батарейки F6 -->
+            <g id="battery-cell" transform="translate(392, 390)">
+              <rect x="0" y="0" width="70" height="70" fill="var(--o-green)" rx="2" />
+              <!-- Корпус батарейки -->
+              <g class="battery-pulse" transform="translate(14, 18)">
+                <rect x="0" y="4" width="38" height="24" rx="4" fill="url(#batteryGrad)" stroke="#047857" stroke-width="2" />
+                <rect x="38" y="10" width="5" height="12" rx="2" fill="#047857" />
+                <!-- Знаки + и - внутри батарейки -->
+                <text x="9" y="21" font-family="monospace" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">−</text>
+                <text x="29" y="21" font-family="monospace" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">+</text>
+                <path d="M 17 22 L 21 16 L 20 16 L 23 10 L 19 16 L 20 16 Z" fill="#fef08a" opacity="0.9" />
+              </g>
+              <text x="35" y="60" font-family="sans-serif" font-size="9" font-weight="bold" fill="#047857" text-anchor="middle">БАТАРЕЙКА</text>
+            </g>
+
+            <!-- Кандидатные метки на поле: B1, D2, A3, C5 -->
+            <g id="candidate-marks">
+              <!-- B1 -->
+              <g id="cand-B1" class="cand-group" opacity="0.75" transform="translate(147, 75)">
+                <circle cx="0" cy="0" r="16" fill="var(--o-cool)" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="0" y="4" font-family="sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">B1</text>
+              </g>
+              <!-- D2 -->
+              <g id="cand-D2" class="cand-group" opacity="0.75" transform="translate(287, 145)">
+                <circle cx="0" cy="0" r="16" fill="var(--o-cool)" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="0" y="4" font-family="sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">D2</text>
+              </g>
+              <!-- A3 -->
+              <g id="cand-A3" class="cand-group" opacity="0.75" transform="translate(77, 215)">
+                <circle cx="0" cy="0" r="16" fill="var(--o-cool)" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="0" y="4" font-family="sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">A3</text>
+              </g>
+              <!-- C5 -->
+              <g id="cand-C5" class="cand-group" opacity="0.75" transform="translate(217, 355)">
+                <circle cx="0" cy="0" r="16" fill="var(--o-cool)" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="0" y="4" font-family="sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">C5</text>
+              </g>
+            </g>
+
+            <!-- Тонкие разделительные линии лабиринта -->
+            <g id="grid-lines" stroke="light-dark(#e2e8f0, #334155)" stroke-width="1.5" stroke-linecap="square">
+              <!-- Вертикальные линии x = 112, 182, 252, 322, 392 -->
+              <line x1="112" y1="40" x2="112" y2="460" />
+              <line x1="182" y1="40" x2="182" y2="460" />
+              <line x1="252" y1="40" x2="252" y2="460" />
+              <line x1="322" y1="40" x2="322" y2="460" />
+              <line x1="392" y1="40" x2="392" y2="460" />
+              <!-- Горизонтальные линии y = 110, 180, 250, 320, 390 -->
+              <line x1="42" y1="110" x2="462" y2="110" />
+              <line x1="42" y1="180" x2="462" y2="180" />
+              <line x1="42" y1="250" x2="462" y2="250" />
+              <line x1="42" y1="320" x2="462" y2="320" />
+              <line x1="42" y1="390" x2="462" y2="390" />
+            </g>
+
+            <!-- Внутренние толстые стены лабиринта -->
+            <g id="walls" stroke="light-dark(#0f172a, #f8fafc)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <!-- Стена 1: уголок вокруг D2 (сверху и слева) -->
+              <path d="M 322 110 L 252 110 L 252 180" />
+              <!-- Стена 2: под A2 / над A3 -->
+              <path d="M 42 180 L 112 180" />
+              <!-- Стена 3: центральный зигзаг (справа от E3, снизу E3-D3, слева от D4, снизу C4-B4) -->
+              <path d="M 392 180 L 392 250 L 252 250 L 252 320 L 112 320" />
+              <!-- Стена 4: вертикальная между E5 и F5 -->
+              <path d="M 392 320 L 392 390" />
+              <!-- Стена 5: вертикальная между C6 и D6 -->
+              <path d="M 252 390 L 252 460" />
+            </g>
+
+            <!-- Внешняя рамка лабиринта -->
+            <rect x="42" y="40" width="420" height="420" fill="none" stroke="light-dark(#0f172a, #f8fafc)" stroke-width="7" rx="3" />
+
+            <!-- Координаты: Буквы столбцов A–F сверху и снизу -->
+            <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="light-dark(#475569, #94a3b8)" text-anchor="middle">
+              <text x="77" y="27">A</text>
+              <text x="147" y="27">B</text>
+              <text x="217" y="27">C</text>
+              <text x="287" y="27">D</text>
+              <text x="357" y="27">E</text>
+              <text x="427" y="27">F</text>
+            </g>
+
+            <!-- Координаты: Номера строк 1–6 слева -->
+            <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="light-dark(#475569, #94a3b8)" text-anchor="middle" dominant-baseline="central">
+              <text x="24" y="75">1</text>
+              <text x="24" y="145">2</text>
+              <text x="24" y="215">3</text>
+              <text x="24" y="285">4</text>
+              <text x="24" y="355">5</text>
+              <text x="24" y="425">6</text>
+            </g>
+
+            <!-- Аварийный маркер удара (вспышка) -->
+            <g id="crash-marker" class="hidden" transform="translate(0, 0)">
+              <circle cx="0" cy="0" r="22" fill="#ef4444" opacity="0.3"/>
+              <text x="0" y="7" font-size="20" text-anchor="middle">💥</text>
+            </g>
+
+            <!-- Сам Робот-Ваня (перемещается по transform) -->
+            <g id="robot-vanya" style="transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none;" transform="translate(147, 75)">
+              <!-- Тень -->
+              <ellipse cx="0" cy="19" rx="14" ry="4" fill="rgba(0,0,0,0.25)" />
+              
+              <!-- Антенна -->
+              <line x1="0" y1="-12" x2="0" y2="-19" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" />
+              <circle cx="0" cy="-20" r="3" fill="#f59e0b" />
+              
+              <!-- Руки -->
+              <path d="M -13 -1 L -19 5" stroke="#1e40af" stroke-width="3" stroke-linecap="round" />
+              <path d="M 13 -1 L 19 5" stroke="#1e40af" stroke-width="3" stroke-linecap="round" />
+              
+              <!-- Голова -->
+              <rect x="-13" y="-14" width="26" height="18" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.8" />
+              <!-- Глаза -->
+              <circle cx="-5" cy="-6" r="3" fill="#ffffff" />
+              <circle cx="-5" cy="-6" r="1.4" fill="#0f172a" />
+              <circle cx="5" cy="-6" r="3" fill="#ffffff" />
+              <circle cx="5" cy="-6" r="1.4" fill="#0f172a" />
+              <!-- Улыбка -->
+              <path d="M -4 -1 Q 0 2 4 -1" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" />
+              
+              <!-- Тело -->
+              <rect x="-11" y="5" width="22" height="14" rx="3" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.8" />
+              <!-- Экранчик на животе -->
+              <rect x="-7" y="8" width="14" height="6" rx="1.5" fill="#93c5fd" />
+              <line x1="-4" y1="11" x2="4" y2="11" stroke="#1e40af" stroke-width="1.2" />
+              
+              <!-- Ножки / гусеницы -->
+              <rect x="-9" y="19" width="6" height="4" rx="1" fill="#0f172a" />
+              <rect x="3" y="19" width="6" height="4" rx="1" fill="#0f172a" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Текущее состояние и статус выполнения -->
+        <div id="status-card" class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-3 sm:p-4 transition-all">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-xs uppercase font-extrabold text-indigo-700 tracking-wider flex items-center gap-1.5">
+              <span id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+              <span>Статус Робота-Вани:</span>
+            </span>
+            <span id="pos-badge" class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-white text-indigo-800 border border-indigo-200 shadow-xs">
+              Клетка: B1
+            </span>
+          </div>
+          <div id="status-msg" class="text-sm sm:text-base font-bold text-zinc-800 leading-snug">
+            Робот готов к запуску. Нажми «Шаг за шагом» или «Запуск».
+          </div>
+          <div id="status-detail" class="text-xs text-zinc-500 font-mono mt-1">
+            Снизу свободно: ? | Справа свободно: ?
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Правая колонка: Код программы, Симулятор, Ответ и Решение -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        
+        <!-- Вкладки языка кода: Кумир / Python -->
+        <div class="flex items-center justify-between bg-zinc-100 p-1 rounded-xl border border-zinc-200">
+          <div class="flex gap-1 text-xs font-bold">
+            <button id="tab-algo" class="px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition">Кумир (Алгоритмический)</button>
+            <button id="tab-py" class="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition">Python</button>
+          </div>
+          <span class="text-[11px] font-mono text-zinc-400 pr-2">Трассировщик</span>
+        </div>
+
+        <!-- Окно с кодом алгоритма -->
+        <div class="bg-zinc-900 text-zinc-100 p-3 sm:p-4 rounded-2xl font-mono text-xs sm:text-sm shadow-inner border border-zinc-800 overflow-x-auto">
+          
+          <!-- Кумир -->
+          <div id="code-algo" class="space-y-1 leading-relaxed">
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-zinc-400" data-line="0">НАЧАЛО</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300 font-bold" data-line="1">  ПОКА снизу свободно ИЛИ справа свободно</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300 font-bold" data-line="2">    ПОКА справа свободно</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-10 text-emerald-400 font-black" data-line="3">      вправо</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300" data-line="4">    КОНЕЦ ПОКА</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-amber-300 font-black" data-line="5">    вниз</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300" data-line="6">  КОНЕЦ ПОКА</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-zinc-400" data-line="7">КОНЕЦ</div>
+          </div>
+
+          <!-- Python -->
+          <div id="code-py" class="hidden space-y-1 leading-relaxed">
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-zinc-500 text-xs" data-line="0"># Робот-Ваня в лабиринте</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-indigo-300 font-bold" data-line="1">while free_down() or free_right():</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-purple-300 font-bold" data-line="2">    while free_right():</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-10 text-emerald-400 font-black" data-line="3">        move_right()</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-zinc-500 text-xs" data-line="4">    # конец цикла вправо</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent pl-6 text-amber-300 font-black" data-line="5">    move_down()</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-zinc-500 text-xs" data-line="6"># конец цикла</div>
+            <div class="code-line px-2 py-0.5 rounded border-l-4 border-transparent text-zinc-500 text-xs" data-line="7"># финиш</div>
+          </div>
+
+        </div>
+
+        <!-- Кнопки управления трассировкой симулятора -->
+        <div class="flex items-center gap-2">
+          <button id="btn-step" class="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+            <span>Шаг за шагом</span>
+            <span>▶</span>
+          </button>
+          <button id="btn-play" class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+            <span id="play-text">Запуск</span>
+            <span id="play-icon">⚡</span>
+          </button>
+          <button id="btn-reset" class="py-2.5 px-4 bg-zinc-200 hover:bg-zinc-300 active:scale-95 text-zinc-700 font-semibold rounded-xl transition text-xs sm:text-sm" title="Сбросить на начальную позицию">
+            Сброс 🔄
+          </button>
+        </div>
+
+        <!-- Инспектор условий алгоритма -->
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-2">
+            <div class="text-[10px] sm:text-[11px] uppercase font-bold text-indigo-500">Снизу свободно</div>
+            <div id="val-down" class="text-sm sm:text-base font-mono font-black text-indigo-800 mt-0.5">—</div>
+          </div>
+          <div class="bg-purple-50 border border-purple-200 rounded-xl p-2">
+            <div class="text-[10px] sm:text-[11px] uppercase font-bold text-purple-500">Справа свободно</div>
+            <div id="val-right" class="text-sm sm:text-base font-mono font-black text-purple-800 mt-0.5">—</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-300 rounded-xl p-2">
+            <div class="text-[10px] sm:text-[11px] uppercase font-bold text-emerald-600">Итого (ИЛИ)</div>
+            <div id="val-or" class="text-sm sm:text-base font-mono font-black text-emerald-800 mt-0.5">—</div>
+          </div>
+        </div>
+
+        <!-- Интерактивный блок выбора ответа -->
+        <div class="bg-indigo-50/70 border-2 border-indigo-200 rounded-2xl p-4 sm:p-5">
+          <div class="font-bold text-zinc-900 text-sm sm:text-base mb-1.5 flex items-center justify-between">
+            <span>🎯 Отметь клетки, из которых Ваня достигнет батарейки:</span>
+          </div>
+          <p class="text-xs text-zinc-500 mb-3">
+            Протестируй роботов в лабиринте и отметь <b>все подходящие</b> клетки:
+          </p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+            <label class="ans-label flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-zinc-200 bg-white cursor-pointer hover:border-indigo-400 transition font-bold text-sm">
+              <input type="checkbox" value="B1" class="ans-checkbox w-4 h-4 text-indigo-600 rounded">
+              <span>B1</span>
+            </label>
+            <label class="ans-label flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-zinc-200 bg-white cursor-pointer hover:border-indigo-400 transition font-bold text-sm">
+              <input type="checkbox" value="D2" class="ans-checkbox w-4 h-4 text-indigo-600 rounded">
+              <span>D2</span>
+            </label>
+            <label class="ans-label flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-zinc-200 bg-white cursor-pointer hover:border-indigo-400 transition font-bold text-sm">
+              <input type="checkbox" value="A3" class="ans-checkbox w-4 h-4 text-indigo-600 rounded">
+              <span>A3</span>
+            </label>
+            <label class="ans-label flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-zinc-200 bg-white cursor-pointer hover:border-indigo-400 transition font-bold text-sm">
+              <input type="checkbox" value="C5" class="ans-checkbox w-4 h-4 text-indigo-600 rounded">
+              <span>C5</span>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-check" class="flex-1 py-2.5 sm:py-3 px-6 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-extrabold text-sm sm:text-base rounded-xl shadow transition">
+              Проверить решение
+            </button>
+            <button id="btn-hint" class="py-2.5 sm:py-3 px-3.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold rounded-xl transition text-xs sm:text-sm flex items-center gap-1.5">
+              <span>💡</span>
+              <span>Подсказка (-1 ⭐)</span>
+            </button>
+          </div>
+
+          <!-- Сообщение результата проверки -->
+          <div id="check-feedback" class="mt-3 text-xs sm:text-sm font-bold min-h-[20px] leading-relaxed"></div>
+        </div>
+
+        <!-- Раскрывающийся блок подсказки -->
+        <div id="hint-box" class="hidden text-xs sm:text-sm text-zinc-700 bg-amber-50/90 p-3 sm:p-4 rounded-xl border-2 border-amber-300 space-y-1.5">
+          <p>💡 <b>Ключевые ловушки алгоритма:</b></p>
+          <ul class="list-disc pl-4 space-y-1 text-zinc-600">
+            <li>Строчка <b>«вниз»</b> выполняется <i>обязательно</i> после того, как робот закончил движение вправо. Если прямо под ним в этот момент стена — он разобьётся!</li>
+            <li>Внешний цикл <b>«ПОКА снизу свободно ИЛИ справа свободно»</b> продолжается, если свободно <i>хотя бы в одну</i> из двух сторон. Проверь внимательно, что делает робот, оказавшись в клетке <b>E6</b>!</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Решение и подробный разбор задачи -->
+    <div id="solution-card" class="hidden mt-6 bg-emerald-50 border-2 border-emerald-400 rounded-3xl p-5 sm:p-6 text-zinc-800 shadow-md">
+      <div class="flex items-center gap-2 text-emerald-800 font-extrabold text-lg sm:text-xl mb-3">
+        <span>🎉 Браво! Клетки D2 и B1 — правильный ответ олимпиады!</span>
+      </div>
+      <div class="text-xs sm:text-sm text-zinc-700 space-y-3 leading-relaxed">
+        <p><b>Разбор поведения Робота-Вани из каждой стартовой позиции:</b></p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          
+          <div class="bg-white p-3.5 rounded-2xl border border-emerald-200">
+            <div class="font-bold text-emerald-700 flex items-center gap-1.5 mb-1">
+              <span>✅ Клетка B1 (Успех):</span>
+            </div>
+            <p class="text-zinc-600 text-xs">
+              Ваня идёт вправо до правой границы лабиринта: <code>B1 → C1 → D1 → E1 → F1</code>. Затем цикл продолжается, так как снизу свободно: он идёт вниз по столбцу F: <code>F1 → F2 → F3 → F4 → F5 → F6</code>. На клетке F6 ни снизу, ни справа нет пути — цикл корректно завершается прямо на батарейке!
+            </p>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-2xl border border-emerald-200">
+            <div class="font-bold text-emerald-700 flex items-center gap-1.5 mb-1">
+              <span>✅ Клетка D2 (Успех):</span>
+            </div>
+            <p class="text-zinc-600 text-xs">
+              Ваня идёт вправо до границы: <code>D2 → E2 → F2</code>. Затем спускается вниз по открытому столбцу F: <code>F2 → F3 → F4 → F5 → F6</code> и завершает алгоритм ровно на батарейке!
+            </p>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-2xl border border-rose-200">
+            <div class="font-bold text-rose-700 flex items-center gap-1.5 mb-1">
+              <span>❌ Клетка A3 (Авария в E3):</span>
+            </div>
+            <p class="text-zinc-600 text-xs">
+              Ваня двигается вправо: <code>A3 → B3 → C3 → D3 → E3</code>. Между E3 и F3 стоит вертикальная стена, поэтому цикл «вправо» завершается. Следующей командой Ваня пытается пойти <b>вниз</b>, но прямо под E3 стоит горизонтальная стена — робот разбивается!
+            </p>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-2xl border border-rose-200">
+            <div class="font-bold text-rose-700 flex items-center gap-1.5 mb-1">
+              <span>❌ Клетка C5 (Коварная ловушка):</span>
+            </div>
+            <p class="text-zinc-600 text-xs">
+              Ваня идёт вправо до E5, затем вниз в E6. В клетке E6 снизу внешняя стена, но <b>справа свободно</b>! Условие <code>снизу ИЛИ справа</code> истинно! Ваня делает шаг вправо на <b>F6</b> (к батарейке), но алгоритм <b>не завершён</b>: далее выполняется команда <code>вниз</code>, и робот врезается в нижнюю стенку лабиринта!
+            </p>
+          </div>
+
+        </div>
+
+        <div class="p-3 bg-emerald-100/60 rounded-xl text-emerald-900 text-xs font-semibold">
+          💡 <b>Вывод олимпиады:</b> Достичь батарейки и успешно остановиться на ней можно только при старте с клеток <b>D2</b> и <b>B1</b>.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  (() => {
+    // Конфигурация координат и лабиринта
+    const COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const ROWS = [1, 2, 3, 4, 5, 6];
+
+    // Геометрия SVG
+    const X0 = 42;
+    const Y0 = 40;
+    const S = 70; // размер клетки 70px
+
+    // Внутренние горизонтальные стены: пара (строка 1..5, колонка 'A'..'F')
+    // означает стену под клеткой (r, c)
+    const hWalls = new Set([
+      '1,D', // между 1 и 2 в D
+      '2,A', // между 2 и 3 в A
+      '3,D', // между 3 и 4 в D
+      '3,E', // между 3 и 4 в E
+      '4,B', // между 4 и 5 в B
+      '4,C'  // между 4 и 5 в C
+    ]);
+
+    // Внутренние вертикальные стены: пара (строка 1..6, колонка 'A'..'E')
+    // означает стену справа от клетки (r, c)
+    const vWalls = new Set([
+      '2,C', // между C и D в строке 2
+      '4,C', // между C и D в строке 4
+      '6,C', // между C и D в строке 6
+      '3,E', // между E и F в строке 3
+      '5,E'  // между E и F в строке 5
+    ]);
+
+    function canMoveRight(r, cIdx) {
+      if (cIdx >= 5) return false; // граница лабиринта справа
+      const key = `${r},${COLS[cIdx]}`;
+      return !vWalls.has(key);
+    }
+
+    function canMoveDown(r, cIdx) {
+      if (r >= 6) return false; // граница лабиринта снизу
+      const key = `${r},${COLS[cIdx]}`;
+      return !hWalls.has(key);
+    }
+
+    function getCellCenter(cIdx, r) {
+      return {
+        x: X0 + cIdx * S + S / 2,
+        y: Y0 + (r - 1) * S + S / 2
+      };
+    }
+
+    // Построение интерактивных клеток в SVG
+    const cellsLayer = document.getElementById('cells-layer');
+    for (let r = 1; r <= 6; r++) {
+      for (let c = 0; c < 6; c++) {
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', X0 + c * S);
+        rect.setAttribute('y', Y0 + (r - 1) * S);
+        rect.setAttribute('width', S);
+        rect.setAttribute('height', S);
+        rect.setAttribute('fill', 'transparent');
+        rect.setAttribute('class', 'cell-rect');
+        rect.setAttribute('data-cell', `${COLS[c]}${r}`);
+        rect.setAttribute('data-c', c);
+        rect.setAttribute('data-r', r);
+
+        rect.addEventListener('click', () => {
+          setStartCell(COLS[c], r);
+        });
+
+        cellsLayer.appendChild(rect);
+      }
+    }
+
+    // Состояние
+    let startCol = 'B';
+    let startRow = 1;
+    let steps = [];
+    let currentStepIdx = -1;
+    let isPlaying = false;
+    let playTimer = null;
+    let isSolved = false;
+
+    // Элементы UI
+    const robotEl = document.getElementById('robot-vanya');
+    const crashMarker = document.getElementById('crash-marker');
+    const trailEl = document.getElementById('robot-trail');
+    const trailDotsEl = document.getElementById('trail-dots');
+    const statusMsg = document.getElementById('status-msg');
+    const statusDetail = document.getElementById('status-detail');
+    const statusIndicator = document.getElementById('status-indicator');
+    const posBadge = document.getElementById('pos-badge');
+    const valDown = document.getElementById('val-down');
+    const valRight = document.getElementById('val-right');
+    const valOr = document.getElementById('val-or');
+
+    const btnStep = document.getElementById('btn-step');
+    const btnPlay = document.getElementById('btn-play');
+    const playText = document.getElementById('play-text');
+    const playIcon = document.getElementById('play-icon');
+    const btnReset = document.getElementById('btn-reset');
+    const btnCheck = document.getElementById('btn-check');
+    const btnHint = document.getElementById('btn-hint');
+    const hintBox = document.getElementById('hint-box');
+    const checkFeedback = document.getElementById('check-feedback');
+    const solutionCard = document.getElementById('solution-card');
+
+    const tabAlgo = document.getElementById('tab-algo');
+    const tabPy = document.getElementById('tab-py');
+    const codeAlgo = document.getElementById('code-algo');
+    const codePy = document.getElementById('code-py');
+
+    // Переключение вкладок кода
+    tabAlgo.addEventListener('click', () => {
+      tabAlgo.className = "px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition";
+      tabPy.className = "px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition";
+      codeAlgo.classList.remove('hidden');
+      codePy.classList.add('hidden');
+    });
+
+    tabPy.addEventListener('click', () => {
+      tabPy.className = "px-3 py-1.5 rounded-lg bg-white shadow-sm text-zinc-900 transition";
+      tabAlgo.className = "px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition";
+      codePy.classList.remove('hidden');
+      codeAlgo.classList.add('hidden');
+    });
+
+    // Подсветка строки кода
+    function highlightLine(lineIdx) {
+      document.querySelectorAll('.code-line').forEach(el => {
+        if (parseInt(el.dataset.line, 10) === lineIdx) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    // Генерация всех атомарных шагов для выбранной стартовой клетки
+    function generateSteps(sCol, sRow) {
+      let cIdx = COLS.indexOf(sCol);
+      let r = sRow;
+      const list = [];
+
+      list.push({
+        type: 'init',
+        line: 0,
+        cIdx,
+        r,
+        cell: `${COLS[cIdx]}${r}`,
+        msg: `Старт в клетке ${COLS[cIdx]}${r}. Готов к выполнению алгоритма.`,
+        down: canMoveDown(r, cIdx),
+        right: canMoveRight(r, cIdx),
+        or: canMoveDown(r, cIdx) || canMoveRight(r, cIdx)
+      });
+
+      let guard = 0;
+      while (guard < 80) {
+        guard++;
+        const freeDown = canMoveDown(r, cIdx);
+        const freeRight = canMoveRight(r, cIdx);
+        const condOr = freeDown || freeRight;
+
+        // Строка 1: ПОКА снизу свободно ИЛИ справа свободно
+        list.push({
+          type: 'check_outer',
+          line: 1,
+          cIdx,
+          r,
+          cell: `${COLS[cIdx]}${r}`,
+          down: freeDown,
+          right: freeRight,
+          or: condOr,
+          msg: `Проверка внешнего цикла: снизу ${freeDown ? 'свободно' : 'стена'}, справа ${freeRight ? 'свободно' : 'стена'} → ${condOr ? 'ИСТИНА (входим в цикл)' : 'ЛОЖЬ (выход из цикла)'}`
+        });
+
+        if (!condOr) {
+          break;
+        }
+
+        // Внутренний цикл: ПОКА справа свободно
+        while (true) {
+          const fRight = canMoveRight(r, cIdx);
+          list.push({
+            type: 'check_inner',
+            line: 2,
+            cIdx,
+            r,
+            cell: `${COLS[cIdx]}${r}`,
+            down: canMoveDown(r, cIdx),
+            right: fRight,
+            or: true,
+            msg: `Проверка «ПОКА справа свободно»: ${fRight ? 'Да (свободно, идём вправо)' : 'Нет (стена, выходим из цикла)'}`
+          });
+
+          if (!fRight) {
+            break;
+          }
+
+          // Движение вправо
+          cIdx += 1;
+          list.push({
+            type: 'move_right',
+            line: 3,
+            cIdx,
+            r,
+            cell: `${COLS[cIdx]}${r}`,
+            down: canMoveDown(r, cIdx),
+            right: canMoveRight(r, cIdx),
+            or: true,
+            msg: `Команда «вправо»: переходим в клетку ${COLS[cIdx]}${r}`
+          });
+        }
+
+        // Строка 5: команда вниз
+        const canDown = canMoveDown(r, cIdx);
+        if (!canDown) {
+          // Авария!
+          list.push({
+            type: 'crash',
+            line: 5,
+            cIdx,
+            r,
+            cell: `${COLS[cIdx]}${r}`,
+            down: false,
+            right: canMoveRight(r, cIdx),
+            or: false,
+            msg: `💥 АВАРИЯ! Команда «вниз», но снизу стена! Робот разбился в клетке ${COLS[cIdx]}${r}!`
+          });
+          return list;
+        }
+
+        r += 1;
+        list.push({
+          type: 'move_down',
+          line: 5,
+          cIdx,
+          r,
+          cell: `${COLS[cIdx]}${r}`,
+          down: canMoveDown(r, cIdx),
+          right: canMoveRight(r, cIdx),
+          or: true,
+          msg: `Команда «вниз»: переходим в клетку ${COLS[cIdx]}${r}`
+        });
+      }
+
+      // Окончание алгоритма
+      const isBattery = (COLS[cIdx] === 'F' && r === 6);
+      if (isBattery) {
+        list.push({
+          type: 'success',
+          line: 7,
+          cIdx,
+          r,
+          cell: `${COLS[cIdx]}${r}`,
+          down: false,
+          right: false,
+          or: false,
+          msg: `🔋 УСПЕХ! Ваня благополучно остановился на батарейке в F6!`
+        });
+      } else {
+        list.push({
+          type: 'stopped',
+          line: 7,
+          cIdx,
+          r,
+          cell: `${COLS[cIdx]}${r}`,
+          down: canMoveDown(r, cIdx),
+          right: canMoveRight(r, cIdx),
+          or: false,
+          msg: `⚠️ Остановился без батарейки: алгоритм завершён в клетке ${COLS[cIdx]}${r}.`
+        });
+      }
+
+      return list;
+    }
+
+    // Установка начальной клетки
+    function setStartCell(c, r) {
+      stopAutoPlay();
+      startCol = c;
+      startRow = r;
+      steps = generateSteps(startCol, startRow);
+      currentStepIdx = 0;
+
+      // Обновляем выделение на SVG
+      document.querySelectorAll('.cell-rect').forEach(rect => {
+        if (rect.dataset.cell === `${c}${r}`) {
+          rect.classList.add('selected-start');
+        } else {
+          rect.classList.remove('selected-start');
+        }
+      });
+
+      // Обновляем кнопки кандидатов
+      document.querySelectorAll('.candidate-btn').forEach(b => {
+        if (b.dataset.cell === `${c}${r}`) {
+          b.classList.remove('bg-white', 'text-indigo-700');
+          b.classList.add('bg-indigo-600', 'text-white', 'shadow');
+        } else {
+          b.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+          b.classList.add('bg-white', 'text-indigo-700');
+        }
+      });
+
+      renderStep(steps[0]);
+    }
+
+    // Отображение конкретного шага
+    function renderStep(step) {
+      if (!step) return;
+
+      highlightLine(step.line);
+
+      // Позиция робота
+      const center = getCellCenter(step.cIdx, step.r);
+      robotEl.setAttribute('transform', `translate(${center.x}, ${center.y})`);
+      posBadge.textContent = `Клетка: ${step.cell}`;
+
+      // Сброс классов анимации
+      robotEl.classList.remove('robot-shake', 'robot-success');
+      crashMarker.classList.add('hidden');
+
+      // Обновление инспектора условий
+      valDown.textContent = step.down ? 'Да (свободно)' : 'Нет (стена)';
+      valDown.className = `text-sm sm:text-base font-mono font-black mt-0.5 ${step.down ? 'text-emerald-700' : 'text-rose-600'}`;
+
+      valRight.textContent = step.right ? 'Да (свободно)' : 'Нет (стена)';
+      valRight.className = `text-sm sm:text-base font-mono font-black mt-0.5 ${step.right ? 'text-emerald-700' : 'text-rose-600'}`;
+
+      valOr.textContent = step.or ? 'ИСТИНА' : 'ЛОЖЬ';
+      valOr.className = `text-sm sm:text-base font-mono font-black mt-0.5 ${step.or ? 'text-emerald-700' : 'text-zinc-500'}`;
+
+      // Текст статуса
+      statusMsg.textContent = step.msg;
+      statusDetail.textContent = `Шаг ${currentStepIdx + 1} из ${steps.length} · Координаты: (${step.cell})`;
+
+      // Индикация аварии / успеха / работы
+      if (step.type === 'crash') {
+        robotEl.classList.add('robot-shake');
+        crashMarker.classList.remove('hidden');
+        crashMarker.setAttribute('transform', `translate(${center.x}, ${center.y + 22})`);
+        statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+        statusMsg.className = "text-sm sm:text-base font-bold text-rose-700 leading-snug";
+        stopAutoPlay();
+      } else if (step.type === 'success') {
+        robotEl.classList.add('robot-success');
+        statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+        statusMsg.className = "text-sm sm:text-base font-bold text-emerald-700 leading-snug";
+        stopAutoPlay();
+      } else if (step.type === 'stopped') {
+        statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+        statusMsg.className = "text-sm sm:text-base font-bold text-amber-800 leading-snug";
+        stopAutoPlay();
+      } else {
+        statusIndicator.className = "w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse";
+        statusMsg.className = "text-sm sm:text-base font-bold text-zinc-800 leading-snug";
+      }
+
+      // Отрисовка пути (траектории)
+      updateTrail();
+    }
+
+    function updateTrail() {
+      if (currentStepIdx <= 0) {
+        trailEl.setAttribute('d', '');
+        trailDotsEl.innerHTML = '';
+        return;
+      }
+
+      const points = [];
+      for (let i = 0; i <= currentStepIdx; i++) {
+        const s = steps[i];
+        if (s.type === 'init' || s.type === 'move_right' || s.type === 'move_down' || s.type === 'crash') {
+          const pt = getCellCenter(s.cIdx, s.r);
+          points.push(pt);
+        }
+      }
+
+      if (points.length < 2) {
+        trailEl.setAttribute('d', '');
+        trailDotsEl.innerHTML = '';
+        return;
+      }
+
+      let d = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        d += ` L ${points[i].x} ${points[i].y}`;
+      }
+      trailEl.setAttribute('d', d);
+
+      // Точки пути
+      let dotsHtml = '';
+      points.forEach(pt => {
+        dotsHtml += `<circle cx="${pt.x}" cy="${pt.y}" r="3" fill="#6366f1" opacity="0.6"/>`;
+      });
+      trailDotsEl.innerHTML = dotsHtml;
+    }
+
+    // Шаг вперёд
+    function stepForward() {
+      if (currentStepIdx < steps.length - 1) {
+        currentStepIdx++;
+        renderStep(steps[currentStepIdx]);
+      } else {
+        stopAutoPlay();
+      }
+    }
+
+    // Авто-запуск
+    function startAutoPlay() {
+      if (currentStepIdx >= steps.length - 1) {
+        currentStepIdx = 0;
+        renderStep(steps[0]);
+      }
+      isPlaying = true;
+      playText.textContent = "Пауза";
+      playIcon.textContent = "⏸";
+      btnPlay.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+      btnPlay.classList.add('bg-amber-600', 'hover:bg-amber-700');
+
+      playTimer = setInterval(() => {
+        if (currentStepIdx < steps.length - 1) {
+          stepForward();
+        } else {
+          stopAutoPlay();
+        }
+      }, 420);
+    }
+
+    function stopAutoPlay() {
+      isPlaying = false;
+      if (playTimer) clearInterval(playTimer);
+      playTimer = null;
+      playText.textContent = "Запуск";
+      playIcon.textContent = "⚡";
+      btnPlay.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+      btnPlay.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+    }
+
+    // Слушатели кнопок симулятора
+    btnStep.addEventListener('click', () => {
+      stopAutoPlay();
+      stepForward();
+    });
+
+    btnPlay.addEventListener('click', () => {
+      if (isPlaying) {
+        stopAutoPlay();
+      } else {
+        startAutoPlay();
+      }
+    });
+
+    btnReset.addEventListener('click', () => {
+      setStartCell(startCol, startRow);
+    });
+
+    // Кнопки кандидатов
+    document.querySelectorAll('.candidate-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cell = btn.dataset.cell;
+        setStartCell(cell[0], parseInt(cell[1], 10));
+      });
+    });
+
+    // Подсказка
+    btnHint.addEventListener('click', () => {
+      if (window.Olymp) Olymp.useHint();
+      hintBox.classList.toggle('hidden');
+    });
+
+    // Проверка ответа пользователя
+    btnCheck.addEventListener('click', () => {
+      const selected = Array.from(document.querySelectorAll('.ans-checkbox:checked')).map(cb => cb.value);
+      selected.sort();
+
+      const correct = ['B1', 'D2'];
+      correct.sort();
+
+      const isCorrect = selected.length === 2 && selected[0] === 'B1' && selected[1] === 'D2';
+
+      if (isCorrect) {
+        isSolved = true;
+        checkFeedback.className = "mt-3 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-100/70 p-3 rounded-xl border border-emerald-300 leading-snug";
+        checkFeedback.innerHTML = `
+          🎉 <b>Правильно!</b> Ответ олимпиады: <b>D2</b> и <b>B1</b>.<br>
+          Только из этих двух клеток Робот-Ваня благополучно зарядится на батарейке в F6!
+        `;
+        solutionCard.classList.remove('hidden');
+
+        if (window.Olymp) {
+          Olymp.stars(3);
+        }
+      } else if (selected.length === 0) {
+        checkFeedback.className = "mt-3 text-xs sm:text-sm font-bold text-amber-800 bg-amber-50 p-3 rounded-xl border border-amber-300";
+        checkFeedback.innerHTML = "⚠️ Отметь хотя бы одну клетку перед проверкой!";
+      } else if (selected.includes('A3') || selected.includes('C5')) {
+        let errDesc = '';
+        if (selected.includes('A3')) {
+          errDesc += 'Клетка <b>A3</b> ошибочна: Ваня доходит до E3 и на строчке «вниз» врезается в стену!<br>';
+        }
+        if (selected.includes('C5')) {
+          errDesc += 'Клетка <b>C5</b> — опасная ловушка: робот доходит до F6, но на строчке «ПОКА снизу свободно ИЛИ справа свободно» условие истинно, и следующая команда «вниз» разбивает его о нижний край!';
+        }
+        checkFeedback.className = "mt-3 text-xs sm:text-sm font-bold text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-300 leading-relaxed";
+        checkFeedback.innerHTML = `❌ <b>Среди выбранных есть неверные клетки:</b><br>${errDesc}`;
+      } else if (selected.length === 1 && (selected[0] === 'B1' || selected[0] === 'D2')) {
+        checkFeedback.className = "mt-3 text-xs sm:text-sm font-bold text-amber-800 bg-amber-50 p-3 rounded-xl border border-amber-300";
+        checkFeedback.innerHTML = `⚠️ Клетка <b>${selected[0]}</b> верна, но есть <b>ещё одна</b> подходящая клетка! Проверь оставшихся роботов.`;
+      }
+    });
+
+    // Синхронизация кликов по кандидатам с чекбоксами ответа
+    document.querySelectorAll('.ans-checkbox').forEach(cb => {
+      cb.addEventListener('change', () => {
+        checkFeedback.innerHTML = '';
+        checkFeedback.className = "mt-3 text-xs sm:text-sm font-bold min-h-[20px]";
+      });
+    });
+
+    // Инициализация первой позиции (B1)
+    setStartCell('B', 1);
+
+  })();
+  </script>
+</body>
+</html>

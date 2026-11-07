@@ -11,6 +11,7 @@ window.OLYMP_TASKS = {
   "new-arithmetic": { title: "Новая арифметика", icon: "📐", about: "Найди сумму третьего столбца по таблице фигур Софы 3×3" },
   "nested-loop": { title: "Вложенный цикл", icon: "🔄", about: "Вычисли значение переменной S после выполнения вложенного цикла" },
   "trains": { title: "Нас ссорили поезда", icon: "🚂", about: "Сколько встречных поездов встретится по пути из Владивостока в Москву?" },
+  "robot-vanya": { title: "Робот-Ваня", icon: "🤖", about: "С каких клеток Робот-Ваня доберётся до батарейки по алгоритму?" },
 };
 
 // Новое занятие дописывается в конец lessons: сайт показывает последнее, остальные уходят в «Прошлые занятия».
@@ -35,7 +36,7 @@ window.OLYMP_GROUPS = {
   "zadachi": {
     stars: false,
     lessons: [
-      { tasks: ["princess", "new-arithmetic", "nested-loop", "boxes", "magic-squares", "carpet", "coins", "trains"] },
+      { tasks: ["princess", "new-arithmetic", "nested-loop", "boxes", "magic-squares", "carpet", "coins", "trains", "robot-vanya"] },
     ],
   },
 };

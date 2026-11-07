@@ -85,6 +85,23 @@
     toast(n, penalized);
   }
 
+  function award({ stars: n = MAX, attemptId, source, notify = false } = {}) {
+    if (!group) return { best: 0, changed: false, persisted: false };
+    n = Math.max(0, Math.min(MAX, n));
+    const data = load();
+    const mine = data[group] || (data[group] = {});
+    const prev = mine[task] || 0;
+    const changed = n > prev;
+    if (changed) {
+      mine[task] = n;
+      save(data);
+    }
+    if (notify) {
+      toast(n, false);
+    }
+    return { best: Math.max(prev, n), changed, persisted: true };
+  }
+
   function addChrome() {
     const style = document.createElement("style");
     style.textContent = `
@@ -168,6 +185,7 @@
     group,
     task,
     stars,
+    award,
     read,
     reset,
     starsText,

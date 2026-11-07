@@ -1011,6 +1011,11 @@
     }
 
     [hidden] { display: none !important; }
+    .travel-guide { margin-bottom: 12px; font-size: 16px; color: var(--color-muted); }
+    .controls-toolbar button:disabled, .time-slider-track:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
     .flow-explain-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
     .console-header, .console-live-results > div, .param-pill-options { flex-wrap: wrap; }
     .track-canvas-layer { left: 44px; right: 44px; }
@@ -1174,9 +1179,10 @@
       </div>
     </div>
 
+    <p class="travel-guide" id="travel-guide">Чтобы отправить поезд, сначала запиши прогноз. Подойдёт любое предположение.</p>
     <div class="controls-toolbar" id="controls-toolbar">
       <div class="controls-group-actions">
-        <button type="button" class="btn-action btn-primary" id="btn-play" disabled>
+        <button type="button" class="btn-action btn-primary" id="btn-play" aria-describedby="travel-guide">
           <svg id="play-icon-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
           <span id="play-btn-text">В путь</span>
         </button>
@@ -1221,7 +1227,7 @@
         <p>Поезда движутся с одинаковой скоростью. Первый московский поезд после нашего старта отправляется через 12 часов, следующие — раз в сутки. Считаем встречи строго в пути. Зафиксируй прогноз перед запуском.</p>
         <form class="flow-form-row" id="form-hypothesis" onsubmit="event.preventDefault(); submitHypothesis();">
           <input type="number" class="flow-input-num" id="input-hypothesis" aria-label="Прогноз числа встреч" min="0" max="100" placeholder="Число" required>
-          <button type="submit" class="btn-action btn-primary">Зафиксировать прогноз</button>
+          <button type="submit" class="btn-action btn-primary">Зафиксировать прогноз и запустить поезд</button>
         </form>
       </div>
     </div>
@@ -1489,6 +1495,7 @@
   const counterTotalVal = document.getElementById('counter-total-val');
   const substatGrp1Val = document.getElementById('substat-grp1-val');
   const substatGrp2Val = document.getElementById('substat-grp2-val');
+  const travelGuide = document.getElementById('travel-guide');
   const btnPlay = document.getElementById('btn-play');
   const playBtnText = document.getElementById('play-btn-text');
   const playIconSvg = document.getElementById('play-icon-svg');
@@ -1694,8 +1701,11 @@
     [cardObservation, cardExplanation, cardTransfer].forEach((card, index) => {
       card.classList.toggle('locked-complete', step > index);
     });
-    for (const control of [btnPlay, btnNextMeet, btnStepDay, btnReset, timeSlider]) {
-      control.disabled = !canTravel();
+    const ready = canTravel();
+    travelGuide.hidden = ready;
+    if (ready) btnPlay.removeAttribute('aria-describedby');
+    for (const control of [btnNextMeet, btnStepDay, btnReset, timeSlider]) {
+      control.disabled = !ready;
     }
   }
 
@@ -1793,6 +1803,11 @@
   }
 
   function togglePlay() {
+    if (!canTravel()) {
+      cardHypothesis.scrollIntoView({ block: 'center' });
+      inputHypothesis.focus({ preventScroll: true });
+      return;
+    }
     if (state.isPlaying) {
       pause();
     } else {
@@ -1883,6 +1898,8 @@
     state.userHypothesis = inputHypothesis.valueAsNumber;
     updateMasteryUI();
     play();
+    document.getElementById('railway-scene').scrollIntoView({ block: 'start' });
+    btnPlay.focus({ preventScroll: true });
   };
 
   window.submitObservation = function() {

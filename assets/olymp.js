@@ -16,7 +16,10 @@
   function save(data) {
     try {
       localStorage.setItem(KEY, JSON.stringify(data));
-    } catch {}
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   function read(g) {
@@ -27,6 +30,9 @@
     const data = load();
     delete data[g];
     save(data);
+    try {
+      localStorage.removeItem("olymp:trains:mastery:v3:" + (g || "local"));
+    } catch {}
   }
 
   let usedHint = false;
@@ -92,14 +98,15 @@
     const mine = data[group] || (data[group] = {});
     const prev = mine[task] || 0;
     const changed = n > prev;
+    let persisted = true;
     if (changed) {
       mine[task] = n;
-      save(data);
+      persisted = save(data);
     }
     if (notify) {
       toast(n, false);
     }
-    return { best: Math.max(prev, n), changed, persisted: true };
+    return { best: Math.max(prev, n), changed, persisted };
   }
 
   function addChrome() {

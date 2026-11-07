@@ -138,7 +138,7 @@
     }
 
     .mastery-stars-label {
-      font-size: 13px;
+      font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--color-muted);
@@ -230,7 +230,7 @@
     }
 
     .station-flag .station-sub {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--color-muted);
       font-family: var(--font-mono);
       font-weight: normal;
@@ -480,7 +480,7 @@
     .timeline-day-ticks {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 14px;
       font-family: var(--font-mono);
       color: var(--color-dim);
       padding: 0 4px;
@@ -532,7 +532,7 @@
     }
 
     .counter-total-desc span.sub {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--color-muted);
     }
 
@@ -551,7 +551,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
+      font-size: 14px;
       font-family: var(--font-mono);
       font-weight: 700;
       text-transform: uppercase;
@@ -588,7 +588,7 @@
     .substat-val.grp2 { color: var(--color-grp2); }
 
     .substat-info {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--color-muted);
     }
 
@@ -731,7 +731,7 @@
 
     .flow-step-tag {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -975,6 +975,21 @@
         transition-duration: 0.01ms !important;
       }
     }
+
+    [hidden] { display: none !important; }
+    .flow-explain-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+    .console-header, .console-live-results > div, .param-pill-options { flex-wrap: wrap; }
+    .track-canvas-layer { left: 44px; right: 44px; }
+    .flow-card-body { font-size: 20px; }
+    .flow-card-body input { max-width: 100%; }
+    .mastery-stars-label, .dotmatrix-badge, .scrubber-label { font-size: 14px; }
+    .railway-scene, .dispatch-board { color: #f1f5f9; }
+    .dispatch-board { --color-muted: #cbd5e1; }
+    .flow-feedback { min-height: 1.4em; }
+    @media (max-width: 600px) {
+      .flow-card-body { font-size: 18px; }
+      .track-canvas-layer { left: 44px; right: 44px; }
+    }
   </style>
 </head>
 <body>
@@ -987,7 +1002,7 @@
 
   <header class="header-layout">
     <h1>Ночная диспетчерская: Нас ссорили поезда</h1>
-    <div class="mastery-stars-badge" id="mastery-badge" aria-label="Освоение темы: 3 звезды">
+    <div class="mastery-stars-badge" id="mastery-badge" role="group" aria-label="Освоение темы: 0 из 3 звёзд">
       <span class="mastery-stars-label">Освоение</span>
       <div class="mastery-stars-list">
         <span class="mastery-star-glyph" id="star-glyph-1" title="1. Исследовал">
@@ -1084,7 +1099,7 @@
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="2" y="4" width="4" height="4"/><rect x="8" y="4" width="4" height="4"/><rect x="14" y="4" width="4" height="4"/><rect x="20" y="4" width="4" height="4"/><rect x="2" y="10" width="4" height="4"/><rect x="8" y="10" width="4" height="4"/><rect x="14" y="10" width="4" height="4"/><rect x="20" y="10" width="4" height="4"/><rect x="2" y="16" width="4" height="4"/><rect x="8" y="16" width="4" height="4"/><rect x="14" y="16" width="4" height="4"/><rect x="20" y="16" width="4" height="4"/></svg>
           <span>Память поездки · Матрица времени</span>
         </div>
-        <div class="dotmatrix-badge" id="dotmatrix-status-badge">Встречи 0 / 20</div>
+        <div class="dotmatrix-badge" id="dotmatrix-status-badge">Встречи 0</div>
       </div>
 
       <div class="matrix-canvas-wrapper">
@@ -1128,22 +1143,22 @@
 
     <div class="controls-toolbar" id="controls-toolbar">
       <div class="controls-group-actions">
-        <button type="button" class="btn-action btn-primary" id="btn-play">
+        <button type="button" class="btn-action btn-primary" id="btn-play" disabled>
           <svg id="play-icon-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
           <span id="play-btn-text">В путь</span>
         </button>
 
-        <button type="button" class="btn-action" id="btn-next-meet">
+        <button type="button" class="btn-action" id="btn-next-meet" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <span>Следующая встреча</span>
         </button>
 
-        <button type="button" class="btn-action" id="btn-step-day">
+        <button type="button" class="btn-action" id="btn-step-day" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           <span>+1 день</span>
         </button>
 
-        <button type="button" class="btn-action" id="btn-reset">
+        <button type="button" class="btn-action" id="btn-reset" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           <span>В начало</span>
         </button>
@@ -1156,7 +1171,7 @@
 
     <div class="scrubber-panel">
       <span class="scrubber-label">Перемотка:</span>
-      <input type="range" class="time-slider-track" id="time-slider" min="0" max="10" step="0.02" value="0">
+      <input type="range" class="time-slider-track" id="time-slider" aria-label="Время поездки" disabled min="0" max="10" step="0.02" value="0">
     </div>
   </section>
 
@@ -1170,9 +1185,9 @@
       </div>
       <h2 class="flow-card-title">Сколько встречных поездов ты ожидаешь увидеть?</h2>
       <div class="flow-card-body">
-        <p>Зафиксируй своё предположение перед тем, как диспетчер запустит поездку по графику.</p>
+        <p>Поезда движутся с одинаковой скоростью. Первый московский поезд после нашего старта отправляется через 12 часов, следующие — раз в сутки. Считаем встречи строго в пути. Зафиксируй прогноз перед запуском.</p>
         <form class="flow-form-row" id="form-hypothesis" onsubmit="event.preventDefault(); submitHypothesis();">
-          <input type="number" class="flow-input-num" id="input-hypothesis" min="0" max="100" placeholder="Число" required>
+          <input type="number" class="flow-input-num" id="input-hypothesis" aria-label="Прогноз числа встреч" min="0" max="100" placeholder="Число" required>
           <button type="submit" class="btn-action btn-primary">Зафиксировать прогноз</button>
         </form>
       </div>
@@ -1189,7 +1204,7 @@
       <div class="flow-card-body">
         <p>Посмотри на итоговое показание счётчика и матрицы времени. Введи фактическое число встреченных составов:</p>
         <form class="flow-form-row" id="form-observation" onsubmit="event.preventDefault(); submitObservation();">
-          <input type="number" class="flow-input-num" id="input-observation" min="0" max="100" placeholder="20" required>
+          <input type="number" class="flow-input-num" id="input-observation" aria-label="Число встреч по итогам поездки" min="0" max="100" placeholder="Число" required>
           <button type="submit" class="btn-action btn-primary">Подтвердить результат</button>
         </form>
       </div>
@@ -1212,7 +1227,7 @@
               <span class="explain-column-title">1. Выехали ДО нашего старта</span>
               <p style="font-size: 15px; color: var(--color-muted);">Уже находились на путях между Москвой и Владивостоком в момент нашего отправления.</p>
               <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
-                <input type="number" class="flow-input-num" id="input-exp-grp1" placeholder="Сколько?" required>
+                <input type="number" class="flow-input-num" id="input-exp-grp1" aria-label="Поезда, выехавшие до нашего старта" placeholder="Сколько?" required>
                 <span>поездов</span>
               </div>
             </div>
@@ -1221,7 +1236,7 @@
               <span class="explain-column-title">2. Выехали ПОСЛЕ нашего старта</span>
               <p style="font-size: 15px; color: var(--color-muted);">Отправлялись из Москвы каждый день, пока наш поезд был в пути (10 дней).</p>
               <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
-                <input type="number" class="flow-input-num" id="input-exp-grp2" placeholder="Сколько?" required>
+                <input type="number" class="flow-input-num" id="input-exp-grp2" aria-label="Поезда, выехавшие после нашего старта" placeholder="Сколько?" required>
                 <span>поездов</span>
               </div>
             </div>
@@ -1229,10 +1244,11 @@
 
           <div class="flow-form-row" style="margin-top: 16px;">
             <button type="submit" class="btn-action btn-primary">Проверить объяснение</button>
-            <button type="button" class="btn-action" id="btn-toggle-hint">Подсказка</button>
+            <button type="button" class="btn-action" id="btn-toggle-hint" aria-controls="hint-drawer" aria-expanded="false">Подсказка</button>
           </div>
         </form>
 
+        <p>Подсказка покажет первый шаг. Самостоятельно попробуешь на новой задаче.</p>
         <div class="hint-drawer" id="hint-drawer" hidden>
           <p>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z"/></svg>
@@ -1255,20 +1271,20 @@
       </div>
       <h2 class="flow-card-title">Проверь себя на новом маршруте без подсказок</h2>
       <div class="flow-card-body">
-        <p>Представь новую железнодорожную линию. Поездка длится <strong>6 дней</strong>. Поезда отправляются навстречу раз в сутки.</p>
+        <p>Представь новую железнодорожную линию. Поездка длится <strong id="transfer-days"></strong>. Поезда идут с одинаковой скоростью и отправляются навстречу раз в сутки со сдвигом 12 часов. Считай встречи строго в пути.</p>
         <form id="form-transfer" onsubmit="event.preventDefault(); submitTransfer();">
           <div class="flow-explain-grid">
             <div class="explain-column-card">
               <span class="explain-column-title">Сколько УЖЕ было в пути?</span>
-              <input type="number" class="flow-input-num" id="input-transfer-grp1" placeholder="?" required>
+              <input type="number" class="flow-input-num" id="input-transfer-grp1" aria-label="Новый маршрут: уже в пути" placeholder="?" required>
             </div>
             <div class="explain-column-card">
               <span class="explain-column-title">Сколько ВЫЕХАЛО навстречу?</span>
-              <input type="number" class="flow-input-num" id="input-transfer-grp2" placeholder="?" required>
+              <input type="number" class="flow-input-num" id="input-transfer-grp2" aria-label="Новый маршрут: выехали навстречу" placeholder="?" required>
             </div>
             <div class="explain-column-card">
               <span class="explain-column-title">Сколько ВСЕГО встреч?</span>
-              <input type="number" class="flow-input-num" id="input-transfer-total" placeholder="?" required>
+              <input type="number" class="flow-input-num" id="input-transfer-total" aria-label="Новый маршрут: всего встреч" placeholder="?" required>
             </div>
           </div>
           <div class="flow-form-row" style="margin-top: 16px;">
@@ -1277,6 +1293,12 @@
         </form>
       </div>
     </div>
+    <details class="flow-card" id="full-explanation">
+      <summary>Полный разбор и встречи на вокзалах</summary>
+      <p>Два поезда сближаются с удвоенной скоростью, поэтому встречи происходят каждые 12 часов. Мы встречаем 10 составов, отправившихся до нашего старта, и 10 отправившихся после него.</p>
+      <p>Если отправляться одновременно, при том же суточном интервале будет 19 встреч строго в пути. Если добавить обе встречи на вокзалах, получится 21.</p>
+    </details>
+    <p id="storage-feedback" role="status"></p>
   </section>
 
   <section class="dispatcher-console-section" id="dispatcher-console-section" hidden>
@@ -1285,7 +1307,6 @@
         <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--color-emerald)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <h2 class="console-title">Бонус: «Пульт диспетчера» открыт!</h2>
       </div>
-      <button type="button" class="btn-action" id="btn-apply-console-sim">Применить к сцене</button>
     </div>
 
     <p style="color: #CBD5E1;">Ты заработал все 3 звезды! Теперь ты можешь исследовать произвольные графики движения поездов и менять параметры.</p>
@@ -1309,7 +1330,12 @@
       </div>
     </div>
 
-    <div class="console-live-results" id="console-live-results">
+    <form class="flow-form-row" id="console-forecast">
+      <label for="console-guess">Прогноз встреч</label>
+      <input type="number" class="flow-input-num" id="console-guess" min="0" max="100" required>
+      <button type="submit" class="btn-action" id="btn-apply-console-sim">Запустить и проверить</button>
+    </form>
+    <div class="console-live-results" id="console-live-results" role="status" hidden>
       <div style="font-size: 19px; font-weight: 700; color: #FFFFFF;" id="console-formula-text">
         Расчёт для: 10 дней, интервал 24 ч
       </div>
@@ -1371,30 +1397,47 @@
     rafId: null,
     lastFrameTime: null,
     userHypothesis: null,
-    usedHint: false,
-    mastery: {
-      star1: false,
-      star2: false,
-      star3: false
-    }
+    finished: false,
+    bonus: false,
+    mastery: { version: 3, step: 0, assisted: false, days: [4, 6, 8, 12][Math.floor(Math.random() * 4)] }
   };
 
-  const masteryStorageKey = `olymp:trains:mastery:v2:${(window.Olymp && window.Olymp.group) || 'local'}`;
+
+  const masteryStorageKey = `olymp:trains:mastery:v3:${window.Olymp?.group || 'local'}`;
+
+  function readMastery() {
+    const record = JSON.parse(localStorage.getItem(masteryStorageKey));
+    if (record?.version === 3 && Number.isInteger(record.step) && record.step >= 0 &&
+        record.step <= 3 && typeof record.assisted === 'boolean' &&
+        [4, 6, 8, 12].includes(record.days)) return record;
+    return null;
+  }
+
+  function storageWarning() {
+    document.getElementById('storage-feedback').textContent =
+      'Хранилище недоступно. Прогресс может пропасть после перезагрузки.';
+  }
 
   function loadMasteryState() {
     try {
-      const raw = localStorage.getItem(masteryStorageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        state.mastery = { ...state.mastery, ...parsed };
-      }
-    } catch {}
+      state.mastery = readMastery() || state.mastery;
+    } catch {
+      storageWarning();
+    }
   }
 
   function saveMasteryState() {
     try {
+      const previous = readMastery();
+      if (previous) {
+        state.mastery.step = Math.max(previous.step, state.mastery.step);
+        state.mastery.assisted ||= previous.assisted;
+        state.mastery.days = previous.days;
+      }
       localStorage.setItem(masteryStorageKey, JSON.stringify(state.mastery));
-    } catch {}
+    } catch {
+      storageWarning();
+    }
   }
 
   const starGlyph1 = document.getElementById('star-glyph-1');
@@ -1421,7 +1464,7 @@
   const btnReset = document.getElementById('btn-reset');
   const btnSpeedToggle = document.getElementById('btn-speed-toggle');
   const timeSlider = document.getElementById('time-slider');
-  const controlsToolbar = document.getElementById('controls-toolbar');
+
 
   const cardHypothesis = document.getElementById('flow-card-hypothesis');
   const inputHypothesis = document.getElementById('input-hypothesis');
@@ -1439,6 +1482,9 @@
   const inputTransferTotal = document.getElementById('input-transfer-total');
   const consoleSection = document.getElementById('dispatcher-console-section');
 
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let finishFrame;
+  let finishWave = 1;
   let audioCtx = null;
 
   function initAudioContext() {
@@ -1554,10 +1600,10 @@
         ctx.beginPath();
         ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
 
-        if (isCompleted) {
-          ctx.fillStyle = '#36D9A0';
-        } else if (meet && meet.isMet && r >= 1 && r <= 3) {
+        if (meet && meet.isMet && r >= 1 && r <= 3) {
           ctx.fillStyle = meet.group === 1 ? '#38BDF8' : '#F59E0B';
+        } else if (isCompleted && c < finishWave * MATRIX_COLS) {
+          ctx.fillStyle = '#36D9A0';
         } else if (c <= activeColFloat) {
           const distToCursor = activeColFloat - c;
           if (distToCursor < 1.5) {
@@ -1576,24 +1622,40 @@
   }
 
   function updateMasteryUI() {
-    starGlyph1.classList.toggle('active', state.mastery.star1);
-    starGlyph2.classList.toggle('active', state.mastery.star2);
-    starGlyph3.classList.toggle('active', state.mastery.star3);
+    const { step, assisted, days } = state.mastery;
+    const stars = step === 2 && assisted ? 1 : step;
+    [starGlyph1, starGlyph2, starGlyph3].forEach((glyph, index) => {
+      glyph.classList.toggle('active', index < stars);
+    });
+    document.getElementById('mastery-badge').setAttribute('aria-label', `Освоение темы: ${stars} из 3 звёзд`);
+    cardHypothesis.classList.toggle('locked-complete', step > 0 || state.userHypothesis !== null);
+    cardObservation.hidden = !state.finished && step === 0;
+    cardExplanation.hidden = step < 1;
+    cardTransfer.hidden = step < 2;
+    consoleSection.hidden = step < 3;
+    explainSuccessBanner.hidden = step < 2;
+    explainSuccessBanner.textContent = assisted && step < 3
+      ? '10 уже были в пути + 10 выехали позже = 20. Новый маршрут проверит самостоятельное объяснение.'
+      : '10 уже были в пути + 10 выехали позже = 20.';
+    document.getElementById('transfer-days').textContent = days + ' суток';
+    for (const [index, form] of [cardHypothesis, cardObservation, cardExplanation, cardTransfer].entries()) {
+      const complete = index === 0 ? canTravel() : step >= index;
+      form.querySelectorAll('input, button').forEach(control => { control.disabled = complete; });
+    }
+    [cardObservation, cardExplanation, cardTransfer].forEach((card, index) => {
+      card.classList.toggle('locked-complete', step > index);
+    });
+    for (const control of [btnPlay, btnNextMeet, btnStepDay, btnReset, timeSlider]) {
+      control.disabled = !canTravel();
+    }
+  }
 
-    if (state.mastery.star1) {
-      cardObservation.hidden = false;
-      cardObservation.classList.add('locked-complete');
-    }
-    if (state.mastery.star2) {
-      cardExplanation.hidden = false;
-      cardExplanation.classList.add('locked-complete');
-      explainSuccessBanner.hidden = false;
-    }
-    if (state.mastery.star3) {
-      cardTransfer.hidden = false;
-      cardTransfer.classList.add('locked-complete');
-      consoleSection.hidden = false;
-    }
+  function canTravel() {
+    return state.userHypothesis !== null || state.mastery.step > 0;
+  }
+
+  function feedback(formId, message) {
+    document.querySelector('#' + formId + ' + .flow-feedback').textContent = message;
   }
 
   function formatTime(days) {
@@ -1606,6 +1668,8 @@
   }
 
   function renderTime(t, prevT) {
+    cancelAnimationFrame(finishFrame);
+    finishWave = prevT !== undefined && t >= simConfig.tripDays && !reducedMotion.matches ? 0 : 1;
     state.currentTime = t;
     const D = simConfig.tripDays;
 
@@ -1622,7 +1686,7 @@
       const arrived = t >= train.t_dep + D;
       const met = t >= train.t_meet;
 
-      if (departed && !arrived) {
+      if (canTravel() && departed && !arrived) {
         el.style.display = 'flex';
         const dist = t - train.t_dep;
         const pos = 100 - (dist / D) * 100;
@@ -1643,7 +1707,7 @@
     substatGrp2Val.textContent = grp2Met;
 
     const isDone = t >= D;
-    matrixStatusBadge.textContent = isDone ? `Готово ${totalMet}/${trainModel.length}` : `Встречи ${totalMet}/${trainModel.length}`;
+    matrixStatusBadge.textContent = `${isDone ? "Готово" : "Встречи"} ${totalMet}`;
     matrixStatusBadge.classList.toggle('complete', isDone);
 
     drawMatrix(t);
@@ -1664,6 +1728,7 @@
       playTone(783.99, 0.18, 'sine');
     }
 
+    if (reducedMotion.matches) return;
     counterTotalVal.classList.add('pop');
     setTimeout(() => counterTotalVal.classList.remove('pop'), 180);
 
@@ -1674,7 +1739,7 @@
       <div class="meeting-pulse-line"></div>
       <div class="meeting-pulse-ring"></div>
     `;
-    flashContainer.appendChild(pulse);
+    flashContainer.replaceChildren(pulse);
     setTimeout(() => pulse.remove(), 700);
   }
 
@@ -1687,7 +1752,7 @@
   }
 
   function play() {
-    initAudioContext();
+    if (!canTravel() || state.isPlaying) return;
     if (state.currentTime >= simConfig.tripDays) {
       renderTime(0);
     }
@@ -1721,7 +1786,7 @@
       nextT = D;
       renderTime(nextT, prevT);
       pause();
-      onTripFinish();
+      onTripFinish(true);
       return;
     }
 
@@ -1730,102 +1795,113 @@
   }
 
   function jumpToTime(targetT) {
+    if (!canTravel()) return;
     pause();
-    const prevT = state.currentTime;
-    renderTime(targetT, prevT);
-    if (targetT >= simConfig.tripDays) {
-      onTripFinish();
-    }
+    renderTime(targetT);
+    if (targetT >= simConfig.tripDays) onTripFinish(false);
   }
 
-  function onTripFinish() {
-    playTone(880, 0.35, 'triangle');
-    if (!state.mastery.star1) {
-      cardObservation.hidden = false;
-      cardObservation.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      inputObservation.focus();
+  function onTripFinish(played) {
+    if (played) {
+      playTone(880, 0.35, 'triangle');
+      if (finishWave === 0) {
+        const start = performance.now();
+        const animate = now => {
+          finishWave = Math.min(1, (now - start) / 650);
+          drawMatrix(state.currentTime);
+          if (finishWave < 1) finishFrame = requestAnimationFrame(animate);
+        };
+        finishFrame = requestAnimationFrame(animate);
+      }
     }
+    if (state.bonus) {
+      revealConsole();
+      return;
+    }
+    state.finished = true;
+    updateMasteryUI();
+  }
+
+  for (const id of ['form-hypothesis', 'form-observation', 'form-explanation', 'form-transfer']) {
+    const status = document.createElement('p');
+    status.className = 'flow-feedback';
+    status.setAttribute('role', 'status');
+    document.getElementById(id).after(status);
   }
 
   window.submitHypothesis = function() {
-    const val = parseInt(inputHypothesis.value, 10);
-    if (isNaN(val)) return;
-    state.userHypothesis = val;
-    cardHypothesis.classList.add('locked-complete');
+    if (canTravel() || !inputHypothesis.checkValidity()) return;
+    state.userHypothesis = inputHypothesis.valueAsNumber;
+    updateMasteryUI();
     play();
   };
 
   window.submitObservation = function() {
-    const val = parseInt(inputObservation.value, 10);
-    if (val === trainModel.length) {
-      state.mastery.star1 = true;
-      saveMasteryState();
-      updateMasteryUI();
-      cardObservation.classList.add('locked-complete');
-      cardExplanation.hidden = false;
-      cardExplanation.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      inputExpGrp1.focus();
-      playTone(784, 0.4);
-    } else {
-      inputObservation.select();
-      playTone(220, 0.25, 'sawtooth');
+    if (!state.finished || state.bonus || state.mastery.step !== 0) return;
+    if (inputObservation.valueAsNumber !== trainModel.length) {
+      feedback('form-observation', 'Сверь число с итогом поездки.');
+      return;
     }
+    completeStep(1, 'Исследование засчитано.');
   };
 
+  function matchesGroups(model, first, second) {
+    const alreadyTravelling = model.filter(train => train.group === 1).length;
+    return first === alreadyTravelling && second === model.length - alreadyTravelling;
+  }
+
   window.submitExplanation = function() {
-    const g1 = parseInt(inputExpGrp1.value, 10);
-    const g2 = parseInt(inputExpGrp2.value, 10);
-
-    const realG1 = trainModel.filter(t => t.group === 1).length;
-    const realG2 = trainModel.filter(t => t.group === 2).length;
-
-    if (g1 === realG1 && g2 === realG2) {
-      state.mastery.star2 = true;
-      saveMasteryState();
-      updateMasteryUI();
-      cardExplanation.classList.add('locked-complete');
-      explainSuccessBanner.hidden = false;
-      cardTransfer.hidden = false;
-      cardTransfer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      inputTransferGrp1.focus();
-      playTone(880, 0.45);
-    } else {
-      playTone(220, 0.25, 'sawtooth');
+    if (state.mastery.step !== 1) return;
+    if (!matchesGroups(trainModel, inputExpGrp1.valueAsNumber, inputExpGrp2.valueAsNumber)) {
+      feedback('form-explanation', 'Сверь числа для обеих групп. Вместе они должны дать все встречи.');
+      return;
     }
+    completeStep(2, 'Обе группы определены верно.');
   };
 
   window.submitTransfer = function() {
-    const g1 = parseInt(inputTransferGrp1.value, 10);
-    const g2 = parseInt(inputTransferGrp2.value, 10);
-    const tot = parseInt(inputTransferTotal.value, 10);
-
-    if (g1 === 6 && g2 === 6 && tot === 12) {
-      state.mastery.star3 = true;
-      saveMasteryState();
-      updateMasteryUI();
-      cardTransfer.classList.add('locked-complete');
-      consoleSection.hidden = false;
-      consoleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      if (window.Olymp) {
-        if (typeof window.Olymp.award === 'function') {
-          window.Olymp.award({ stars: 3, source: 'trains-v2', notify: true });
-        } else if (typeof window.Olymp.stars === 'function') {
-          window.Olymp.stars(3);
-        }
-      }
-      playTone(1046.5, 0.6);
-    } else {
-      playTone(220, 0.25, 'sawtooth');
+    if (state.mastery.step !== 2) return;
+    const model = computeTrains(state.mastery.days, 1, 0.5);
+    if (!matchesGroups(model, inputTransferGrp1.valueAsNumber, inputTransferGrp2.valueAsNumber) ||
+        inputTransferTotal.valueAsNumber !== model.length) {
+      feedback('form-transfer', 'Проверь число в каждой группе и их сумму.');
+      return;
     }
+    completeStep(3, 'Три звезды. Пульт диспетчера открыт.');
   };
 
-  btnToggleHint.addEventListener('click', () => {
-    state.usedHint = true;
-    hintDrawer.hidden = !hintDrawer.hidden;
-    if (window.Olymp && typeof window.Olymp.useHint === 'function') {
-      window.Olymp.useHint();
+  function completeStep(step, message) {
+    state.mastery.step = step;
+    saveMasteryState();
+    updateMasteryUI();
+    const stars = state.mastery.step === 2 && state.mastery.assisted ? 1 : state.mastery.step;
+    if (window.Olymp?.group) {
+      if (typeof window.Olymp.award === 'function') {
+        if (!window.Olymp.award({ stars, source: 'trains-v3' }).persisted) storageWarning();
+      } else {
+        window.Olymp.stars?.(stars);
+      }
     }
+    feedback(['form-observation', 'form-explanation', 'form-transfer'][step - 1], message);
+    playTone([784, 880, 1046][step - 1], 0.4);
+  }
+
+  function recordHelp() {
+    if (state.mastery.step >= 2 || state.mastery.assisted) return;
+    state.mastery.assisted = true;
+    saveMasteryState();
+  }
+
+  btnToggleHint.addEventListener('click', () => {
+    if (state.mastery.step !== 1) return;
+    recordHelp();
+    hintDrawer.hidden = !hintDrawer.hidden;
+    btnToggleHint.setAttribute('aria-expanded', String(!hintDrawer.hidden));
+  });
+
+  const fullExplanation = document.getElementById('full-explanation');
+  fullExplanation.querySelector('summary').addEventListener('click', () => {
+    if (!fullExplanation.open) recordHelp();
   });
 
   btnPlay.addEventListener('click', togglePlay);
@@ -1871,7 +1947,10 @@
   });
 
   timeSlider.addEventListener('input', (e) => {
-    pause();
+    if (!canTravel()) {
+      timeSlider.value = state.currentTime;
+      return;
+    }
     jumpToTime(parseFloat(e.target.value));
   });
 
@@ -1882,25 +1961,25 @@
   const consoleGrp2 = document.getElementById('console-grp2-calc');
   const consoleTotal = document.getElementById('console-total-calc');
   const discoveryAlert = document.getElementById('console-discovery-alert');
-  const btnApplySim = document.getElementById('btn-apply-console-sim');
+  const consoleForm = document.getElementById('console-forecast');
+  const consoleGuess = document.getElementById('console-guess');
+  const consoleResults = document.getElementById('console-live-results');
+  let activeForecast;
 
   let consoleD = 10;
   let consoleIntervalH = 24;
 
-  function updateConsoleCalc() {
-    const hDays = consoleIntervalH / 24;
-    const deltaDays = 0.5;
-    const list = computeTrains(consoleD, hDays, deltaDays);
-    const grp1Count = list.filter(tr => tr.group === 1).length;
-    const grp2Count = list.filter(tr => tr.group === 2).length;
-    const totalCount = list.length;
-
-    formulaText.textContent = `Расчёт для: ${consoleD} дней, отправление каждые ${consoleIntervalH} ч`;
+  function revealConsole() {
+    if (!activeForecast || activeForecast.days !== consoleD || activeForecast.interval !== consoleIntervalH) return;
+    const grp1Count = trainModel.filter(tr => tr.group === 1).length;
+    const grp2Count = trainModel.length - grp1Count;
+    const verdict = activeForecast.guess === trainModel.length ? 'Прогноз совпал' : 'Прогноз: ' + activeForecast.guess;
+    formulaText.textContent = `${verdict} · ${consoleD} суток · интервал ${consoleIntervalH} ч`;
     consoleGrp1.textContent = `Уже в пути: ${grp1Count}`;
     consoleGrp2.textContent = `Новые составы: ${grp2Count}`;
-    consoleTotal.textContent = `Всего: ${totalCount}`;
-
+    consoleTotal.textContent = `Всего: ${trainModel.length}`;
     discoveryAlert.hidden = !(consoleD === 5 && consoleIntervalH === 48);
+    consoleResults.hidden = false;
   }
 
   durationPills.forEach(btn => {
@@ -1908,7 +1987,8 @@
       durationPills.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       consoleD = parseInt(btn.dataset.val, 10);
-      updateConsoleCalc();
+      consoleResults.hidden = true;
+      consoleGuess.value = '';
     });
   });
 
@@ -1917,11 +1997,17 @@
       intervalPills.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       consoleIntervalH = parseInt(btn.dataset.val, 10);
-      updateConsoleCalc();
+      consoleResults.hidden = true;
+      consoleGuess.value = '';
     });
   });
 
-  btnApplySim.addEventListener('click', () => {
+  consoleForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (state.mastery.step !== 3 || !consoleGuess.checkValidity()) return;
+    state.bonus = true;
+    activeForecast = { days: consoleD, interval: consoleIntervalH, guess: consoleGuess.valueAsNumber };
+    consoleResults.hidden = true;
     simConfig.tripDays = consoleD;
     simConfig.intervalDays = consoleIntervalH / 24;
     simConfig.offsetDays = 0.5;
@@ -1931,7 +2017,8 @@
     setupDayTicks();
     setupOncomingElements();
     jumpToTime(0);
-    document.querySelector('.dispatch-board').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    play();
+    document.querySelector('.dispatch-board').scrollIntoView({ block: 'start' });
   });
 
   window.addEventListener('resize', resizeCanvas);
@@ -1943,7 +2030,6 @@
   timeSlider.max = simConfig.tripDays;
   resizeCanvas();
   renderTime(0);
-  updateConsoleCalc();
 })();
 </script>
 </body>

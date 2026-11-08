@@ -6,6 +6,7 @@
   <title>Поезда — Ночная диспетчерская</title>
   <script src="../assets/theme.js"></script>
   <script src="../assets/olymp.js"></script>
+  <script src="../assets/trip-matrix.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -516,6 +517,7 @@
       border: 1px solid rgba(173, 138, 255, 0.15);
       overflow: hidden;
       padding: 6px 10px;
+      box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.12);
     }
 
     canvas.matrix-canvas {
@@ -1292,7 +1294,7 @@
       </div>
 
       <div class="matrix-canvas-wrapper">
-        <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
+        <canvas class="matrix-canvas" id="matrix-canvas" role="img" aria-label="Память поездки. Поезд ещё не отправился."></canvas>
       </div>
 
       <div class="timeline-day-ticks" id="timeline-day-ticks"></div>
@@ -1516,8 +1518,6 @@
 
 <script>
 (() => {
-  const MATRIX_COLS = 120;
-  const MATRIX_ROWS = 5;
 
   let simConfig = {
     tripDays: 10,
@@ -1614,7 +1614,7 @@
   const oncomingContainer = document.getElementById('oncoming-trains-container');
   const flashContainer = document.getElementById('flash-effects-container');
   const matrixCanvas = document.getElementById('matrix-canvas');
-  const matrixCtx = matrixCanvas.getContext('2d');
+  const matrixPainter = new TripMatrix(matrixCanvas);
   const matrixStatusBadge = document.getElementById('dotmatrix-status-badge');
   const dayTicksContainer = document.getElementById('timeline-day-ticks');
   const counterTotalVal = document.getElementById('counter-total-val');
@@ -1728,8 +1728,7 @@
   function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
     const rect = matrixCanvas.getBoundingClientRect();
-    matrixCanvas.width = Math.round(rect.width * dpr);
-    matrixCanvas.height = Math.round(rect.height * dpr);
+    matrixPainter.resize(rect.width, rect.height, dpr);
     renderTrains(state.currentTime);
     drawMatrix(state.currentTime);
   }
@@ -1747,70 +1746,20 @@
       trail: style.getPropertyValue('--matrix-trail').trim(),
       idle: style.getPropertyValue('--matrix-idle').trim()
     };
+    matrixPainter.setPalette(matrixColors);
     drawMatrix(state.currentTime);
   }
 
   function drawMatrix(t) {
-    if (!matrixCanvas.width || !matrixCanvas.height) return;
-    const ctx = matrixCtx;
-    const w = matrixCanvas.width;
-    const h = matrixCanvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    const D = simConfig.tripDays;
-    const progressFrac = Math.min(1, Math.max(0, t / D));
-    const activeColFloat = progressFrac * MATRIX_COLS;
-    const isCompleted = t >= D;
-
-    const cellW = w / MATRIX_COLS;
-    const cellH = h / MATRIX_ROWS;
-    const dotRadius = Math.min(cellW, cellH) * 0.38;
-
-    const meetColumns = new Map();
-    trainModel.forEach(train => {
-      const col = Math.min(MATRIX_COLS - 1, Math.floor((train.t_meet / D) * MATRIX_COLS));
-      meetColumns.set(col, {
-        group: train.group,
-        isMet: t >= train.t_meet
-      });
+    matrixPainter.draw({
+      time: t,
+      duration: simConfig.tripDays,
+      trains: trainModel,
+      playing: state.isPlaying,
+      speed: state.speed,
+      reducedMotion: reducedMotion.matches,
+      finishWave
     });
-
-    for (let c = 0; c < MATRIX_COLS; c++) {
-      const cx = (c + 0.5) * cellW;
-      const meet = meetColumns.get(c);
-      if (meet?.isMet) {
-        ctx.beginPath();
-        ctx.strokeStyle = meet.group === 1 ? matrixColors.group1 : matrixColors.group2;
-        ctx.lineWidth = dotRadius * 2.15;
-        ctx.lineCap = 'round';
-        ctx.moveTo(cx, cellH * 0.65);
-        ctx.lineTo(cx, h - cellH * 0.65);
-        ctx.stroke();
-        continue;
-      }
-
-      for (let r = 0; r < MATRIX_ROWS; r++) {
-        const cy = (r + 0.5) * cellH;
-        ctx.beginPath();
-        ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
-
-        if (isCompleted && c < finishWave * MATRIX_COLS) {
-          ctx.fillStyle = matrixColors.done;
-        } else if (c <= activeColFloat) {
-          const distToCursor = activeColFloat - c;
-          if (distToCursor < 1.5) {
-            ctx.fillStyle = matrixColors.cursor;
-          } else if (distToCursor < 5.0) {
-            ctx.fillStyle = matrixColors.glow;
-          } else {
-            ctx.fillStyle = matrixColors.trail;
-          }
-        } else {
-          ctx.fillStyle = matrixColors.idle;
-        }
-        ctx.fill();
-      }
-    }
   }
 
   function updateMasteryUI() {
